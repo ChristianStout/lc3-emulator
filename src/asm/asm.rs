@@ -41,9 +41,9 @@ impl Asm {
         }
         
         // this is for debug purposes
-        for (i, token) in tokens.iter().enumerate() {
-            println!("{}\t: {:?}", i, token);
-        }
+        // for (i, token) in tokens.iter().enumerate() {
+        //     println!("{}\t: {:?}", i, token);
+        // }
         
         // 3. Verify that file is semantically valid
         self.semantic_checker.run(&tokens, input_file);
@@ -200,8 +200,7 @@ impl Asm {
                 output = ins;
             },
             _ => {
-                println!("unimplemented ins: {:?}", instruction);
-                unimplemented!()
+                unreachable!();
             }
         }
         

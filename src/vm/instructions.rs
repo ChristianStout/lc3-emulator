@@ -134,8 +134,8 @@ impl Instruction for Br {
               | ---- --- --------- |
               | op   nzp pcoffset9 |
         */
-        print!("IN BR");
-        print!(" - {:#018b}\n", value);
+        // print!("IN BR");
+        // print!(" - {:#018b}\n", value);
         let n = get_bit_index(value, 11);
         let z = get_bit_index(value, 10);
         let p = get_bit_index(value, 9);

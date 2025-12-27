@@ -33,7 +33,7 @@ impl SystemIO for StdIO {
         match input {
             Some(input) => input as char,
             None => {
-                println!("Char: None");
+                // println!("Char: None");
                 return '\0';
             },
         }

@@ -104,7 +104,7 @@ mod tests {
 
         println!("\n\t-------------------------------------------------");
         for (i, token)  in tokens.iter().enumerate() {
-            println!("{}\t: {:?}", i, token);
+            // println!("{}\t: {:?}", i, token);
         }
 
         return highlight_text(file);
