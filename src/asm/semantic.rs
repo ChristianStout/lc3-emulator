@@ -391,8 +391,8 @@ impl SemanticChecker {
     }
 
     fn verify_all_used_labels_defined(&mut self) {
-        println!("USED LABELS = {:?}", self.used_labels);
-        println!("\n\nDEFINED LABELS = {:?}", self.symbol_table);
+        // println!("USED LABELS = {:?}", self.used_labels);
+        // println!("\n\nDEFINED LABELS = {:?}", self.symbol_table);
         for label in self.used_labels.keys() {
             if !self.symbol_table.contains_key(label) {
                 self.errors.push(AsmError::from(
@@ -478,9 +478,9 @@ mod tests {
             panic!("COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!");
         }
         
-        for (i, token) in tokens.iter().enumerate() {
-            println!("{}\t: {:?}", i, token);
-        }
+        // for (i, token) in tokens.iter().enumerate() {
+        //     // println!("{}\t: {:?}", i, token);
+        // }
         
         let mut semantic_checker = SemanticChecker::new();
         semantic_checker.run(&tokens, file.to_string());
@@ -499,9 +499,9 @@ mod tests {
             panic!("COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!");
         }
         
-        for (i, token) in tokens.iter().enumerate() {
-            println!("{}\t: {:?}", i, token);
-        }
+        // for (i, token) in tokens.iter().enumerate() {
+        //     // println!("{}\t: {:?}", i, token);
+        // }
         
         let mut semantic_checker = SemanticChecker::new();
         semantic_checker.run(&tokens, file.to_string());
