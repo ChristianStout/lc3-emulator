@@ -23,7 +23,12 @@ fn main() {
 
 
     let mut asm = Asm::new();
-    let binary_file = asm.run(file);
+    let binary_file: Vec<u16>;
+    if let Some(out) = asm.run(file) {
+        binary_file = out;
+    } else {
+        return;
+    }
     
     let mut vm = VM::new();
     vm.run(binary_file);

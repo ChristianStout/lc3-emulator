@@ -23,10 +23,10 @@ impl Asm {
         }
     }
 
-    pub fn run(&mut self, input_file: String) -> Vec<u16> {
+    pub fn run(&mut self, input_file: String) -> Option<Vec<u16>> {
         // 1. Verify that file is syntactically valid
         if !self.lexer.syntax_checker.is_syntactically_valid_file(&input_file) {
-            return vec![];
+            return None;
         }
         
         // 2. Create token stream with Lexer
@@ -37,7 +37,7 @@ impl Asm {
             for error in self.lexer.errors.iter() {
                 println!("{}", error.generate_msg());
             }
-            return vec![];
+            return None;
         }
         
         // this is for debug purposes
@@ -52,13 +52,13 @@ impl Asm {
             for error in self.semantic_checker.errors.iter() {
                 println!("{}", error.generate_msg());
             }
-            return vec![];
+            return None;
         }
         
         // self.symbol_table = self.semantic_checker.symbol_table;
         
         // 4. Assemble Vec<Token> into binary Vec<u16> & Symbol Table
-        return self.assemble(tokens);
+        return Some(self.assemble(tokens));
     }
 
     pub fn assemble(&mut self, tokens: Vec<Token>) -> Vec<u16> {
