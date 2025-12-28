@@ -1,5 +1,5 @@
-use super::registers::Registers;
 use super::memory::Memory;
+use super::registers::Registers;
 use super::trap::Trap;
 
 /*
@@ -13,7 +13,7 @@ pub trait Instruction {
     *excluding* the opcode.
      ^^^^^^^^^
     This is because we already had to obtain that information
-    in order to dynamically call the correct instruction. 
+    in order to dynamically call the correct instruction.
     */
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory);
 }
@@ -62,15 +62,15 @@ impl Instruction for Add {
 
                 let v1 = reg.get(sr1 as usize);
                 let v2 = reg.get(sr2 as usize);
-        
+
                 new_value = v1 + v2;
-            },
+            }
             1 => {
                 let reg_val = reg.get(sr1 as usize);
                 let imm_val = get_offset(value, 5);
                 new_value = (reg_val as i16 + imm_val as i16) as u16;
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
 
         reg.set(dr as usize, new_value);
@@ -110,17 +110,17 @@ impl Instruction for And {
                 let v1 = reg.get(sr1 as usize);
                 let v2 = reg.get(sr2 as usize);
                 new_value = v1 & v2;
-            },
+            }
             1 => {
                 i -= code >> 5;
                 let reg_val = reg.get(sr1 as usize);
                 let imm_val = i;
                 new_value = reg_val & imm_val;
-            },
+            }
             _ => {
                 unreachable!();
-            },
-        }   
+            }
+        }
         reg.set(dr as usize, new_value);
 
         set_nzp(reg, new_value)
@@ -140,10 +140,11 @@ impl Instruction for Br {
         let z = get_bit_index(value, 10);
         let p = get_bit_index(value, 9);
 
-        if (n == 0 && z == 0 && p == 0) ||
-            (n == 1 && reg.n) ||
-            (z == 1 && reg.z) ||
-            (p == 1 && reg.p) {
+        if (n == 0 && z == 0 && p == 0)
+            || (n == 1 && reg.n)
+            || (z == 1 && reg.z)
+            || (p == 1 && reg.p)
+        {
             reg.pc += get_offset(value, 9);
         }
     }
@@ -181,17 +182,16 @@ impl Instruction for Jsr {
         let code = value >> 11;
         let inc_pc = reg.pc;
 
-
         match code {
             0 => {
                 let offset_reg = value >> 6;
                 let offset = reg.r[offset_reg as usize];
                 reg.pc += offset;
-            },
+            }
             1 => {
                 let offset = get_offset(value, 11);
                 reg.pc = offset;
-            },
+            }
             _ => unreachable!(),
         }
 
@@ -257,7 +257,7 @@ impl Instruction for Lea {
         LEA - | 1110 000 000000000 |
               | ---- --- --------- |
               | op   dr  label     |
-        
+
         Loads memory location of the label into memory
         */
         let dr = value >> 9;
@@ -289,6 +289,7 @@ impl Instruction for Not {
     }
 }
 
+// TODO: Impl rti
 impl Instruction for Rti {
     fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory) {
         /*
@@ -296,6 +297,7 @@ impl Instruction for Rti {
               | ---- ------------ |
               | op                |
         */
+        todo!();
     }
 }
 
@@ -503,7 +505,6 @@ mod test {
         // TODO: Account for NZP bits
     }
 
-
     // #[test]
     // fn test_br() {
     //     unimplemented!();
@@ -669,12 +670,10 @@ mod test {
         assert!(!reg.z);
         assert!(!reg.p);
 
- 
         set_nzp(&mut reg, 0);
         assert!(!reg.n);
         assert!(reg.z);
         assert!(!reg.p);
-
 
         set_nzp(&mut reg, 1);
         assert!(!reg.n);
