@@ -1,13 +1,10 @@
 use super::instructions::{
-    Instruction, Add, And, Br, JmpRet, Jsr, Ld,
-    Ldi, Lea, Not, Rti, St, Sti, Str, Ldr,
+    Add, And, Br, Instruction, JmpRet, Jsr, Ld, Ldi, Ldr, Lea, Not, Rti, St, Sti, Str,
 };
-use super::trap::Trap;
-use super::registers::Registers;
 use super::memory::Memory;
+use super::registers::Registers;
+use super::trap::Trap;
 use std::collections::HashMap;
-
-use std::process::Command;
 
 const CMD_SIZE: u8 = 16;
 const OPCODE_SIZE: u8 = 4;
@@ -50,7 +47,7 @@ impl VM {
 
     pub fn run(&mut self, file: Vec<u16>) {
         self.registers.pc = file[0];
-        
+
         self.memory.load_file(file);
 
         while self.registers.halt != true {
@@ -70,34 +67,36 @@ impl VM {
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
         let value: u16 = cmd - (opcode << OPCODE_DELTA);
-        self.instructions[&(opcode as u8)]
-            .exe(value, &mut self.registers, &mut self.memory);
+        self.instructions[&(opcode as u8)].exe(value, &mut self.registers, &mut self.memory);
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::asm::asm::Asm;
     use super::*;
+    use crate::asm::asm::Asm;
 
     fn run_vm(file: &str) -> VM {
-        let file = format!(".orig x0000
-        
+        let file = format!(
+            ".orig x0000
+
         {file}
-    
+
         halt
         .end"
-    );
+        );
         let mut asm = Asm::new();
 
-        let binary_file = asm.run(file.to_string()).expect("Errors occurred during the assembly process, so the VM could not be run");
-        
+        let binary_file = asm
+            .run(file.to_string())
+            .expect("Errors occurred during the assembly process, so the VM could not be run");
+
         if binary_file.len() == 0 {
             panic!();
         }
-        
+
         println!("\nBinary file:");
-        
+
         let mut vm = VM::new();
 
         vm.run(binary_file);
@@ -141,7 +140,7 @@ mod tests {
 num     .fill   #5300
 start   add r1, r1, #15 ; since every register should be set to 0 by default, this should always just put 10 in r1
         add r2, r2, #6  ; r2 == 6
-        
+
         not r1, r1
         not r2, r2
 
@@ -156,7 +155,8 @@ start   add r1, r1, #15 ; since every register should be set to 0 by default, th
 
     #[test]
     fn test_jmp() {
-        let vm = run_vm("
+        let vm = run_vm(
+            "
         lea r0, start
         jmp r0
 max     .fill xFFFF
@@ -167,7 +167,8 @@ end     ld r0, max
 start   ld r1, max
         lea r7, end
         jmp r7
-       ");
+       ",
+        );
 
         assert_eq!(vm.registers.r[0], u16::MAX);
         assert_eq!(vm.registers.r[1], u16::MAX);
@@ -175,7 +176,8 @@ start   ld r1, max
 
     #[test]
     fn test_lea() {
-        let vm = run_vm(r#"
+        let vm = run_vm(
+            r#"
         lea r0, start
         lea r1, max
         lea r2, string
@@ -194,18 +196,20 @@ start   ld r1, max      ; address = 14
         lea r7, end
         jmp r7
 num_16  .fill   #16     ; address = 17
-        "#);
+        "#,
+        );
 
         assert_eq!(vm.registers.r[0], 14);
-        assert_eq!(vm.registers.r[1], 6); 
-        assert_eq!(vm.registers.r[2], 9); 
-        assert_eq!(vm.registers.r[3], 7); 
-        assert_eq!(vm.registers.r[4], 17); 
+        assert_eq!(vm.registers.r[1], 6);
+        assert_eq!(vm.registers.r[2], 9);
+        assert_eq!(vm.registers.r[3], 7);
+        assert_eq!(vm.registers.r[4], 17);
     }
 
     #[test]
     fn test_ret() {
-        let vm = run_vm("
+        let vm = run_vm(
+            "
         lea r7, start
         ret
 max     .fill xFFFF
@@ -216,10 +220,10 @@ end     ld r0, max
 start   ld r1, max
         lea r7, end
         ret
-       ");
+       ",
+        );
 
         assert_eq!(vm.registers.r[0], u16::MAX);
         assert_eq!(vm.registers.r[1], u16::MAX);
-
     }
 }
