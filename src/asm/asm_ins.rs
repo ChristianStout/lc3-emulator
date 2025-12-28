@@ -1,12 +1,18 @@
-use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
-use tsify::Tsify;
 use std::collections::VecDeque;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
+
+pub const GETC_VAL: u16 = 0x20;
+pub const OUT_VAL: u16 = 0x21;
+pub const PUTS_VAL: u16 = 0x22;
+pub const IN_VAL: u16 = 0x23;
+pub const HALT_VAL: u16 = 0x25;
 
 pub enum OperandType {
     /*
     # OperandType
-    This enum refers to the types 
+    This enum refers to the types
     of operands an instruction could have
     */
     Reg,
@@ -78,33 +84,53 @@ impl OpcodeIns {
             "ST" => return OpcodeIns::St,
             "STI" => return OpcodeIns::Sti,
             "STR" => return OpcodeIns::Str,
-            "GETC" => return OpcodeIns::Trap(20),
-            "OUT" => return OpcodeIns::Trap(21),
-            "PUTS" => return OpcodeIns::Trap(22),
-            "IN" => return OpcodeIns::Trap(23),
-            "HALT" => return OpcodeIns::Trap(25),
+            "GETC" => return OpcodeIns::Trap(GETC_VAL),
+            "OUT" => return OpcodeIns::Trap(OUT_VAL),
+            "PUTS" => return OpcodeIns::Trap(PUTS_VAL),
+            "IN" => return OpcodeIns::Trap(IN_VAL),
+            "HALT" => return OpcodeIns::Trap(HALT_VAL),
             _ => return OpcodeIns::INVALID,
         }
     }
 
     pub fn get_expected_operands(&self) -> VecDeque<OperandType> {
         match self {
-            OpcodeIns::Add => vec![OperandType::Reg, OperandType::Reg, OperandType::RegOrImm].into_iter().collect(),
-            OpcodeIns::And => vec![OperandType::Reg, OperandType::Reg, OperandType::RegOrImm].into_iter().collect(),
-            OpcodeIns::Br(_,_,_) => vec![OperandType::Label].into_iter().collect(),
+            OpcodeIns::Add => vec![OperandType::Reg, OperandType::Reg, OperandType::RegOrImm]
+                .into_iter()
+                .collect(),
+            OpcodeIns::And => vec![OperandType::Reg, OperandType::Reg, OperandType::RegOrImm]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Br(_, _, _) => vec![OperandType::Label].into_iter().collect(),
             OpcodeIns::Jmp => vec![OperandType::Reg].into_iter().collect(),
             OpcodeIns::Jsr => vec![OperandType::Label].into_iter().collect(),
             OpcodeIns::Jsrr => vec![OperandType::Reg].into_iter().collect(),
-            OpcodeIns::Ld => vec![OperandType::Reg, OperandType::Label].into_iter().collect(),
-            OpcodeIns::Ldi => vec![OperandType::Reg, OperandType::Label].into_iter().collect(),
-            OpcodeIns::Ldr => vec![OperandType::Reg, OperandType::Reg, OperandType::Imm].into_iter().collect(),
-            OpcodeIns::Lea => vec![OperandType::Reg, OperandType::Label].into_iter().collect(),
-            OpcodeIns::Not => vec![OperandType::Reg, OperandType::Reg].into_iter().collect(),
+            OpcodeIns::Ld => vec![OperandType::Reg, OperandType::Label]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Ldi => vec![OperandType::Reg, OperandType::Label]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Ldr => vec![OperandType::Reg, OperandType::Reg, OperandType::Imm]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Lea => vec![OperandType::Reg, OperandType::Label]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Not => vec![OperandType::Reg, OperandType::Reg]
+                .into_iter()
+                .collect(),
             OpcodeIns::Ret => vec![].into_iter().collect(),
             OpcodeIns::Rti => vec![].into_iter().collect(),
-            OpcodeIns::St => vec![OperandType::Reg, OperandType::Label].into_iter().collect(),
-            OpcodeIns::Sti => vec![OperandType::Reg, OperandType::Label].into_iter().collect(),
-            OpcodeIns::Str => vec![OperandType::Reg, OperandType::Reg, OperandType::Imm].into_iter().collect(),
+            OpcodeIns::St => vec![OperandType::Reg, OperandType::Label]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Sti => vec![OperandType::Reg, OperandType::Label]
+                .into_iter()
+                .collect(),
+            OpcodeIns::Str => vec![OperandType::Reg, OperandType::Reg, OperandType::Imm]
+                .into_iter()
+                .collect(),
             OpcodeIns::Trap(subroutine) => self.get_expected_operand_for_trap(*subroutine),
             _ => vec![].into_iter().collect(),
         }
@@ -112,14 +138,16 @@ impl OpcodeIns {
 
     fn get_expected_operand_for_trap(&self, subroutine: u16) -> VecDeque<OperandType> {
         match subroutine {
-            20 => vec![].into_iter().collect(),
-            21 => vec![].into_iter().collect(),
-            22 => vec![].into_iter().collect(),
-            23 => vec![].into_iter().collect(),
-            25 => vec![].into_iter().collect(),
+            0x20 => vec![].into_iter().collect(),
+            0x21 => vec![].into_iter().collect(),
+            0x22 => vec![].into_iter().collect(),
+            0x23 => vec![].into_iter().collect(),
+            0x25 => vec![].into_iter().collect(),
             _ => {
-                panic!("asm_ins::OpcodeIns::get_expected_operand_for_trap(): Received an impossible trap subroutine number.");
-            },
+                panic!(
+                    "asm_ins::OpcodeIns::get_expected_operand_for_trap(): Received an impossible trap subroutine number."
+                );
+            }
         }
     }
 
@@ -137,35 +165,35 @@ impl OpcodeIns {
                         return OpcodeIns::INVALID;
                     }
                     n = true;
-                },
+                }
                 'Z' => {
                     if z {
                         return OpcodeIns::INVALID;
                     }
                     z = true;
-                },
+                }
                 'P' => {
                     if p {
                         return OpcodeIns::INVALID;
                     }
                     p = true;
-                },
+                }
                 _ => return OpcodeIns::INVALID,
             }
         }
-        /* 
+        /*
         if !n && !z && !p {
             return OpcodeIns::Br(true, true, true);
         } */
 
         return OpcodeIns::Br(n, z, p);
     }
-    
+
     pub fn get_immediate_value_width(&self) -> Option<i32> {
         match self {
             OpcodeIns::Add | OpcodeIns::And => Some(5),
             OpcodeIns::Ldr | OpcodeIns::Str => Some(6),
-            OpcodeIns::Br(_,_,_) | OpcodeIns::Ld | OpcodeIns::Ldi => Some(9),
+            OpcodeIns::Br(_, _, _) | OpcodeIns::Ld | OpcodeIns::Ldi => Some(9),
             OpcodeIns::Lea | OpcodeIns::St | OpcodeIns::Sti => Some(9),
             OpcodeIns::Jsr => Some(11),
             _ => None,
@@ -174,7 +202,7 @@ impl OpcodeIns {
 
     pub fn get_opcode_value(&self) -> u16 {
         match self {
-            OpcodeIns::Br(_,_,_) => 0,
+            OpcodeIns::Br(_, _, _) => 0,
             OpcodeIns::Add => 1,
             OpcodeIns::Ld => 2,
             OpcodeIns::St => 3,
@@ -194,7 +222,6 @@ impl OpcodeIns {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -219,12 +246,11 @@ mod tests {
         assert!(OpcodeIns::from("ST") == OpcodeIns::St);
         assert!(OpcodeIns::from("STI") == OpcodeIns::Sti);
         assert!(OpcodeIns::from("STR") == OpcodeIns::Str);
-        assert!(OpcodeIns::from("GETC") == OpcodeIns::Trap(20));
-        assert!(OpcodeIns::from("OUT") == OpcodeIns::Trap(21));
-        assert!(OpcodeIns::from("PUTS") == OpcodeIns::Trap(22));
-        assert!(OpcodeIns::from("IN") == OpcodeIns::Trap(23));
-        assert!(OpcodeIns::from("HALT") == OpcodeIns::Trap(25));
-
+        assert!(OpcodeIns::from("GETC") == OpcodeIns::Trap(GETC_VAL));
+        assert!(OpcodeIns::from("OUT") == OpcodeIns::Trap(OUT_VAL));
+        assert!(OpcodeIns::from("PUTS") == OpcodeIns::Trap(PUTS_VAL));
+        assert!(OpcodeIns::from("IN") == OpcodeIns::Trap(IN_VAL));
+        assert!(OpcodeIns::from("HALT") == OpcodeIns::Trap(HALT_VAL));
 
         assert!(OpcodeIns::from("HALTT") == OpcodeIns::INVALID);
         assert!(OpcodeIns::from("LLEA") == OpcodeIns::INVALID);
@@ -251,13 +277,12 @@ mod tests {
         assert!(OpcodeIns::from("aNd") == OpcodeIns::And);
         assert!(OpcodeIns::from("AND") == OpcodeIns::And);
 
-
         assert!(OpcodeIns::from("not") == OpcodeIns::Not);
         assert!(OpcodeIns::from("NOT") == OpcodeIns::Not);
         assert!(OpcodeIns::from("LD") == OpcodeIns::Ld);
         assert!(OpcodeIns::from("lD") == OpcodeIns::Ld);
-        assert!(OpcodeIns::from("hAlT") == OpcodeIns::Trap(25));
-        assert!(OpcodeIns::from("halt") == OpcodeIns::Trap(25));
+        assert!(OpcodeIns::from("hAlT") == OpcodeIns::Trap(HALT_VAL));
+        assert!(OpcodeIns::from("halt") == OpcodeIns::Trap(HALT_VAL));
     }
 
     #[test]

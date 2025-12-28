@@ -1,6 +1,7 @@
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
+use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL};
 
 /*
 Uses the command pattern to execute functions dynamically
@@ -358,11 +359,11 @@ impl Instruction for Trap {
         let code = get_offset(value, 8);
 
         match code {
-            20 => self.get_c(reg),
-            21 => self.out(reg),
-            22 => self.put_s(reg, mem),
-            23 => self.r#in(reg, mem),
-            25 => self.halt(reg),
+            GETC_VAL => self.get_c(reg),
+            OUT_VAL => self.out(reg),
+            PUTS_VAL => self.put_s(reg, mem),
+            IN_VAL => self.r#in(reg, mem),
+            HALT_VAL => self.halt(reg),
             _ => unreachable!(),
         }
     }

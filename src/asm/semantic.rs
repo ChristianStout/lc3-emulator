@@ -1,7 +1,11 @@
-use std::collections::{HashMap, VecDeque};
-use super::{asm_error::{AsmError, ErrorType}, asm_ins::{OpcodeIns, OperandType}, directive::Directive, token};
-use super::token::*;
 use super::file::AsmFile;
+use super::token::*;
+use super::{
+    asm_error::{AsmError, ErrorType},
+    asm_ins::{OpcodeIns, OperandType},
+    directive::Directive,
+};
+use std::collections::{HashMap, VecDeque};
 
 const ARCH_LIMIT: i32 = 16;
 
@@ -55,15 +59,15 @@ impl SemanticChecker {
             end_encountered: false,
         }
     }
-    
+
     #[allow(unused_variables)]
     pub fn run(&mut self, tokens: &Vec<Token>, file: String) {
         self.original_file = AsmFile::new(file);
-        
+
         if self.tokens_is_empty(tokens) {
             return;
         }
-        
+
         self.handle_orig(tokens);
 
         for token in tokens {
@@ -76,7 +80,7 @@ impl SemanticChecker {
                 }
                 TokenType::Label(label) => {
                     self.handle_label(token, label);
-                },
+                }
                 TokenType::Number(number) => {
                     self.handle_number(token, number);
                 }
@@ -122,15 +126,18 @@ impl SemanticChecker {
                 &self.original_file.get_line(token.line_num),
                 token.clone(),
                 ErrorType::OperandError,
-                &format!("{} was expected, but received an instruction instead.", self.expected_operands[0].as_string()),
+                &format!(
+                    "{} was expected, but received an instruction instead.",
+                    self.expected_operands[0].as_string()
+                ),
             ));
-        }                   
+        }
         self.curr_ins_token = token.clone(); // These should be optimized out. In errors they are acceptable, but we should not take a performance hit to valid code.
         self.memory_location += 1;
 
         self.expected_operands = instruction.get_expected_operands();
     }
-    
+
     pub fn handle_directive(&mut self, token: &Token, directive: &Directive) {
         if self.expected_operands.len() > 0 {
             // Syntactically, it is not possible to get a directive as an argument, so an instruction must have terminated early
@@ -139,7 +146,10 @@ impl SemanticChecker {
                 &self.original_file.get_line(self.curr_ins_token.line_num),
                 self.curr_ins_token.clone(),
                 ErrorType::OperandError,
-                &format!("{} was expected, was not provided.", self.expected_operands[0].as_string()),
+                &format!(
+                    "{} was expected, was not provided.",
+                    self.expected_operands[0].as_string()
+                ),
             ));
         }
         if self.is_end(directive) {
@@ -149,7 +159,7 @@ impl SemanticChecker {
         // TODO: figure how how I will increment memory for directives.
         // Some do, some don't, .STRINGZ could a little or a lot.
         self.move_memory_location_directive(directive);
-        
+
         self.expected_operands = directive.get_expected_operands();
     }
 
@@ -161,34 +171,39 @@ impl SemanticChecker {
                     &self.original_file.get_line(token.line_num),
                     token.clone(),
                     ErrorType::OperandError,
-                    "no operands were expected, but received a label instead."
+                    "no operands were expected, but received a label instead.",
                 ));
                 return;
             }
             self.define_label(label.clone(), token.clone());
             return;
         }
-        
+
         let expected = self.expected_operands.pop_front().unwrap();
 
         match expected {
-            OperandType::Label => { /* ... */ 
-                self.used_labels.insert(token.original_match.clone(), token.clone());
-            },
+            OperandType::Label => {
+                /* ... */
+                self.used_labels
+                    .insert(token.original_match.clone(), token.clone());
+            }
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_LABEL),
                     &self.original_file.get_line(token.line_num),
                     token.clone(),
                     ErrorType::OperandError,
-                    &format!("{} was expected, but received a label instead.", expected.as_string()),
+                    &format!(
+                        "{} was expected, but received a label instead.",
+                        expected.as_string()
+                    ),
                 ));
             }
         }
     }
-    
+
     pub fn handle_number(&mut self, token: &Token, number: &i16) {
-            if self.expected_operands.len() == 0 {
+        if self.expected_operands.len() == 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_EXPECTED_NOTHING_RECEIVED_NUMBER),
                 &self.original_file.get_line(token.line_num),
@@ -198,7 +213,7 @@ impl SemanticChecker {
             ));
             return;
         }
-        
+
         let expected: OperandType = self.expected_operands.pop_front().unwrap();
 
         match expected {
@@ -209,21 +224,24 @@ impl SemanticChecker {
                     self.in_blkw_directive = false;
                     self.memory_location += *number as i32;
                 }
-            },
+            }
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_NUMBER),
                     &self.original_file.get_line(token.line_num),
                     token.clone(),
                     ErrorType::OperandError,
-                    &format!("{} was expected, but received a number instead.", expected.as_string()),
+                    &format!(
+                        "{} was expected, but received a number instead.",
+                        expected.as_string()
+                    ),
                 ));
             }
-        }       
+        }
     }
 
     pub fn handle_register(&mut self, token: &Token) {
-            if self.expected_operands.len() == 0 {
+        if self.expected_operands.len() == 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_EXPECTED_NOTHING_RECEIVED_REGISTER),
                 &self.original_file.get_line(token.line_num),
@@ -233,17 +251,20 @@ impl SemanticChecker {
             ));
             return;
         }
-        
+
         let expected = self.expected_operands.pop_front().unwrap();
         match expected {
-            OperandType::Reg | OperandType::RegOrImm => { /* ... */ },
+            OperandType::Reg | OperandType::RegOrImm => { /* ... */ }
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_REGISTER),
                     &self.original_file.get_line(token.line_num),
                     token.clone(),
                     ErrorType::OperandError,
-                    &format!("{} was expected, but received a register instead.", expected.as_string()),
+                    &format!(
+                        "{} was expected, but received a register instead.",
+                        expected.as_string()
+                    ),
                 ));
             }
         }
@@ -260,20 +281,23 @@ impl SemanticChecker {
             ));
             return;
         }
-        
+
         let expected = self.expected_operands.pop_front().unwrap();
 
         match expected {
             OperandType::String => {
                 self.memory_location += string.len() as i32;
-            },
+            }
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_STRING),
                     &self.original_file.get_line(token.line_num),
                     token.clone(),
                     ErrorType::OperandError,
-                    &format!("{} was expected, but received a string instead.", expected.as_string()),
+                    &format!(
+                        "{} was expected, but received a string instead.",
+                        expected.as_string()
+                    ),
                 ));
             }
         }
@@ -316,16 +340,14 @@ impl SemanticChecker {
                 ErrorType::LogicalError,
                 "The provided file is not valid, because it only contains a `.ORIG` directive without arguments, and no `.END` directive",
             ))
-        }       
+        }
     }
 
     pub fn orig_at_top(&self, tokens: &Vec<Token>) -> bool {
         match &tokens[0].inner_token {
-            TokenType::Directive(directive) => {
-                match directive {
-                    Directive::ORIG => true,
-                    _ => false,
-                }
+            TokenType::Directive(directive) => match directive {
+                Directive::ORIG => true,
+                _ => false,
             },
             _ => false,
         }
@@ -335,18 +357,20 @@ impl SemanticChecker {
         match tokens[1].inner_token {
             TokenType::Number(location) => {
                 self.memory_location = location as i32;
-            },
+            }
             _ => {
                 AsmError::from(
                     String::from(CODE_ORIG_NOT_GIVEN_NUMBER),
                     &self.original_file.get_line(tokens[1].line_num),
                     tokens[1].clone(),
                     ErrorType::OperandError,
-                    &format!("{} must be given a number as an immediate value", tokens[1].original_match),
+                    &format!(
+                        "{} must be given a number as an immediate value",
+                        tokens[1].original_match
+                    ),
                 );
             }
         }
-        
     }
 
     pub fn is_end(&self, directive: &Directive) -> bool {
@@ -360,18 +384,16 @@ impl SemanticChecker {
         match directive {
             Directive::FILL => {
                 self.memory_location += 1;
-            },
+            }
             Directive::BLKW => {
                 // Unfortunately, the number token will have to handle this, since we cannot have clairvoyance.
                 self.in_blkw_directive = true;
-            },
+            }
             Directive::STRINGZ => {
                 // Strings can handle themselves, since this is the only syntactically valid position
                 // for a string in LC-3 assembly
             }
-            _ => {
-
-            }
+            _ => {}
         }
     }
 
@@ -383,11 +405,15 @@ impl SemanticChecker {
                 &self.original_file.get_line(token.line_num),
                 token.clone(),
                 ErrorType::LabelError,
-                &format!("attempted to redefine a label that was already defined on line {}", other.line_num),
+                &format!(
+                    "attempted to redefine a label that was already defined on line {}",
+                    other.line_num
+                ),
             ));
             return;
         }
-        self.symbol_table.insert(label, (self.memory_location, token));
+        self.symbol_table
+            .insert(label, (self.memory_location, token));
     }
 
     fn verify_all_used_labels_defined(&mut self) {
@@ -397,7 +423,9 @@ impl SemanticChecker {
             if !self.symbol_table.contains_key(label) {
                 self.errors.push(AsmError::from(
                     String::from(CODE_USED_UNDEFINED_LABEL),
-                    &self.original_file.get_line(self.used_labels.get(label).unwrap().line_num),
+                    &self
+                        .original_file
+                        .get_line(self.used_labels.get(label).unwrap().line_num),
                     self.used_labels.get(label).unwrap().clone(),
                     ErrorType::LabelError,
                     &format!("the label `{}` was never defined within the file.", label),
@@ -405,7 +433,7 @@ impl SemanticChecker {
             }
         }
     }
-    
+
     fn verify_immediate_value_in_range(&mut self, value: &Token) {
         let width: i32;
 
@@ -413,20 +441,22 @@ impl SemanticChecker {
             TokenType::Instruction(opcode_ins) => {
                 width = opcode_ins.get_immediate_value_width()
                     .expect("Somehow we are trying to verify that a value is within range when the instruction does not take in a value. THIS SHOULD NOT BE POSSIBLE!");
-            },
+            }
             TokenType::Directive(_) => {
                 width = ARCH_LIMIT; // This is because directives only store information in memory. They don't have limits, other than architecture.
             }
             _ => {
-                panic!("semantic::SemanticChecker::verify_value_in_range(): A non-instruction/directive was given as a token that can take an immediate value");
-            },
+                panic!(
+                    "semantic::SemanticChecker::verify_value_in_range(): A non-instruction/directive was given as a token that can take an immediate value"
+                );
+            }
         }
-         
+
         match &value.inner_token {
             TokenType::Number(number) => {
                 let number = *number as i32;
                 let (lower, upper) = self.get_twos_complement_range(width);
-                
+
                 if number < lower || number > upper {
                     self.errors.push(AsmError::from(
                         String::from(CODE_NUMBER_OUT_OF_BOUNDS),
@@ -445,10 +475,8 @@ impl SemanticChecker {
                         )
                     ));
                 }
-            },
-            TokenType::Label(_label) => {
-
-            },
+            }
+            TokenType::Label(_label) => {}
             _ => {
                 unreachable!();
             }
@@ -464,8 +492,8 @@ impl SemanticChecker {
 
 #[cfg(test)]
 mod tests {
-    use crate::asm::{asm_error::*, lexer::*};
     use super::*;
+    use crate::asm::{asm_error::*, lexer::*};
 
     fn get_semantic_errors(file: &str) -> Vec<AsmError> {
         let mut lexer: Lexer = Lexer::new();
@@ -475,13 +503,15 @@ mod tests {
 
         let tokens = lexer.run(file.to_string());
         if lexer.errors.len() > 0 {
-            panic!("COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!");
+            panic!(
+                "COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!"
+            );
         }
-        
+
         // for (i, token) in tokens.iter().enumerate() {
         //     // println!("{}\t: {:?}", i, token);
         // }
-        
+
         let mut semantic_checker = SemanticChecker::new();
         semantic_checker.run(&tokens, file.to_string());
 
@@ -496,23 +526,26 @@ mod tests {
 
         let tokens = lexer.run(file.to_string());
         if lexer.errors.len() > 0 {
-            panic!("COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!");
+            panic!(
+                "COULD NOT SEMANTICALLY VERIFY FILE, BECAUSE ERRORS OCCURRED WHILE GENERATING TOKENS!!!"
+            );
         }
-        
+
         // for (i, token) in tokens.iter().enumerate() {
         //     // println!("{}\t: {:?}", i, token);
         // }
-        
+
         let mut semantic_checker = SemanticChecker::new();
         semantic_checker.run(&tokens, file.to_string());
 
         if semantic_checker.errors.len() > 0 {
-            panic!("COULD NOT PROVIDE A RELIABLE SYMBOL TABLE, BECAUSE THE FILE PROVIDED IS NOT SEMANTICALLY VALID!!!");
+            panic!(
+                "COULD NOT PROVIDE A RELIABLE SYMBOL TABLE, BECAUSE THE FILE PROVIDED IS NOT SEMANTICALLY VALID!!!"
+            );
         }
 
         return semantic_checker.symbol_table;
     }
-
 
     #[test]
     fn test_redefine_label() {
@@ -587,7 +620,7 @@ ADD R1, R2, Hello
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_RECEIVED_UNEXPECTED_LABEL);
     }
-    
+
     #[test]
     fn test_expected_nothing_but_received_label() {
         let file = r#"
@@ -606,8 +639,7 @@ RET hello
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_EXPECTED_NOTHING_RECEIVED_LABEL);
     }
-    
-    
+
     #[test]
     fn test_expected_nothing_but_received_number() {
         let file = r#"
@@ -625,7 +657,7 @@ RET #1
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_EXPECTED_NOTHING_RECEIVED_NUMBER);
     }
-    
+
     #[test]
     fn test_received_unexpected_number() {
         let file = r#"
@@ -643,7 +675,7 @@ JSR #1
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_RECEIVED_UNEXPECTED_NUMBER);
     }
-    
+
     #[test]
     fn test_expected_nothing_but_received_register() {
         let file = r#"
@@ -660,7 +692,7 @@ RET r1
 
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_EXPECTED_NOTHING_RECEIVED_REGISTER);
-        
+
         let file = r#"
 .ORIG x3000
         BR          begin, r1    ; comment
@@ -676,7 +708,7 @@ RET r1
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_EXPECTED_NOTHING_RECEIVED_REGISTER);
     }
-    
+
     #[test]
     fn test_received_unexpected_register() {
         let file = r#"
@@ -694,7 +726,6 @@ JSR r1
 
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_RECEIVED_UNEXPECTED_REGISTER);
-    
     }
 
     #[test]
@@ -708,13 +739,16 @@ JSR r1
 
         for err in errors.iter() {
             println!("{}", err.generate_msg());
-            assert_eq!(err.code, String::from(CODE_EXPECTED_NOTHING_RECEIVED_STRING));
+            assert_eq!(
+                err.code,
+                String::from(CODE_EXPECTED_NOTHING_RECEIVED_STRING)
+            );
         }
 
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_EXPECTED_NOTHING_RECEIVED_STRING);
     }
-    
+
     #[test]
     fn test_received_unexpected_string() {
         let file = r#"
@@ -732,7 +766,7 @@ JSR r1
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_RECEIVED_UNEXPECTED_STRING);
     }
- 
+
     #[test]
     fn test_value_out_bounds_for_add() {
         let file = r#"
@@ -749,7 +783,7 @@ ADD R0, R2, x3000
 
         assert!(errors.len() > 0);
         assert_eq!(errors[0].code, CODE_NUMBER_OUT_OF_BOUNDS);
-    let file = r#"
+        let file = r#"
 .ORIG x3000
 ADD R0, R2, #16
 .END
@@ -769,7 +803,10 @@ ADD R0, R2, #16
     fn test_get_twos_complement_range() {
         let sm = SemanticChecker::new();
 
-        assert_eq!(sm.get_twos_complement_range(16), (i16::MIN as i32, i16::MAX as i32));
+        assert_eq!(
+            sm.get_twos_complement_range(16),
+            (i16::MIN as i32, i16::MAX as i32)
+        );
     }
 
     #[test]
@@ -799,15 +836,15 @@ maybe   add r1, r1, r1
             "#;
 
         let st: HashMap<String, (i32, Token)> = get_symbol_table(file);
-        
+
         assert_eq!(st.len(), 3);
-        
+
         let (location, _) = st.get("start").unwrap();
         assert_eq!(*location, 3000);
-        
+
         let (location, _) = st.get("other").unwrap();
         assert_eq!(*location, 3001);
-        
+
         let (location, _) = st.get("maybe").unwrap();
         assert_eq!(*location, 3002);
     }
@@ -829,22 +866,22 @@ maybe       add r1, r1, r1
             "#;
 
         let st: HashMap<String, (i32, Token)> = get_symbol_table(file);
-        
+
         assert_eq!(st.len(), 4);
-        
+
         let (location, _) = st.get("start").unwrap();
         assert_eq!(*location, 3000);
-        
+
         let (location, _) = st.get("other").unwrap();
         assert_eq!(*location, 3009); // it should account for the 8-long string between `start` and `other`
-        
+
         let (location, _) = st.get("hello").unwrap();
         assert_eq!(*location, 3010); // the difference is only one because the string starts in the following memory location
-        
+
         let (location, _) = st.get("maybe").unwrap();
         assert_eq!(*location, 3015);
     }
-    
+
     #[test]
     fn test_label_symbol_table_with_blkw() {
         let file = r#"
@@ -862,22 +899,22 @@ maybe       add r1, r1, r1
             "#;
 
         let st: HashMap<String, (i32, Token)> = get_symbol_table(file);
-        
+
         assert_eq!(st.len(), 4);
-        
+
         let (location, _) = st.get("start").unwrap();
         assert_eq!(*location, 3000);
-        
+
         let (location, _) = st.get("other").unwrap();
         assert_eq!(*location, 3009); // it should account for the 8-long block between `start` and `other`
-        
+
         let (location, _) = st.get("hello").unwrap();
         assert_eq!(*location, 3010); // the difference is only one because the block starts in the following memory location
-        
+
         let (location, _) = st.get("maybe").unwrap();
         assert_eq!(*location, 3015);
     }
-    
+
     #[test]
     fn test_label_symbol_table_with_fill() {
         let file = r#"
@@ -906,18 +943,18 @@ maybe       add r1, r1, r1
             "#;
 
         let st: HashMap<String, (i32, Token)> = get_symbol_table(file);
-        
+
         assert_eq!(st.len(), 4);
-        
+
         let (location, _) = st.get("start").unwrap();
         assert_eq!(*location, 3000);
-        
+
         let (location, _) = st.get("other").unwrap();
         assert_eq!(*location, 3009); // it should account for the 8-long block between `start` and `other`
-        
+
         let (location, _) = st.get("hello").unwrap();
         assert_eq!(*location, 3010); // the difference is only one because the block starts in the following memory location
-        
+
         let (location, _) = st.get("maybe").unwrap();
         assert_eq!(*location, 3015);
     }

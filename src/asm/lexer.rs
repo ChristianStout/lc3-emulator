@@ -1,7 +1,7 @@
+use super::asm_error::*;
 use super::asm_ins::*;
 use super::directive::*;
 use super::syntax::SyntaxChecker;
-use super::asm_error::*;
 use super::token::*;
 
 const CODE_TOKEN_NO_CATEGORY: &'static str = "SX001";
@@ -44,7 +44,6 @@ impl Lexer {
 
         let mut word_buffer: Vec<char> = vec![];
         let mut c: char;
-            
 
         while self.file_position < self.file_as_chars.len() {
             c = self.next_char(); // iterates self.file_position, self.line_position
@@ -60,14 +59,20 @@ impl Lexer {
                         &format!(r#""{}""#, string),
                         TokenType::String(string),
                     ));
-                    continue;   
+                    continue;
                 } else {
                     self.token_stream.push(Token::new(
                         self.file_position,
                         self.line_position,
                         self.curr_line_num,
-                        &self.file_as_chars[start_file_pos..self.file_position].iter().collect::<String>(),
-                        TokenType::INVALID(self.file_as_chars[start_file_pos..self.file_position].iter().collect())
+                        &self.file_as_chars[start_file_pos..self.file_position]
+                            .iter()
+                            .collect::<String>(),
+                        TokenType::INVALID(
+                            self.file_as_chars[start_file_pos..self.file_position]
+                                .iter()
+                                .collect(),
+                        ),
                     ))
                 }
             }
@@ -113,7 +118,7 @@ impl Lexer {
         self.line_position += 1;
         return c;
     }
-    
+
     fn next_line(&mut self) {
         self.line_position = 0;
         // self.file_position += 1;
@@ -152,64 +157,58 @@ impl Lexer {
 
         if self.syntax_checker.is_ignore(&upper) {
             return;
-        }
-        else if self.syntax_checker.is_instruction_name(&upper) {
+        } else if self.syntax_checker.is_instruction_name(&upper) {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Instruction(OpcodeIns::from(&upper))
+                TokenType::Instruction(OpcodeIns::from(&upper)),
             ));
             return;
-        }
-        else if self.syntax_checker.is_directive_name(&upper) {
+        } else if self.syntax_checker.is_directive_name(&upper) {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Directive(Directive::from(&upper))
+                TokenType::Directive(Directive::from(&upper)),
             ));
             return;
-        }
-        else if self.syntax_checker.is_valid_register(&upper) {
+        } else if self.syntax_checker.is_valid_register(&upper) {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Register(self.parse_register(&upper))
+                TokenType::Register(self.parse_register(&upper)),
             ));
             return;
-        }
-        else if self.syntax_checker.is_valid_immediate_value(&word) {
+        } else if self.syntax_checker.is_valid_immediate_value(&word) {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Number(self.parse_immediate_value(&word))
+                TokenType::Number(self.parse_immediate_value(&word)),
             ));
             return;
-        }
-        else if self.syntax_checker.is_valid_label(&word) {
+        } else if self.syntax_checker.is_valid_label(&word) {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Label(word.to_string())
+                TokenType::Label(word.to_string()),
             ));
             return;
-        }
-        else {
+        } else {
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word.clone(),
-                TokenType::INVALID(word)
+                TokenType::INVALID(word),
             ));
             let line = self.get_current_line();
             self.errors.push(AsmError::new(
@@ -217,7 +216,7 @@ impl Lexer {
                 &line,
                 self.curr_line_num,
                 ErrorType::SyntaxError,
-                "a token could not be categorized"
+                "a token could not be categorized",
             ))
         }
     }
@@ -231,22 +230,25 @@ impl Lexer {
             .expect("Lexer::parse_register: Somehow a register was given without a number. This shouldn't be possible given the Regex.")
             .to_digit(base) // a base 10 number
             .expect(&format!("Lexer::parse_register: When converting the register value on line {}, could not convert value into base 10 number.", self.curr_line_num));
-        
+
         return register_num as u16;
     }
-    
+
     pub fn parse_immediate_value(&self, word: &str) -> i16 {
         match word.chars().nth(0).unwrap() {
             '#' => {
-                return word[1..]
-                    .parse()
-                    .expect(&format!("Lexer::parse_immediate_value: The given number on line {} is not valid", self.curr_line_num));
-            },
+                return word[1..].parse().expect(&format!(
+                    "Lexer::parse_immediate_value: The given number on line {} is not valid",
+                    self.curr_line_num
+                ));
+            }
             'x' | 'X' => {
                 let base = 16;
-                return u16::from_str_radix(&word[1..], base)
-                    .expect(&format!("Lexer::parse_immediate_value: The given number on line {} is not valid", self.curr_line_num)) as i16;
-            },
+                return u16::from_str_radix(&word[1..], base).expect(&format!(
+                    "Lexer::parse_immediate_value: The given number on line {} is not valid",
+                    self.curr_line_num
+                )) as i16;
+            }
             _ => unreachable!(),
         }
     }
@@ -270,7 +272,7 @@ impl Lexer {
                 string_terminated = true;
                 break;
             }
-            
+
             if c == '\\' {
                 is_escape = true;
                 continue;
@@ -299,9 +301,9 @@ impl Lexer {
         return Some(str_buffer.iter().collect());
     }
 
-     pub fn parse_escape(&mut self, character: char) -> char {
+    pub fn parse_escape(&mut self, character: char) -> char {
         match character {
-            '\\' | '\'' |'\"' => return character,
+            '\\' | '\'' | '\"' => return character,
             'n' => return '\n',
             'r' => return '\r',
             't' => return '\t',
@@ -314,12 +316,15 @@ impl Lexer {
                     &line,
                     line_number,
                     ErrorType::SyntaxError,
-                    &format!("the given escape character `\\{}` does not exist.", character)
+                    &format!(
+                        "the given escape character `\\{}` does not exist.",
+                        character
+                    ),
                 ));
-            },
+            }
         }
         '\0'
-     }
+    }
 }
 
 #[cfg(test)]
@@ -430,25 +435,24 @@ mod tests {
         );
         assert_eq!(
             lexer.run(String::from(" GETC "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Trap(20))
+            TokenType::Instruction(OpcodeIns::Trap(0x20))
         );
         assert_eq!(
             lexer.run(String::from(" OUT "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Trap(21))
+            TokenType::Instruction(OpcodeIns::Trap(0x21))
         );
         assert_eq!(
             lexer.run(String::from(" PUTS "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Trap(22))
+            TokenType::Instruction(OpcodeIns::Trap(0x22))
         );
         assert_eq!(
             lexer.run(String::from(" IN "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Trap(23))
+            TokenType::Instruction(OpcodeIns::Trap(0x23))
         );
         assert_eq!(
             lexer.run(String::from(" HALT "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Trap(25))
+            TokenType::Instruction(OpcodeIns::Trap(0x25))
         );
-
 
         assert_ne!(
             lexer.run(String::from(" HALTS "))[0].inner_token,
@@ -508,7 +512,6 @@ mod tests {
             lexer.run(String::from(" R7 "))[0].inner_token,
             TokenType::Register(7)
         );
-
 
         assert_ne!(
             lexer.run(String::from(" R8 "))[0].inner_token,
@@ -607,18 +610,17 @@ mod tests {
 
     //     let mut lexer = Lexer::new();
     // }
-    
+
     // #[test]
     // fn test_comments() {
     //     let mut lexer = Lexer::new();
-
 
     //     assert_eq!(
     //         lexer.run(String::from("LA;"))[0].inner_token,
     //         TokenType::Label(String::from("LA"))
     //     )
     // }
-    
+
     #[test]
     fn test_labels() {
         // todo!();
@@ -641,7 +643,6 @@ mod tests {
             TokenType::Label("THIS".to_string())
         );
 
-
         assert_eq!(
             lexer.run(String::from(" halt "))[0].inner_token,
             lexer.run(String::from(" HALT "))[0].inner_token
@@ -662,7 +663,6 @@ mod tests {
             lexer.run(String::from(" GeTc "))[0].inner_token,
             lexer.run(String::from(" gEtC "))[0].inner_token
         );
-
 
         assert_ne!(
             lexer.run(String::from(r#" "string" "#))[0].inner_token,
@@ -730,22 +730,23 @@ mod tests {
         let mut lexer = Lexer::new();
 
         let _ = lexer.run(String::from(r#" "hello \." "#));
-        
+
         assert_eq!(lexer.errors[0].code, String::from(CODE_INVALID_ESCAPE_CHAR));
     }
-    
+
     #[test]
     fn test_token_after_comment_line_is_captured() {
         let mut lexer = Lexer::new();
-        
-        // importantly, the bug only occurred when there was no whitespace 
+
+        // importantly, the bug only occurred when there was no whitespace
         // before the next token after a comment
-        let tokens = lexer.run(String::from(r#"
+        let tokens = lexer.run(String::from(
+            r#"
 ; This
 MAYBE_HERE
-        "#));
+        "#,
+        ));
 
-    assert!(tokens[0].inner_token == TokenType::Label(String::from("MAYBE_HERE")));
-
+        assert!(tokens[0].inner_token == TokenType::Label(String::from("MAYBE_HERE")));
     }
 }
