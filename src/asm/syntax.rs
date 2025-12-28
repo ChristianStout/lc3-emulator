@@ -32,7 +32,7 @@ impl SyntaxChecker {
 
         // let ins_line_regex: Regex = Regex::new(r#"([A-Za-z_][A-Za-z0-9_]*\s)?(\s)*[A-Za-z]+(\s)*(\s([A-Za-z_][A-Za-z0-9_]*|#[0-9]+|(R|r)[0-7]|PC)(,(\s)+([A-Za-z_][A-Za-z0-9_]*|#[0-9]+|(R|r)[0-7]|PC)(,(\s)+([A-Za-z_][A-Za-z0-9_]*|#[0-9]+|(R|r)[0-7]|PC))?)?)?(\s)*(;.*)?"#).unwrap();
         let ins_line_regex: Regex = Regex::new(
-            r#"^\s*([A-Za-z_][A-Za-z0-9_]*\s)?\s*([A-Za-z]+)(\s+((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[0-9]+))(\s*,\s*((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[0-9]+)))(\s*,\s*((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[0-9]+))))?)?)?)?\s*(;.*)?$"#
+            r#"^\s*([A-Za-z_][A-Za-z0-9_]*\s)?\s*([A-Za-z]+)(\s+((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[-]?[0-9]+))(\s*,\s*((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[-]?[0-9]+)))(\s*,\s*((((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(((x|X)[0-9A-Fa-f]+)|#[-]?[0-9]+))))?)?)?)?\s*(;.*)?$"#
         ).unwrap();
         let dir_line_regex: Regex = Regex::new(
             r#"^\s*([A-Za-z_][A-Za-z0-9_]*\s)?\s*([.][A-Za-z]+)\s*(\s((r|R)[0-7])|([A-Za-z_][A-Za-z0-9_]*)|(".*")|(((x|X)[0-9A-Fa-f]+)|#[0-9]+))?\s*(;.*)?$"#
@@ -162,7 +162,9 @@ mod tests {
         assert!(s.is_ins(r"here RET"));
         assert!(s.is_ins(r"add r1,r1, #1"));
         assert!(s.is_ins(r"                NOT     R0, R0"));
-        assert!(s.is_ins(r"       hello    NOT     R0, R0 ; Whitespace must be allowed before labels"));
+        assert!(
+            s.is_ins(r"       hello    NOT     R0, R0 ; Whitespace must be allowed before labels")
+        );
         assert!(s.is_ins(r"in"));
         assert!(s.is_ins(r"rin"));
 
@@ -175,27 +177,43 @@ mod tests {
         assert!(!s.is_ins(r""));
         // assert!(!s.is_ins(r"rin"));
         // assert!(!s.instruction_line.is_match(r" thalt "));
+        //
+        assert!(s.is_ins(r"hi add #-1")); // negative numbers support
+        assert!(s.is_ins(r"hi add #-1, #-1")); // negative numbers support
+        assert!(s.is_ins(r"hi add #-1, #-1, #-1")); // negative numbers support
     }
 
     #[test]
     fn test_directive_lines() {
         let s = SyntaxChecker::new();
-        
+
         assert!(s.directive_line.is_match(r#"        .ORIG  x3000 "#));
         assert!(s.directive_line.is_match(r#"start   .ORIG  x3000 "#));
         assert!(s.directive_line.is_match(r#"start   .orig  x3000 "#));
         assert!(s.directive_line.is_match(r#"start   .FILL  "HI!" "#));
         assert!(s.directive_line.is_match(r#"        .ANYTHING    "#));
         assert!(s.directive_line.is_match(r#"        .ORIG  #3000 "#));
-        assert!(s.directive_line.is_match(r#"        .ORIG  #3000 ; comments are supported"#));
+        assert!(
+            s.directive_line
+                .is_match(r#"        .ORIG  #3000 ; comments are supported"#)
+        );
         assert!(s.directive_line.is_match(r#"        .ORIG  #3000;"#));
-        assert!(s.directive_line.is_match(r#"start   .ORIG  #3000 ; MORE COMMENTS!!! "#));
-        assert!(s.directive_line.is_match(r#".ORIG  #3000 ; labels are not required "#));
+        assert!(
+            s.directive_line
+                .is_match(r#"start   .ORIG  #3000 ; MORE COMMENTS!!! "#)
+        );
+        assert!(
+            s.directive_line
+                .is_match(r#".ORIG  #3000 ; labels are not required "#)
+        );
         assert!(s.directive_line.is_match(r#"        .end"#));
         assert!(s.directive_line.is_match(r#"        .END"#));
         assert!(s.directive_line.is_match(r#".END"#));
         assert!(s.directive_line.is_match(r#".Okay"#));
-        assert!(s.directive_line.is_match(r#"    end    .END ; Whitespace must be allowed before labels"#));
+        assert!(
+            s.directive_line
+                .is_match(r#"    end    .END ; Whitespace must be allowed before labels"#)
+        );
 
         assert!(!s.directive_line.is_match(r#"         ORIG  x3000 "#));
         assert!(!s.directive_line.is_match(r#"        .ORIG  x3000, x3000 "#));
@@ -215,14 +233,17 @@ mod tests {
     #[test]
     fn test_ignore_lines() {
         let s = SyntaxChecker::new();
-        
+
         assert!(s.ignore_line.is_match(r"  ;       .ORIG  x3000    "));
         assert!(s.ignore_line.is_match(r"  ;  A COMMENT  "));
         assert!(s.ignore_line.is_match(r"    "));
         assert!(s.ignore_line.is_match(r""));
         assert!(s.ignore_line.is_match(r";"));
         assert!(s.ignore_line.is_match("\t\t;"));
-        assert!(s.ignore_line.is_match(" ;  LITERALLY ANYTHING YOU WOULD WANT TO PUT HERE ^_^"));
+        assert!(
+            s.ignore_line
+                .is_match(" ;  LITERALLY ANYTHING YOU WOULD WANT TO PUT HERE ^_^")
+        );
 
         assert!(!s.ignore_line.is_match(r"         .ORIG  x3000    "));
         assert!(!s.ignore_line.is_match(r"       add  r1, r1, r1   "));
