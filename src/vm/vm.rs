@@ -54,7 +54,7 @@ impl VM {
         self.memory.load_file(file);
 
         while self.registers.halt != true {
-            print!("\n{:#06x}\t : ", self.registers.pc);
+            // print!("\n{:#06x}\t : ", self.registers.pc);
             /* let mut child = Command::new("sleep").arg("1").spawn().unwrap();
             let _ = child.wait().unwrap(); */
             self.run_single_command();
@@ -90,16 +90,13 @@ mod tests {
     );
         let mut asm = Asm::new();
 
-        let binary_file = asm.run(file.to_string());
+        let binary_file = asm.run(file.to_string()).expect("Errors occurred during the assembly process, so the VM could not be run");
         
         if binary_file.len() == 0 {
-            panic!("Errors occurred during the assembly process, so the VM could not be run");
+            panic!();
         }
         
         println!("\nBinary file:");
-        for (i, two_bytes) in binary_file.iter().enumerate() {
-            println!("{i}:\t{:#018b}", two_bytes);
-        }
         
         let mut vm = VM::new();
 
