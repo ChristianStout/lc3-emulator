@@ -22,4 +22,17 @@
     "adapter": "CodeLLDB",
     "args": ["test.asm"],
   },
+  {
+    "label": "Build & Debug SecretProject",
+    "build": {
+      "command": "cargo",
+      "args": ["build"],
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/lc3-emulator",
+    // sourceLanguages is required for CodeLLDB (not GDB) when using Rust
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB",
+    "args": ["SecretProject.asm"],
+  },
 ]

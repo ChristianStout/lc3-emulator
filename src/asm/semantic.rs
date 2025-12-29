@@ -286,7 +286,7 @@ impl SemanticChecker {
 
         match expected {
             OperandType::String => {
-                self.memory_location += string.len() as i32;
+                self.memory_location += string.len() as i32 + 1; // Null terminated, so one more memory location
             }
             _ => {
                 self.errors.push(AsmError::from(
@@ -855,11 +855,11 @@ maybe   add r1, r1, r1
 .orig #3000
 start       add r1, r1, r1
 
-.stringz    "length=8"
+.stringz    "length=9" ; NULL TERMINATED
 
 other       add r1, r1, r1
 
-hello .stringz "hello" ; length = 5
+hello .stringz "hello" ; length = 5 + 1 (NULL TERMINATED)
 
 maybe       add r1, r1, r1
 .end
@@ -873,13 +873,13 @@ maybe       add r1, r1, r1
         assert_eq!(*location, 3000);
 
         let (location, _) = st.get("other").unwrap();
-        assert_eq!(*location, 3009); // it should account for the 8-long string between `start` and `other`
+        assert_eq!(*location, 3010); // it should account for the 8-long string between `start` and `other`
 
         let (location, _) = st.get("hello").unwrap();
-        assert_eq!(*location, 3010); // the difference is only one because the string starts in the following memory location
+        assert_eq!(*location, 3011); // the difference is only one because the string starts in the following memory location
 
         let (location, _) = st.get("maybe").unwrap();
-        assert_eq!(*location, 3015);
+        assert_eq!(*location, 3017);
     }
 
     #[test]
@@ -919,6 +919,7 @@ maybe       add r1, r1, r1
     fn test_label_symbol_table_with_fill() {
         let file = r#"
 .orig #3000
+; HELLO THERE!!!
 start       add r1, r1, r1
 
 .fill       x0042
@@ -957,5 +958,38 @@ maybe       add r1, r1, r1
 
         let (location, _) = st.get("maybe").unwrap();
         assert_eq!(*location, 3015);
+    }
+
+    #[test]
+    fn test_symbol_table_label_with_br_comments() {
+        // This example is totally not from a secret project
+        let file = r#"
+.ORIG       #3000
+;---------------------------+
+; REDACTED                  |
+;---------------------------+
+            LEA R0, PROMPT
+            PUTS
+            BR          BEGIN       ; REDACTED
+PROMPT      .STRINGZ    "RECACTED"  ; NULL TERMINATED, so 8 + 1
+;---------------------------+
+; REDACTED                  |
+;---------------------------+
+BEGIN       LEA     R1, STARTS      ; REDACTED
+STARTS      .STRINGZ    "REDACTED"
+.END
+        "#;
+        let st: HashMap<String, (i32, Token)> = get_symbol_table(file);
+
+        assert_eq!(st.len(), 3);
+
+        let (location, _) = st.get("PROMPT").unwrap();
+        assert_eq!(*location, 3003);
+
+        let (location, _) = st.get("BEGIN").unwrap();
+        assert_eq!(*location, 3012);
+
+        let (location, _) = st.get("STARTS").unwrap();
+        assert_eq!(*location, 3013);
     }
 }
