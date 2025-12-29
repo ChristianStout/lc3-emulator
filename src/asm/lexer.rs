@@ -337,7 +337,7 @@ mod tests {
 
         assert_eq!(
             lexer.run(String::from(" BR "))[0].inner_token,
-            TokenType::Instruction(OpcodeIns::Br(false, false, false))
+            TokenType::Instruction(OpcodeIns::Br(true, true, true))
         );
         assert_eq!(
             lexer.run(String::from(" BRn "))[0].inner_token,

@@ -1,4 +1,4 @@
-.ORIG       x3000
+.ORIG       x0000
 
 nl          .FILL   #10
 char        .FILL   #0
@@ -12,5 +12,6 @@ start       GETC
             OUT
             LD      R0, nl
             HALT
+            BR      start
 
 .END

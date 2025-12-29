@@ -141,7 +141,7 @@ impl Instruction for Br {
         let z = get_bit_index(value, 10);
         let p = get_bit_index(value, 9);
 
-        if (n == 0 && z == 0 && p == 0)
+        if (n == 1 && z == 1 && p == 1)
             || (n == 1 && reg.n)
             || (z == 1 && reg.z)
             || (p == 1 && reg.p)
