@@ -57,7 +57,7 @@ impl Trap {
         terminal::disable_raw_mode().ok();
 
         let c = input as u8 as char;
-        print!("{c}");
+        // print!("{c}");
         return c;
     }
 }
