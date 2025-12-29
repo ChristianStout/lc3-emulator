@@ -493,7 +493,7 @@ impl SemanticChecker {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::asm::{asm_error::*, lexer::*};
+    use crate::asm::lexer::*;
 
     fn get_semantic_errors(file: &str) -> Vec<AsmError> {
         let mut lexer: Lexer = Lexer::new();

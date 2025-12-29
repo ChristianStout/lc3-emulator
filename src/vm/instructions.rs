@@ -539,10 +539,6 @@ mod test {
 
     #[test]
     fn test_ret() {
-        let mut mem = Memory::new();
-        let mut reg = super::Registers::new();
-        let ret = super::JmpRet {};
-
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let jmp = super::JmpRet {};
