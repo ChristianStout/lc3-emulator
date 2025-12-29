@@ -311,8 +311,9 @@ impl Instruction for St {
         */
         let sr = value >> 9;
         let pcoffset9 = get_offset(value, 9);
+        let location = get_pcoffset_location(&reg, pcoffset9);
 
-        mem.set(reg.pc + pcoffset9, reg.get(sr as usize));
+        mem.set(location, reg.get(sr as usize));
     }
 }
 
@@ -325,7 +326,8 @@ impl Instruction for Sti {
         */
         let sr = value >> 9;
         let pcoffset9 = get_offset(value, 9);
-        let indirect = mem.get(reg.pc + pcoffset9);
+        let location = get_pcoffset_location(&reg, pcoffset9);
+        let indirect = mem.get(location);
 
         mem.set(indirect, reg.get(sr as usize));
     }
@@ -421,8 +423,8 @@ fn set_nzp(reg: &mut Registers, value: u16) {
     }
 }
 
-fn get_pcoffset_location(reg: &mut Registers, value: u16) -> u16 {
-    if value == 0 || value as i16 > 0 {
+fn get_pcoffset_location(reg: &Registers, value: u16) -> u16 {
+    if value as i16 >= 0 {
         return reg.pc + value;
     }
     // if Rust ignored unused carried "overflow" bits, this wouldn't be necessary.

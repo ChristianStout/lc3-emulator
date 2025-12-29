@@ -4,8 +4,9 @@
 
 nl          .FILL   #10
 char        .FILL   #0
+A           .FILL   #65
 
-start       GETC
+start       LD      R0, A
             OUT
             ST      R0, char
             LD      R0, nl
