@@ -186,6 +186,12 @@ impl OpcodeIns {
             return OpcodeIns::Br(true, true, true);
         } */
 
+        if !n && !z && !p {
+            n = true;
+            z = true;
+            p = true;
+        }
+
         return OpcodeIns::Br(n, z, p);
     }
 
@@ -231,7 +237,7 @@ mod tests {
     fn test_get_ins_from_str() {
         assert!(OpcodeIns::from("ADD") == OpcodeIns::Add);
         assert!(OpcodeIns::from("AND") == OpcodeIns::And);
-        assert!(OpcodeIns::from("BR") == OpcodeIns::Br(false, false, false));
+        assert!(OpcodeIns::from("BR") == OpcodeIns::Br(true, true, true));
         assert!(OpcodeIns::from("BRnzp") == OpcodeIns::Br(true, true, true));
         assert!(OpcodeIns::from("JMP") == OpcodeIns::Jmp);
         assert!(OpcodeIns::from("JSR") == OpcodeIns::Jsr);
@@ -287,7 +293,7 @@ mod tests {
 
     #[test]
     fn test_get_br() {
-        assert!(OpcodeIns::get_br("") == OpcodeIns::Br(false, false, false));
+        assert!(OpcodeIns::get_br("") == OpcodeIns::Br(true, true, true));
         assert!(OpcodeIns::get_br("N") == OpcodeIns::Br(true, false, false));
         assert!(OpcodeIns::get_br("NZ") == OpcodeIns::Br(true, true, false));
         assert!(OpcodeIns::get_br("NP") == OpcodeIns::Br(true, false, true));

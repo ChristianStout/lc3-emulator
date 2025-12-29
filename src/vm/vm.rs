@@ -51,9 +51,8 @@ impl VM {
         self.memory.load_file(file);
 
         while self.registers.halt != true {
-            // print!("\n{:#06x}\t : ", self.registers.pc);
-            /* let mut child = Command::new("sleep").arg("1").spawn().unwrap();
-            let _ = child.wait().unwrap(); */
+            print!("\n{:#06x}\t : ", self.registers.pc);
+
             self.run_single_command();
         }
     }
