@@ -8,6 +8,7 @@ use crate::asm::asm::Asm;
 use crate::vm::vm::VM;
 // use std::env;
 use std::fs;
+use std::io::*;
 
 fn main() {
     let cli = cli::get_cli();

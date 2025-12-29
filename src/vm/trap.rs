@@ -1,27 +1,37 @@
 use super::{memory::Memory, registers::Registers};
+use crossterm::terminal;
 use std::io::*;
 pub struct Trap;
 
 impl Trap {
+    /// takes a single char as input from the console and puts it in R0
     pub fn get_c(&self, reg: &mut Registers) {
-        self.get_char(reg);
+        let c = self.get_char();
+        reg.set(0, c as u16);
     }
 
+    /// Outputs the value in R0 as a char to the console
     pub fn out(&self, reg: &mut Registers) {
         print!("{}", reg.get(0) as u8 as char);
     }
 
+    /// prints a string to the console pointed to by R0
     pub fn put_s(&self, reg: &mut Registers, mem: &mut Memory) {
         self.print_string(reg, mem);
     }
 
+    /// Prints a prompt string pointed to by R0,
+    /// then takes a single char as input from the console and puts it in R0
     pub fn r#in(&self, reg: &mut Registers, mem: &mut Memory) {
         self.print_string(reg, mem);
 
-        self.get_char(reg);
+        let c = self.get_char();
+        reg.set(0, c as u16);
     }
 
-    pub fn halt(&self, reg:&mut Registers) {
+    /// Triggers the halt register to signal to the VM to end the program
+    pub fn halt(&self, reg: &mut Registers) {
+        println!("\nHALT TRIGGERED!");
         reg.halt = true;
     }
 
@@ -36,25 +46,26 @@ impl Trap {
         }
     }
 
-    fn get_char(&self, reg: &mut Registers) {
-        let input: Option<i64> = std::io::stdin()
+    fn get_char(&self) -> char {
+        terminal::enable_raw_mode().ok();
+        let input = std::io::stdin()
             .bytes()
             .next()
             .and_then(|result| result.ok())
-            .map(|byte| byte as i64);
+            .map(|byte| byte as i64)
+            .expect("Expected to reciece a value from the terminal, and got nothing");
+        terminal::disable_raw_mode().ok();
 
-        // Since input is an Option<i64>, which is an enum, we have to consider it's cases: Some and None.
-        match input {
-            Some(input) => reg.set(0, input as u16),
-            None => println!("Char: None"),
-        }
+        let c = input as u8 as char;
+        print!("{c}");
+        return c;
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::vm::registers::Registers;
     use super::*;
+    use crate::vm::registers::Registers;
 
     #[test]
     fn test_out() {

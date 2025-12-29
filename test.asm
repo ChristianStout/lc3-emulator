@@ -1,5 +1,7 @@
 .ORIG       x0000
 
+            BR      start
+
 nl          .FILL   #10
 char        .FILL   #0
 
