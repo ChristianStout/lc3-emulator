@@ -189,20 +189,20 @@ max     .fill xFFFF     ; address = 6
 end     ld r0, max      ; address = 7
         halt
 
-string .stringz "len=5" ; address = 9
+string .stringz "len=6" ; address = 9 // NULL TERMINATED
 
-start   ld r1, max      ; address = 14
+start   ld r1, max      ; address = 15
         lea r7, end
         jmp r7
-num_16  .fill   #16     ; address = 17
+num_16  .fill   #16     ; address = 18
         "#,
         );
 
-        assert_eq!(vm.registers.r[0], 14);
+        assert_eq!(vm.registers.r[0], 15);
         assert_eq!(vm.registers.r[1], 6);
         assert_eq!(vm.registers.r[2], 9);
         assert_eq!(vm.registers.r[3], 7);
-        assert_eq!(vm.registers.r[4], 17);
+        assert_eq!(vm.registers.r[4], 18);
     }
 
     #[test]
