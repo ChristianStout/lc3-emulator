@@ -21,7 +21,7 @@ impl SystemIO for StdIO {
     fn print_char(&mut self, c: char) {
         print!("{c}");
     }
-    
+
     fn get_char(&mut self) -> char {
         let input: Option<u8> = std::io::stdin()
             .bytes()
@@ -35,7 +35,7 @@ impl SystemIO for StdIO {
             None => {
                 // println!("Char: None");
                 return '\0';
-            },
+            }
         }
     }
 }
