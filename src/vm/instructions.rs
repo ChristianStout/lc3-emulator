@@ -347,7 +347,9 @@ impl Instruction for Str {
         let base_r = buffer >> 6;
         let offset6 = get_offset(buffer, 6);
 
-        mem.set(reg.get(base_r as usize) + offset6, reg.get(sr as usize));
+        let relative_offeset = get_general_offset(reg.get(base_r as usize), offset6);
+
+        mem.set(relative_offeset, reg.get(sr as usize));
     }
 }
 
@@ -421,6 +423,11 @@ fn set_nzp(reg: &mut Registers, value: u16) {
     if signed > 0 {
         reg.p = true;
     }
+}
+
+fn get_general_offset(relative_location: u16, offset: u16) -> u16 {
+    let value = relative_location as i16 + offset as i16;
+    return value as u16;
 }
 
 fn get_pcoffset_location(reg: &Registers, value: u16) -> u16 {

@@ -1,10 +1,10 @@
 use super::asm_ins::*;
 use super::directive::*;
-use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
 use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Tsify, Serialize,Deserialize)]
+#[derive(Debug, Clone, PartialEq, Tsify, Serialize, Deserialize)]
 pub enum TokenType {
     Label(String),
     Instruction(OpcodeIns),
@@ -34,7 +34,13 @@ pub struct TokenCollection {
 }
 
 impl Token {
-    pub fn new(file_index: usize, line_index: usize, line_num: i32, string: &str, token: TokenType) -> Token {
+    pub fn new(
+        file_index: usize,
+        line_index: usize,
+        line_num: i32,
+        string: &str,
+        token: TokenType,
+    ) -> Token {
         let original_match = string.to_string();
         let to = line_index - 1; // Because it only matches on the whitespace after the match
         let from = to - original_match.len();
@@ -51,7 +57,7 @@ impl Token {
             original_match: original_match,
         }
     }
-    
+
     pub fn get_useless_token() -> Token {
         Token {
             inner_token: TokenType::INVALID("".to_string()),

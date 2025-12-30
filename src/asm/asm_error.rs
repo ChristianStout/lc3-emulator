@@ -31,7 +31,13 @@ pub struct AsmError {
 }
 
 impl AsmError {
-    pub fn new(code: String, line_content: &str, line_num: i32, err_type: ErrorType, msg: &str) -> AsmError {
+    pub fn new(
+        code: String,
+        line_content: &str,
+        line_num: i32,
+        err_type: ErrorType,
+        msg: &str,
+    ) -> AsmError {
         AsmError {
             code: code,
             line_content: String::from(line_content),
@@ -42,7 +48,13 @@ impl AsmError {
         }
     }
 
-    pub fn from(code: String, line_content: &str, token: Token, err_type: ErrorType, msg: &str) -> AsmError {
+    pub fn from(
+        code: String,
+        line_content: &str,
+        token: Token,
+        err_type: ErrorType,
+        msg: &str,
+    ) -> AsmError {
         AsmError {
             code: code,
             line_content: String::from(line_content),
@@ -60,9 +72,9 @@ impl AsmError {
 
     #[allow(dead_code)]
     pub fn print(&self, io: &mut Box<dyn SystemIO>) {
-        let _ = self.generate_msg()
-            .chars()
-            .map(|c| { io.print_char(c); });
+        let _ = self.generate_msg().chars().map(|c| {
+            io.print_char(c);
+        });
     }
 
     pub fn generate_msg(&self) -> String {
@@ -74,16 +86,19 @@ impl AsmError {
         let specific_problem = &self.msg;
         let line_content = &self.line_content;
 
-        let mut gen_msg = format!("[{code}] {err_type}: On line {line_num}, {specific_problem}\n\t{line_content}");
+        let mut gen_msg = format!(
+            "[{code}] {err_type}: On line {line_num}, {specific_problem}\n\t{line_content}"
+        );
 
         if let Some((from, to)) = self.from_to {
             gen_msg += "\n\t";
-            
+
             if from > 0 {
-                for _ in 0..(from-1) {
+                for _ in 0..(from - 1) {
                     gen_msg += " ";
-                }   
+                }
             }
+            // TODO: fix underlining being completely off.
             for _ in 0..to {
                 gen_msg += "^";
             }

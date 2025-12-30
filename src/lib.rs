@@ -1,7 +1,7 @@
 mod asm;
+mod output;
 mod vm;
 mod web;
-mod output;
 use crate::asm::lexer::*;
 use crate::asm::token::*;
 use wasm_bindgen::prelude::*;
@@ -21,5 +21,7 @@ pub fn greet(name: &str) {
 
 #[wasm_bindgen]
 pub fn get_tokens(file: String) -> TokenCollection {
-    return TokenCollection { tokens: Lexer::new().run(file) };
+    return TokenCollection {
+        tokens: Lexer::new().run(file),
+    };
 }

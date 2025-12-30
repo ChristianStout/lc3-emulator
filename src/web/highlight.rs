@@ -13,7 +13,6 @@ pub fn highlight_text(text: &str) -> String {
     }
 
     for token in tokens {
-        
         output.push_str(&fill_gap(text, &mut i, Some(&token)));
         // i = output.len();
 
@@ -23,25 +22,25 @@ pub fn highlight_text(text: &str) -> String {
                 output.push_str(&token.original_match);
                 output.push_str(r#"</span>"#);
                 i = token.file_relative_to + 1;
-            },
+            }
             TokenType::Directive(_) => {
                 output.push_str(r#"<span id="highlight-directive">"#);
                 output.push_str(&token.original_match);
                 output.push_str(r#"</span>"#);
                 i = token.file_relative_to + 1;
-            },
+            }
             TokenType::Register(_) => {
                 output.push_str(r#"<span id="highlight-register">"#);
                 output.push_str(&token.original_match);
                 output.push_str(r#"</span>"#);
                 i = token.file_relative_to + 1;
-            },
+            }
             TokenType::String(_) => {
                 output.push_str(r#"<span id="highlight-string">"#);
                 output.push_str(&token.original_match);
                 output.push_str(r#"</span>"#);
                 i = token.file_relative_to + 1;
-            },
+            }
             TokenType::INVALID(_) => {
                 i = token.file_relative_from;
                 continue;
@@ -50,7 +49,7 @@ pub fn highlight_text(text: &str) -> String {
                 output.push_str(&token.original_match);
                 i = token.file_relative_to + 1;
             }
-        } 
+        }
     }
 
     output.push_str(&fill_gap(text, &i, None));
@@ -91,7 +90,6 @@ fn fill_gap(text: &str, i: &usize, maybe_token: Option<&Token>) -> String {
     }
 
     return stream;
-
 }
 
 #[cfg(test)]
@@ -103,7 +101,7 @@ mod tests {
         let tokens = lexer.run(String::from(file));
 
         println!("\n\t-------------------------------------------------");
-        for (i, token)  in tokens.iter().enumerate() {
+        for (i, token) in tokens.iter().enumerate() {
             // println!("{}\t: {:?}", i, token);
         }
 
@@ -119,46 +117,75 @@ mod tests {
     #[test]
     fn test_comments() {
         let text = get_highlighted_text(" hi ; comment ");
-        assert_eq!(text, r#" hi <span id="highlight-comment">; comment </span>"#.to_string());
+        assert_eq!(
+            text,
+            r#" hi <span id="highlight-comment">; comment </span>"#.to_string()
+        );
 
         let text = get_highlighted_text(" hi ; ");
-        assert_eq!(text, r#" hi <span id="highlight-comment">; </span>"#.to_string());
+        assert_eq!(
+            text,
+            r#" hi <span id="highlight-comment">; </span>"#.to_string()
+        );
 
-        let text = get_highlighted_text(r" hi ; so
-            ;a");
-        assert_eq!(text, r#" hi <span id="highlight-comment">; so</span>
-            <span id="highlight-comment">;a</span>"#.to_string());
+        let text = get_highlighted_text(
+            r" hi ; so
+            ;a",
+        );
+        assert_eq!(
+            text,
+            r#" hi <span id="highlight-comment">; so</span>
+            <span id="highlight-comment">;a</span>"#
+                .to_string()
+        );
 
-        
         let text = get_highlighted_text(" hi;");
-        assert_eq!(text, r#" hi<span id="highlight-comment">;</span>"#.to_string());
-        
-        let text = get_highlighted_text(r#"hi; boo
+        assert_eq!(
+            text,
+            r#" hi<span id="highlight-comment">;</span>"#.to_string()
+        );
 
-ee"#);
-        assert_eq!(text, r#"hi<span id="highlight-comment">; boo</span>
+        let text = get_highlighted_text(
+            r#"hi; boo
 
-ee"#.to_string());
+ee"#,
+        );
+        assert_eq!(
+            text,
+            r#"hi<span id="highlight-comment">; boo</span>
 
+ee"#
+            .to_string()
+        );
 
-
-        let text = get_highlighted_text(r#"
+        let text = get_highlighted_text(
+            r#"
         hi; boo
 
-        ee"#);
-        assert_eq!(text, r#"
+        ee"#,
+        );
+        assert_eq!(
+            text,
+            r#"
         hi<span id="highlight-comment">; boo</span>
 
-        ee"#.to_string());
-
+        ee"#
+            .to_string()
+        );
     }
 
     #[test]
     fn test_multiple_semicolons() {
-        let text = get_highlighted_text(r#" hi ;;;
-        ;; "#);
-        assert_eq!(text, r#" hi <span id="highlight-comment">;;;</span>
-        <span id="highlight-comment">;; </span>"#.to_string());
+        let text = get_highlighted_text(
+            r#" hi ;;;
+        ;; "#,
+        );
+        assert_eq!(
+            text,
+            r#" hi <span id="highlight-comment">;;;</span>
+        <span id="highlight-comment">;; </span>"#
+                .to_string()
+        );
     }
 
     #[test]
@@ -173,14 +200,17 @@ ee"#.to_string());
     fn test_strings() {
         let text = get_highlighted_text(r#" "" "#);
         assert_eq!(text, r#" <span id="highlight-string">""</span> "#);
-    
+
         let text = get_highlighted_text(r#" .stringz "hi" "#);
-        assert_eq!(text, r#" <span id="highlight-directive">.stringz</span> <span id="highlight-string">"hi"</span> "#);
+        assert_eq!(
+            text,
+            r#" <span id="highlight-directive">.stringz</span> <span id="highlight-string">"hi"</span> "#
+        );
     }
 
     #[test]
     fn test_non_terminated_string_displays() {
         let text = get_highlighted_text(r#" " "#);
         assert_eq!(text, r#" " "#);
-    } 
+    }
 }

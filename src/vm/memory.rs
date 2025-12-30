@@ -1,4 +1,3 @@
-
 const POW_2_16: usize = 2_usize.pow(16);
 
 pub struct Memory {
@@ -19,7 +18,7 @@ impl Memory {
 
         while vec_i < file.len() {
             self.inner[mem_i] = file[vec_i];
-            
+
             vec_i += 1;
             mem_i += 1;
         }

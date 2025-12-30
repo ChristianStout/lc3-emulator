@@ -1,4 +1,3 @@
-
 pub struct Registers {
     pub r: [u16; 8],
     pub pc: u16,
@@ -25,7 +24,10 @@ impl Registers {
         // TODO: Add error handling that will (gracefully) shutdown
         //      entire VM if this get hit.
         if reg_value >= 8 {
-            println!("Well, no. Don't give me {} as a register value. There are only 8 registers...", reg_value);
+            println!(
+                "Well, no. Don't give me {} as a register value. There are only 8 registers...",
+                reg_value
+            );
             return 1;
         }
 
@@ -36,7 +38,10 @@ impl Registers {
         // TODO: Add error handling that will (gracefully) shutdown
         //      entire VM if this get hit.
         if reg_value >= 8 {
-            println!("Well, no. Don't give me {} as a register value. There are only 8 registers...", reg_value);
+            println!(
+                "Well, no. Don't give me {} as a register value. There are only 8 registers...",
+                reg_value
+            );
             return;
         }
 
