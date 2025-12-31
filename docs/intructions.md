@@ -11,3 +11,5 @@ label? instruction  reg, reg, reg   ; three registers
 label? instruction  reg, reg, label ; two registers, one label
 label? instruction  reg, reg, imm   ; two registers, one immediate value
 ```
+
+IMPORTANT VIDEO: https://www.youtube.com/watch?v=oFYZkoglbQk

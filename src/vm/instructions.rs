@@ -68,7 +68,7 @@ impl Instruction for Add {
             }
             1 => {
                 let reg_val = reg.get(sr1 as usize);
-                let imm_val = get_offset(value, 5);
+                let imm_val = get_offset(value, 5); // TODO: rename get_offset to something more useful, like get_last_bits
                 new_value = (reg_val as i16 + imm_val as i16) as u16;
             }
             _ => unreachable!(),
@@ -124,7 +124,7 @@ impl Instruction for And {
         }
         reg.set(dr as usize, new_value);
 
-        set_nzp(reg, new_value)
+        set_nzp(reg, new_value);
     }
 }
 
@@ -146,7 +146,9 @@ impl Instruction for Br {
             || (z == 1 && reg.z)
             || (p == 1 && reg.p)
         {
-            reg.pc += get_offset(value, 9);
+            let pcoffset9 = get_offset(value, 9);
+            let target_location = get_pcoffset_location(&reg, pcoffset9);
+            reg.pc = target_location;
         }
     }
 }
@@ -182,19 +184,21 @@ impl Instruction for Jsr {
         // let code = get_bit_index(value, 12);
         let code = value >> 11;
         let inc_pc = reg.pc;
+        let offset: u16;
 
         match code {
             0 => {
                 let offset_reg = value >> 6;
-                let offset = reg.r[offset_reg as usize];
-                reg.pc += offset;
+                offset = reg.r[offset_reg as usize];
             }
             1 => {
-                let offset = get_offset(value, 11);
-                reg.pc = offset;
+                offset = get_offset(value, 11);
             }
             _ => unreachable!(),
         }
+
+        let target_location = get_pcoffset_location(&reg, offset);
+        reg.pc = target_location;
 
         // link back to the instruction after Jsr by putting PC in R7
         reg.r[7] = inc_pc;
@@ -227,8 +231,9 @@ impl Instruction for Ldi {
         let dr = value << 9;
         let ptr = get_offset(value, 9);
 
-        let address = mem.get(ptr);
-        let new_value = mem.get(address);
+        let pcoffset9 = mem.get(ptr);
+        let relative_pc_address = get_pcoffset_location(reg, pcoffset9);
+        let new_value = mem.get(relative_pc_address);
         reg.set(dr as usize, new_value);
     }
 }
@@ -244,14 +249,18 @@ impl Instruction for Ldr {
         let dr = buffer >> 9;
         buffer -= dr << 9;
         let base_r = buffer >> 6;
-        let offset = get_offset(value, 6);
 
-        let address = mem.get(base_r) + offset;
-        let new_value = mem.get(address);
+        let offset = get_offset(value, 6);
+        let address = reg.get(base_r as usize);
+
+        let target_location = calculate_relative_offset(address, offset);
+
+        let new_value = mem.get(target_location);
         reg.set(dr as usize, new_value);
     }
 }
 
+/// Loads memory location of the label into memory
 impl Instruction for Lea {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
         /*
@@ -347,7 +356,7 @@ impl Instruction for Str {
         let base_r = buffer >> 6;
         let offset6 = get_offset(buffer, 6);
 
-        let relative_offeset = get_general_offset(reg.get(base_r as usize), offset6);
+        let relative_offeset = calculate_relative_offset(reg.get(base_r as usize), offset6);
 
         mem.set(relative_offeset, reg.get(sr as usize));
     }
@@ -425,7 +434,7 @@ fn set_nzp(reg: &mut Registers, value: u16) {
     }
 }
 
-fn get_general_offset(relative_location: u16, offset: u16) -> u16 {
+fn calculate_relative_offset(relative_location: u16, offset: u16) -> u16 {
     let value = relative_location as i16 + offset as i16;
     return value as u16;
 }
@@ -685,5 +694,30 @@ mod test {
         assert!(!reg.n);
         assert!(!reg.z);
         assert!(reg.p);
+    }
+
+    #[test]
+    fn test_negative_pc_offsets() {
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        reg.pc = 3000;
+
+        let br = Br {};
+        br.exe(0b0000_111_111111111, &mut reg, &mut mem);
+
+        let jsr = Jsr {};
+        jsr.exe(0b0000_1_11111111111, &mut reg, &mut mem);
+        jsr.exe(0b0000_0_00_111111111, &mut reg, &mut mem);
+
+        let ld = Ld {};
+        ld.exe(0b0000_111_111111111, &mut reg, &mut mem);
+
+        let ldi = Ldi {};
+        ldi.exe(0b0000_111_111111111, &mut reg, &mut mem);
+
+        mem.set(u16::MAX, u16::MAX);
+        reg.set(7, u16::MAX);
+        let ldr = Ldr {};
+        ldr.exe(0b0000_111_111_111111, &mut reg, &mut mem);
     }
 }
