@@ -51,7 +51,8 @@ impl VM {
         self.memory.load_file(file);
 
         while self.registers.halt != true {
-            print!("\n{:#06x}\t : ", self.registers.pc);
+            // print!("\n{:#06x}\t : ", self.registers.pc);
+            // print!("\n{:#04}\t : ", self.registers.pc);
 
             self.run_single_command();
         }
@@ -121,15 +122,24 @@ mod tests {
     #[test]
     fn test_and() {
         let vm = run_vm("
-        add r1, r1, #15 ; since every register should be set to 0 by default, this should always just put 10 in r1
-        add r2, r2, #5
-        and r3, r1, r2  ; r3 == 5
-        add r4, r4, #6  ; r4 == 6
-        and r5, r4, r3  ; r4 == 4
+            add r1, r1, #15 ; since every register should be set to 0 by default, this should always just put 10 in r1
+            add r2, r2, #5
+            and r3, r1, r2  ; r3 == 5
+            add r4, r4, #6  ; r4 == 6
+            and r5, r4, r3  ; r4 == 4
         ");
 
         assert_eq!(vm.registers.r[3], 5);
         assert_eq!(vm.registers.r[5], 4);
+        assert!(!vm.registers.n);
+        assert!(!vm.registers.z);
+        assert!(vm.registers.p);
+
+        let vm = run_vm("
+            add r1, r1, #15 ; since every register should be set to 0 by default, this should always just put 10 in r1
+            add r2, r2, #-15
+            and r3, r1, r2  ; r3 ==
+        ");
     }
 
     #[test]

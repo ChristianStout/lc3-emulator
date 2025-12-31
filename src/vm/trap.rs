@@ -7,17 +7,30 @@ impl Trap {
     /// takes a single char as input from the console and puts it in R0
     pub fn get_c(&self, reg: &mut Registers) {
         let c = self.get_char();
+        let mut stdout = std::io::stdout().lock();
+        stdout.write(b"\r").expect(
+            "Expected to be able to print '\\r' to the console in get_char(), therfore removing it from stdout",
+        );
+        std::io::stdout().flush().expect(
+            "Expected to be able to flush stdout after printing a char to the console in get_c().",
+        );
         reg.set(0, c as u16);
     }
 
     /// Outputs the value in R0 as a char to the console
     pub fn out(&self, reg: &mut Registers) {
         print!("{}", reg.get(0) as u8 as char);
+        std::io::stdout().flush().expect(
+            "Expected to be able to flush stdout after printing a char to the console in out().",
+        );
     }
 
     /// prints a string to the console pointed to by R0
     pub fn put_s(&self, reg: &mut Registers, mem: &mut Memory) {
         self.print_string(reg, mem);
+        std::io::stdout()
+            .flush()
+            .expect("Expected to be able to flush stdout after printing a string to the console.");
     }
 
     /// Prints a prompt string pointed to by R0,
@@ -47,14 +60,14 @@ impl Trap {
     }
 
     fn get_char(&self) -> char {
-        terminal::enable_raw_mode().ok();
+        // terminal::enable_raw_mode().ok();
         let input = std::io::stdin()
             .bytes()
             .next()
             .and_then(|result| result.ok())
             .map(|byte| byte as i64)
             .expect("Expected to reciece a value from the terminal, and got nothing");
-        terminal::disable_raw_mode().ok();
+        // terminal::disable_raw_mode().ok();
 
         let c = input as u8 as char;
         // print!("{c}");

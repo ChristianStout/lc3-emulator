@@ -64,7 +64,7 @@ impl Instruction for Add {
                 let v1 = reg.get(sr1 as usize);
                 let v2 = reg.get(sr2 as usize);
 
-                new_value = v1 + v2;
+                new_value = (v1 as i16 + v2 as i16) as u16;
             }
             1 => {
                 let reg_val = reg.get(sr1 as usize);
