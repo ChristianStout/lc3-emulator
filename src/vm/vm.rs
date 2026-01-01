@@ -1,6 +1,7 @@
 use super::instructions::{
     Add, And, Br, Instruction, JmpRet, Jsr, Ld, Ldi, Ldr, Lea, Not, Rti, St, Sti, Str,
 };
+use super::io::*;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
@@ -14,6 +15,7 @@ pub struct VM {
     instructions: HashMap<u8, Box<dyn Instruction>>,
     registers: Registers,
     memory: Memory,
+    io: Lc3IO,
 }
 
 #[allow(dead_code)]
@@ -42,6 +44,7 @@ impl VM {
             instructions: ins,
             registers: Registers::new(),
             memory: Memory::new(),
+            io: Lc3IO::new(Box::new(StdIOTarget {})),
         }
     }
 
@@ -67,7 +70,12 @@ impl VM {
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
         let value: u16 = cmd - (opcode << OPCODE_DELTA);
-        self.instructions[&(opcode as u8)].exe(value, &mut self.registers, &mut self.memory);
+        self.instructions[&(opcode as u8)].exe(
+            value,
+            &mut self.registers,
+            &mut self.memory,
+            &mut self.io,
+        );
     }
 }
 
