@@ -1,3 +1,4 @@
+use super::io::Lc3IO;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
@@ -16,7 +17,7 @@ pub trait Instruction {
     This is because we already had to obtain that information
     in order to dynamically call the correct instruction.
     */
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory);
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO);
 }
 
 #[allow(dead_code, unused_variables)]
@@ -36,7 +37,7 @@ pub struct Sti;
 pub struct Str;
 
 impl Instruction for Add {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         ADD - | 0001 000 000 000 000 |
               | ---- --- --- --- --- |
@@ -81,7 +82,7 @@ impl Instruction for Add {
 }
 
 impl Instruction for And {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         AND - | 0101 000 000 000 000 |
               | ---- --- --- --- --- |
@@ -122,6 +123,7 @@ impl Instruction for And {
                 unreachable!();
             }
         }
+        println!("\nand value = {}\n", new_value);
         reg.set(dr as usize, new_value);
 
         set_nzp(reg, new_value);
@@ -129,7 +131,7 @@ impl Instruction for And {
 }
 
 impl Instruction for Br {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         BR  - | 0000 000 000000000 |
               | ---- --- --------- |
@@ -154,7 +156,7 @@ impl Instruction for Br {
 }
 
 impl Instruction for JmpRet {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         JMP - | 1100 000 000 000000 |
               | ---- --- --- ------ |
@@ -171,7 +173,7 @@ impl Instruction for JmpRet {
 }
 
 impl Instruction for Jsr {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         JSR - | 0100 1 00000000000   |
               | ---- - -----------   |
@@ -206,7 +208,7 @@ impl Instruction for Jsr {
 }
 
 impl Instruction for Ld {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         LD  - | 0010 000 000000000 |
               | ---- --- --------- |
@@ -222,7 +224,7 @@ impl Instruction for Ld {
 }
 
 impl Instruction for Ldi {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         LDI - | 1010 000 000000000 |
               | ---- --- --------- |
@@ -239,7 +241,7 @@ impl Instruction for Ldi {
 }
 
 impl Instruction for Ldr {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         LDR - | 0110 000 000 000000 |
               | ---- --- --- ------ |
@@ -262,7 +264,7 @@ impl Instruction for Ldr {
 
 /// Loads memory location of the label into memory
 impl Instruction for Lea {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         LEA - | 1110 000 000000000 |
               | ---- --- --------- |
@@ -279,7 +281,7 @@ impl Instruction for Lea {
 }
 
 impl Instruction for Not {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         NOT - | 1001 000 000 111111 |
               | ---- --- --- ------ |
@@ -301,7 +303,7 @@ impl Instruction for Not {
 
 // TODO: Impl rti
 impl Instruction for Rti {
-    fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory) {
+    fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         RTI - | 1000 000000000000 |
               | ---- ------------ |
@@ -312,7 +314,7 @@ impl Instruction for Rti {
 }
 
 impl Instruction for St {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         ST  - | 0011 000 000000000 |
               | ---- --- --------- |
@@ -327,7 +329,7 @@ impl Instruction for St {
 }
 
 impl Instruction for Sti {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         STI - | 1011 000 000000000 |
               | ---- --- --------- |
@@ -343,7 +345,7 @@ impl Instruction for Sti {
 }
 
 impl Instruction for Str {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         STR - | 0111 000 000 000000  |
               | ---- --- --- ------  |
@@ -363,7 +365,7 @@ impl Instruction for Str {
 }
 
 impl Instruction for Trap {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory) {
+    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
         /*
         TRAP - | 1111 0000 00000000 |
                | ---- ---- -------- |
@@ -372,10 +374,10 @@ impl Instruction for Trap {
         let code = get_offset(value, 8);
 
         match code {
-            GETC_VAL => self.get_c(reg),
-            OUT_VAL => self.out(reg),
-            PUTS_VAL => self.put_s(reg, mem),
-            IN_VAL => self.r#in(reg, mem),
+            GETC_VAL => self.get_c(reg, io),
+            OUT_VAL => self.out(reg, io),
+            PUTS_VAL => self.put_s(reg, mem, io),
+            IN_VAL => self.r#in(reg, mem, io),
             HALT_VAL => self.halt(reg),
             _ => unreachable!(),
         }
@@ -457,6 +459,8 @@ mod test {
 
     #[test]
     fn test_add() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let add = super::Add {};
@@ -465,12 +469,12 @@ mod test {
         reg.set(1, 8);
 
         let ins: u16 = 0b0000_010_001_0_00_000;
-        add.exe(ins, &mut reg, &mut mem);
+        add.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) == 10);
 
         let ins: u16 = 0b0000_010_001_1_00011; // 3
-        add.exe(ins, &mut reg, &mut mem);
+        add.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) == 11);
         // TODO: Account for NZP bits
@@ -480,7 +484,7 @@ mod test {
         assert!(reg.p == true);
 
         let ins: u16 = 0b0000_010_001_1_11000; // -8
-        add.exe(ins, &mut reg, &mut mem);
+        add.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) == 0);
 
@@ -489,7 +493,7 @@ mod test {
         assert!(reg.p == false);
 
         let ins: u16 = 0b0000_010_000_1_11000; // R0 with -8
-        add.exe(ins, &mut reg, &mut mem);
+        add.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) as i16 == -6);
 
@@ -500,6 +504,8 @@ mod test {
 
     #[test]
     fn test_and() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let and = super::And {};
@@ -508,7 +514,7 @@ mod test {
         reg.set(1, 9);
 
         let mut ins: u16 = 0b0000_010_001_0_00_000;
-        and.exe(ins, &mut reg, &mut mem);
+        and.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) == 1);
 
@@ -517,9 +523,14 @@ mod test {
         assert!(reg.p == true);
 
         ins = 0b0000_010_001_1_11001;
-        and.exe(ins, &mut reg, &mut mem);
+        and.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(2) == 9);
+
+        ins = 0b0000_010_001_1_00000;
+        and.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.z == true);
+        assert!(reg.get(2) == 0);
 
         // TODO: Account for NZP bits
     }
@@ -531,6 +542,8 @@ mod test {
 
     #[test]
     fn test_jmp() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let jmp = super::JmpRet {};
@@ -539,7 +552,7 @@ mod test {
         reg.pc = 16;
         reg.set(1, 4000);
 
-        jmp.exe(ins, &mut reg, &mut mem);
+        jmp.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.pc != 16);
         assert!(reg.pc == 4000);
@@ -547,7 +560,7 @@ mod test {
         let ins: u16 = 0b0000_000_011_000000;
         reg.set(3, 2048);
 
-        jmp.exe(ins, &mut reg, &mut mem);
+        jmp.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.pc != 4000);
         assert!(reg.pc == 2048);
@@ -555,6 +568,8 @@ mod test {
 
     #[test]
     fn test_ret() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let jmp = super::JmpRet {};
@@ -563,13 +578,13 @@ mod test {
         reg.pc = 16;
         reg.set(7, 999);
 
-        jmp.exe(ins, &mut reg, &mut mem);
+        jmp.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.pc != 16);
         assert!(reg.pc == 999);
 
         reg.set(7, 2190);
-        jmp.exe(ins, &mut reg, &mut mem);
+        jmp.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.pc != 999);
         assert!(reg.pc == 2190);
@@ -607,6 +622,8 @@ mod test {
 
     #[test]
     fn test_not() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let not = super::Not {};
@@ -614,7 +631,7 @@ mod test {
         reg.set(1, 0b0000_0101_0000_1111);
 
         let ins: u16 = 0b0000_000_001_111111;
-        not.exe(ins, &mut reg, &mut mem);
+        not.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(0) != reg.get(1));
         assert!(reg.get(0) == !reg.get(1));
@@ -626,7 +643,7 @@ mod test {
         reg.set(1, 0b0000_1111_0101_1010);
 
         let ins: u16 = 0b0000_000_001_111111;
-        not.exe(ins, &mut reg, &mut mem);
+        not.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(0) != reg.get(1));
         assert!(reg.get(0) == !reg.get(1));
@@ -636,7 +653,7 @@ mod test {
         assert!(reg.p == false);
 
         reg.set(1, 0b1101_1011_1111_1110);
-        not.exe(ins, &mut reg, &mut mem);
+        not.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(0) != reg.get(1));
         assert!(reg.get(0) == !reg.get(1));
@@ -646,7 +663,7 @@ mod test {
         assert!(reg.p == true);
 
         reg.set(1, 0b1111_1111_1111_1111);
-        not.exe(ins, &mut reg, &mut mem);
+        not.exe(ins, &mut reg, &mut mem, &mut io);
 
         assert!(reg.get(0) != reg.get(1));
         assert!(reg.get(0) == !reg.get(1));
@@ -698,26 +715,28 @@ mod test {
 
     #[test]
     fn test_negative_pc_offsets() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         reg.pc = 3000;
 
         let br = Br {};
-        br.exe(0b0000_111_111111111, &mut reg, &mut mem);
+        br.exe(0b0000_111_111111111, &mut reg, &mut mem, &mut io);
 
         let jsr = Jsr {};
-        jsr.exe(0b0000_1_11111111111, &mut reg, &mut mem);
-        jsr.exe(0b0000_0_00_111111111, &mut reg, &mut mem);
+        jsr.exe(0b0000_1_11111111111, &mut reg, &mut mem, &mut io);
+        jsr.exe(0b0000_0_00_111111111, &mut reg, &mut mem, &mut io);
 
         let ld = Ld {};
-        ld.exe(0b0000_111_111111111, &mut reg, &mut mem);
+        ld.exe(0b0000_111_111111111, &mut reg, &mut mem, &mut io);
 
         let ldi = Ldi {};
-        ldi.exe(0b0000_111_111111111, &mut reg, &mut mem);
+        ldi.exe(0b0000_111_111111111, &mut reg, &mut mem, &mut io);
 
         mem.set(u16::MAX, u16::MAX);
         reg.set(7, u16::MAX);
         let ldr = Ldr {};
-        ldr.exe(0b0000_111_111_111111, &mut reg, &mut mem);
+        ldr.exe(0b0000_111_111_111111, &mut reg, &mut mem, &mut io);
     }
 }

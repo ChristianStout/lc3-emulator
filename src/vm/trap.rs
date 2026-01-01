@@ -1,44 +1,32 @@
-use super::{memory::Memory, registers::Registers};
+use super::{io::Lc3IO, memory::Memory, registers::Registers};
 use crossterm::terminal;
 use std::io::*;
 pub struct Trap;
 
 impl Trap {
     /// takes a single char as input from the console and puts it in R0
-    pub fn get_c(&self, reg: &mut Registers) {
-        let c = self.get_char();
-        let mut stdout = std::io::stdout().lock();
-        stdout.write(b"\r").expect(
-            "Expected to be able to print '\\r' to the console in get_char(), therfore removing it from stdout",
-        );
-        std::io::stdout().flush().expect(
-            "Expected to be able to flush stdout after printing a char to the console in get_c().",
-        );
+    pub fn get_c(&self, reg: &mut Registers, io: &mut Lc3IO) {
+        let c = io.get_char();
+
         reg.set(0, c as u16);
     }
 
     /// Outputs the value in R0 as a char to the console
-    pub fn out(&self, reg: &mut Registers) {
-        print!("{}", reg.get(0) as u8 as char);
-        std::io::stdout().flush().expect(
-            "Expected to be able to flush stdout after printing a char to the console in out().",
-        );
+    pub fn out(&self, reg: &mut Registers, io: &mut Lc3IO) {
+        io.print_single_char(reg);
     }
 
     /// prints a string to the console pointed to by R0
-    pub fn put_s(&self, reg: &mut Registers, mem: &mut Memory) {
-        self.print_string(reg, mem);
-        std::io::stdout()
-            .flush()
-            .expect("Expected to be able to flush stdout after printing a string to the console.");
+    pub fn put_s(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
+        io.print_string(reg, mem);
     }
 
     /// Prints a prompt string pointed to by R0,
     /// then takes a single char as input from the console and puts it in R0
-    pub fn r#in(&self, reg: &mut Registers, mem: &mut Memory) {
-        self.print_string(reg, mem);
+    pub fn r#in(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
+        io.print_string(reg, mem);
 
-        let c = self.get_char();
+        let c = io.get_char();
         reg.set(0, c as u16);
     }
 
@@ -46,32 +34,6 @@ impl Trap {
     pub fn halt(&self, reg: &mut Registers) {
         println!("\nHALT TRIGGERED!");
         reg.halt = true;
-    }
-
-    fn print_string(&self, reg: &mut Registers, mem: &mut Memory) {
-        let mut i = reg.get(0);
-        let mut c = mem.get(i) as u8 as char;
-
-        while c != '\0' {
-            print!("{c}");
-            i += 1;
-            c = mem.get(i) as u8 as char;
-        }
-    }
-
-    fn get_char(&self) -> char {
-        // terminal::enable_raw_mode().ok();
-        let input = std::io::stdin()
-            .bytes()
-            .next()
-            .and_then(|result| result.ok())
-            .map(|byte| byte as i64)
-            .expect("Expected to reciece a value from the terminal, and got nothing");
-        // terminal::disable_raw_mode().ok();
-
-        let c = input as u8 as char;
-        // print!("{c}");
-        return c;
     }
 }
 
@@ -82,16 +44,18 @@ mod tests {
 
     #[test]
     fn test_out() {
+        use crate::vm::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut reg = Registers::new();
         let trap = Trap {};
 
         reg.set(0, 'a' as u16);
 
-        trap.out(&mut reg);
+        trap.out(&mut reg, &mut io);
 
         reg.set(0, 'p' as u16);
 
-        trap.out(&mut reg);
-        trap.out(&mut reg);
+        trap.out(&mut reg, &mut io);
+        trap.out(&mut reg, &mut io);
     }
 }
