@@ -4,6 +4,7 @@ use crossterm::event::*;
 use crossterm::terminal;
 use std::io::*;
 
+#[allow(unused)]
 pub struct Lc3IO {
     stdin: Vec<u8>,
     stdout: Vec<u8>,

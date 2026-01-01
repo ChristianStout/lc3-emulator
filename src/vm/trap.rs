@@ -1,6 +1,4 @@
 use super::{io::Lc3IO, memory::Memory, registers::Registers};
-use crossterm::terminal;
-use std::io::*;
 pub struct Trap;
 
 impl Trap {
