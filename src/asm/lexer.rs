@@ -7,6 +7,7 @@ use super::token::*;
 const CODE_TOKEN_NO_CATEGORY: &'static str = "SX001";
 const CODE_STRING_NOT_ENDED: &'static str = "SX002";
 const CODE_INVALID_ESCAPE_CHAR: &'static str = "SX003";
+const CODE_IMM_VAL_GREATER_THAN_U16_MAX: &'static str = "SX004";
 
 pub struct Lexer {
     pub token_stream: Vec<Token>,
@@ -185,12 +186,13 @@ impl Lexer {
             ));
             return;
         } else if self.syntax_checker.is_valid_immediate_value(&word) {
+            let imm_val = TokenType::Number(self.parse_immediate_value(&word));
             self.token_stream.push(Token::new(
                 self.file_position,
                 self.line_position,
                 self.curr_line_num,
                 &word,
-                TokenType::Number(self.parse_immediate_value(&word)),
+                imm_val,
             ));
             return;
         } else if self.syntax_checker.is_valid_label(&word) {
@@ -234,20 +236,38 @@ impl Lexer {
         return register_num as u16;
     }
 
-    pub fn parse_immediate_value(&self, word: &str) -> i16 {
+    pub fn parse_immediate_value(&mut self, word: &str) -> i16 {
         match word.chars().nth(0).unwrap() {
             '#' => {
-                return word[1..].parse().expect(&format!(
-                    "Lexer::parse_immediate_value: The given number on line {} is not valid",
-                    self.curr_line_num
-                ));
+                if let Ok(num) = word[1..].parse() {
+                    return num;
+                } else {
+                    let line = self.get_current_line();
+                    self.errors.push(AsmError::new(
+                        String::from(CODE_TOKEN_NO_CATEGORY),
+                        &line,
+                        self.curr_line_num,
+                        ErrorType::SyntaxError,
+                        "the immediate value could not be parsed, since it falls outside the 16-bit range. Note the ranges of immediate value are likely much smaller than the 16-bit range, and very based on size.\nConsider using the `.FILL` directive, and loading large values by address instead.",
+                    ));
+                    return 0;
+                }
             }
             'x' | 'X' => {
                 let base = 16;
-                return u16::from_str_radix(&word[1..], base).expect(&format!(
-                    "Lexer::parse_immediate_value: The given number on line {} is not valid",
-                    self.curr_line_num
-                )) as i16;
+                if let Ok(num) = u16::from_str_radix(&word[1..], base) {
+                    return num as i16;
+                } else {
+                    let line = self.get_current_line();
+                    self.errors.push(AsmError::new(
+                        String::from(CODE_TOKEN_NO_CATEGORY),
+                        &line,
+                        self.curr_line_num,
+                        ErrorType::SyntaxError,
+                        "the immediate value could not be parsed, since it falls outside the 16-bit range. Note the ranges of immediate value are likely much smaller than the 16-bit range, and very based on size.\nConsider using the `.FILL` directive, and loading large values by address instead.",
+                    ));
+                    return 0;
+                }
             }
             _ => unreachable!(),
         }
@@ -748,5 +768,21 @@ MAYBE_HERE
         ));
 
         assert!(tokens[0].inner_token == TokenType::Label(String::from("MAYBE_HERE")));
+    }
+
+    #[test]
+    fn test_imm_val_greater_than_u16_max() {
+        // I conticed that the program panic, albeit with a useful message
+        // by me, that the value could not be parsed properly. I want to be able to
+        // end the program more smoothly than that.
+        let mut lexer = Lexer::new();
+        let tokens = lexer.run(String::from(
+            r#"
+    ADD R0, R1, #648930
+    ADD R0, R1, x43891943
+            "#,
+        ));
+
+        assert!(lexer.errors.len() == 2);
     }
 }
