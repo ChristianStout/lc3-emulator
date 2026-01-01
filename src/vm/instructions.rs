@@ -37,6 +37,26 @@ pub struct Sti;
 pub struct Str;
 
 impl Instruction for Add {
+    /// Add adds two numbers together, and stores it in a separate register. If the control code (6th from the end)
+    /// is 0, then the last three bits are the second source register. If the control
+    /// bit is 1, then the last 5 bits are a 2's complement immediate value.
+    ///
+    ///        AND - | 0101 000 000 000 000 |
+    ///              | ---- --- --- --- --- |
+    ///              | op   dr  sr1 --- sr2 |
+    ///             +----------------------+
+    ///        AND - | 0101 000 000 1 00000 |
+    ///              | ---- --- --- - ----- |
+    ///              | op   dr  sr1 - imm   |
+    /// Example:
+    ///
+    ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] + memory[R2]
+    ///
+    ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] + 2
+    ///
+    /// **NOTE**:
+    /// The immeidate value can only
+    /// -------------------------------------------------------------------------------
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         ADD - | 0001 000 000 000 000 |
@@ -82,6 +102,24 @@ impl Instruction for Add {
 }
 
 impl Instruction for And {
+    /// And does a bitwise `&` operation. If the control code (6th from the end)
+    /// is 0, then the last three bits are the second source register. If the control
+    /// bit is 1, then the last 5 bits are a 2's complement immediate value.
+    ///
+    ///        AND - | 0101 000 000 000 000 |
+    ///              | ---- --- --- --- --- |
+    ///              | op   dr  sr1 --- sr2 |
+    ///             +----------------------+
+    ///        AND - | 0101 000 000 1 00000 |
+    ///              | ---- --- --- - ----- |
+    ///              | op   dr  sr1 - imm   |
+    /// Example:
+    ///
+    ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] & memory[R2]
+    ///
+    ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] & 2
+    ///
+    /// -------------------------------------------------------------------------------
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
         AND - | 0101 000 000 000 000 |
@@ -531,10 +569,20 @@ mod test {
         ins = 0b0000_010_001_1_00000;
         reg.set(1, 13048);
         and.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.n == false);
         assert!(reg.z == true);
+        assert!(reg.p == false);
         assert!(reg.get(2) == 0);
 
-        // TODO: Account for NZP bits
+        let val1 = 0b0010_0110_1111_0101;
+        let val2 = 0b1010_0111_1000_1010;
+        let resv = 0b0010_0110_1000_0000;
+
+        reg.set(0, val1);
+        reg.set(1, val2);
+        let ins = 0b0000_001_010_000000;
+        and.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == resv);
     }
 
     // #[test]
