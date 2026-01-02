@@ -244,7 +244,7 @@ impl Lexer {
                 } else {
                     let line = self.get_current_line();
                     self.errors.push(AsmError::new(
-                        String::from(CODE_TOKEN_NO_CATEGORY),
+                        String::from(CODE_IMM_VAL_GREATER_THAN_U16_MAX),
                         &line,
                         self.curr_line_num,
                         ErrorType::SyntaxError,
@@ -260,7 +260,7 @@ impl Lexer {
                 } else {
                     let line = self.get_current_line();
                     self.errors.push(AsmError::new(
-                        String::from(CODE_TOKEN_NO_CATEGORY),
+                        String::from(CODE_IMM_VAL_GREATER_THAN_U16_MAX),
                         &line,
                         self.curr_line_num,
                         ErrorType::SyntaxError,
@@ -784,5 +784,7 @@ MAYBE_HERE
         ));
 
         assert!(lexer.errors.len() == 2);
+        assert!(lexer.errors[0].code == CODE_IMM_VAL_GREATER_THAN_U16_MAX);
+        assert!(lexer.errors[1].code == CODE_IMM_VAL_GREATER_THAN_U16_MAX);
     }
 }
