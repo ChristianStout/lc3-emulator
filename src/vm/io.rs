@@ -15,6 +15,7 @@ pub trait IOTarget {
     fn get_char(&self) -> char;
     fn print_string(&self, reg: &mut Registers, mem: &mut Memory);
     fn print_single_char(&self, reg: &mut Registers);
+    fn print_error(&self, error_name: &str, error_msg: &str);
 }
 
 pub struct StdIOTarget;
@@ -38,6 +39,10 @@ impl Lc3IO {
 
     pub fn print_single_char(&self, reg: &mut Registers) {
         self.target.print_single_char(reg);
+    }
+
+    pub fn print_error(&self,  error_name: &str, error_msg: &str) {
+        self.target.print_error(error_name, error_msg);
     }
 }
 
@@ -126,5 +131,9 @@ impl IOTarget for StdIOTarget {
         std::io::stdout().flush().expect(
             "Expected to be able to flush stdout after printing a char to the console in out().",
         );
+    }
+
+    fn print_error(&self,  error_name: &str, error_msg: &str) {
+        println!("{error_name}: {error_msg}\n");
     }
 }
