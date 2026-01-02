@@ -1,5 +1,5 @@
 use super::token::*;
-use crate::output::SystemIO;
+use crate::io::*;
 
 pub enum ErrorType {
     SyntaxError,
@@ -70,11 +70,8 @@ impl AsmError {
         self.from_to = Some((from, to));
     }
 
-    #[allow(dead_code)]
-    pub fn print(&self, io: &mut Box<dyn SystemIO>) {
-        let _ = self.generate_msg().chars().map(|c| {
-            io.print_char(c);
-        });
+    pub fn print(&self, io: &mut Box<dyn IOTarget>) {
+        io.print_asm_error(&self.generate_msg());
     }
 
     pub fn generate_msg(&self) -> String {

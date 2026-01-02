@@ -1,7 +1,7 @@
 use super::instructions::{
     Add, And, Br, Instruction, JmpRet, Jsr, Ld, Ldi, Ldr, Lea, Not, Rti, St, Sti, Str,
 };
-use super::io::*;
+use crate::io::*;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
@@ -69,7 +69,7 @@ impl VM {
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            self.io.print_error("Overflow Error:", "The PC attempted to increment past maximum xFFFF");
+            self.io.print_vm_error("Overflow Error:", "The PC attempted to increment past maximum xFFFF");
             self.registers.halt = true;
             return;
         }

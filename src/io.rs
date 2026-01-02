@@ -1,5 +1,5 @@
-use super::memory::Memory;
-use super::registers::Registers;
+use super::vm::memory::Memory;
+use super::vm::registers::Registers;
 use crossterm::event::*;
 use crossterm::terminal;
 use std::io::*;
@@ -15,7 +15,8 @@ pub trait IOTarget {
     fn get_char(&self) -> char;
     fn print_string(&self, reg: &mut Registers, mem: &mut Memory);
     fn print_single_char(&self, reg: &mut Registers);
-    fn print_error(&self, error_name: &str, error_msg: &str);
+    fn print_asm_error(&self, err_msg: &str);
+    fn print_vm_error(&self, error_name: &str, error_msg: &str);
 }
 
 pub struct StdIOTarget;
@@ -41,8 +42,12 @@ impl Lc3IO {
         self.target.print_single_char(reg);
     }
 
-    pub fn print_error(&self,  error_name: &str, error_msg: &str) {
-        self.target.print_error(error_name, error_msg);
+    pub fn print_vm_error(&self,  error_name: &str, error_msg: &str) {
+        self.target.print_vm_error(error_name, error_msg);
+    }
+
+    pub fn print_asm_error(&self, error: &str) {
+        self.target.print_asm_error(error);
     }
 }
 
@@ -98,18 +103,6 @@ impl IOTarget for StdIOTarget {
         terminal::disable_raw_mode()
             .expect("Expected to be able to turn off raw mode after getting a char from stdin");
         return out_c;
-        // // terminal::enable_raw_mode().ok();
-        // let input = std::io::stdin()
-        //     .bytes()
-        //     .next()
-        //     .and_then(|result| result.ok())
-        //     .map(|byte| byte as i64)
-        //     .expect("Expected to reciece a value from the terminal, and got nothing");
-        // // terminal::disable_raw_mode().ok();
-
-        // let c = input as u8 as char;
-        // // print!("{c}");
-        // return c;
     }
 
     fn print_string(&self, reg: &mut Registers, mem: &mut Memory) {
@@ -133,7 +126,11 @@ impl IOTarget for StdIOTarget {
         );
     }
 
-    fn print_error(&self,  error_name: &str, error_msg: &str) {
+    fn print_vm_error(&self,  error_name: &str, error_msg: &str) {
         println!("{error_name}: {error_msg}\n");
+    }
+    
+    fn print_asm_error(&self, err_msg: &str) {
+        println!("{}", err_msg);
     }
 }

@@ -13,3 +13,4 @@ label? instruction  reg, reg, imm   ; two registers, one immediate value
 ```
 
 IMPORTANT VIDEO: https://www.youtube.com/watch?v=oFYZkoglbQk
+LC-3 ISA: https://acsa.ustc.edu.cn/ics/download/lc3/lc3-handbook.pdf
