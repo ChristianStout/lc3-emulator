@@ -41,13 +41,26 @@ impl Instruction for Add {
     /// is 0, then the last three bits are the second source register. If the control
     /// bit is 1, then the last 5 bits are a 2's complement immediate value.
     ///
-    ///        AND - | 0101 000 000 000 000 |
-    ///              | ---- --- --- --- --- |
-    ///              | op   dr  sr1 --- sr2 |
-    ///              +----------------------+
-    ///        AND - | 0101 000 000 1 00000 |
-    ///              | ---- --- --- - ----- |
-    ///              | op   dr  sr1 - imm   |
+    /// The result of the operation modifies the nzp bits depending on the outcome.
+    /// If the result is negative, then n == true, z, p == false.
+    /// If the result is zero, te z == true, n, p == false.
+    /// If the result is positive, then p == true, n, z == false
+    ///
+    ///        AND - | 0101 000 000 000 000  |
+    ///              | ---- --- --- - -- --- |
+    ///              | op   dr  sr1 c -- sr2 |
+    ///              +-----------------------+
+    ///        AND - | 0101 000 000 1 00000  |
+    ///              | ---- --- --- - -----  |
+    ///              | op   dr  sr1 c imm5   |
+    ///
+    /// Legend:
+    ///     op ---> opcode,
+    ///     dr ---> desitination register
+    ///     sr1 --> source register 1
+    ///     sr2 --> source register 2
+    ///     imm5 -> immediate value (5-bit 2's compliement)
+    ///
     /// Example:
     ///
     ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] + memory[R2]
@@ -55,18 +68,10 @@ impl Instruction for Add {
     ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] + 2
     ///
     /// **NOTE**:
-    /// The immeidate value can only
+    /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
+    /// an immediate value is [-16, 15].
     /// -------------------------------------------------------------------------------
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
-        /*
-        ADD - | 0001 000 000 000 000 |
-              | ---- --- --- --- --- |
-              | op   dr  sr1 --- sr2 |
-              +----------------------+
-        ADD - | 0001 000 000 1 00000 |
-              | ---- --- --- - ----- |
-              | op   dr  sr1 - imm   |
-        */
         let mut i = value;
 
         let dr = i >> 9;
@@ -106,30 +111,41 @@ impl Instruction for And {
     /// is 0, then the last three bits are the second source register. If the control
     /// bit is 1, then the last 5 bits are a 2's complement immediate value.
     ///
-    ///        AND - | 0101 000 000 000 000 |
-    ///              | ---- --- --- --- --- |
-    ///              | op   dr  sr1 --- sr2 |
-    ///              +----------------------+
-    ///        AND - | 0101 000 000 1 00000 |
-    ///              | ---- --- --- - ----- |
-    ///              | op   dr  sr1 - imm   |
-    /// Example:
+    /// The result of the operation modifies the nzp bits depending on the outcome.
+    /// If the result is negative, then n == true, z, p == false.
+    /// If the result is zero, te z == true, n, p == false.
+    /// If the result is positive, then p == true, n, z == false
+    ///
+    /// # Instruction Layout
+    ///
+    ///        AND - | 0101 000 000 0 00 000 |
+    ///              | ---- --- --- - -- --- |
+    ///              | op   dr  sr1 c -- sr2 |
+    ///              +-----------------------+
+    ///        AND - | 0101 000 000 1 00000  |
+    ///              | ---- --- --- - -----  |
+    ///              | op   dr  sr1 c imm5   |
+    ///
+    /// ## Legend:
+    /// ```
+    ///     op ---> opcode,
+    ///     dr ---> desitination register
+    ///     sr1 --> source register 1
+    ///     sr2 --> source register 2
+    ///     imm5 -> immediate value (5-bit 2's compliement)
+    ///```
+    ///
+    /// # Example:
     ///
     ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] & memory[R2]
     ///
     ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] & 2
     ///
+    /// **NOTE**:
+    /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
+    /// an immediate value is [-16, 15].
     /// -------------------------------------------------------------------------------
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
-        /*
-        AND - | 0101 000 000 000 000 |
-              | ---- --- --- --- --- |
-              | op   dr  sr1 --- sr2 |
-              +----------------------+
-        AND - | 0101 000 000 1 00000 |
-              | ---- --- --- - ----- |
-              | op   dr  sr1 - imm   |
-        */
         let mut i = value;
 
         let dr = i >> 9;

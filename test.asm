@@ -15,7 +15,7 @@ start       LD      R0, A
             OUT
             LD      R0, nl
             HALT
-            add r0, r1, #4089000
+            add r0, r1, #409
             BR      start
 
 .END
