@@ -66,6 +66,13 @@ impl VM {
             return;
         }
         let cmd = self.memory.get(self.registers.pc);
+
+        if self.registers.pc == u16::MAX {
+            // throw error for trying to increment PC past xFFFF
+            self.io.print_error("Overflow Error:", "The PC attempted to increment past maximum xFFFF");
+            self.registers.halt = true;
+            return;
+        }
         self.registers.pc += 1;
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
@@ -242,5 +249,16 @@ start   ld r1, max
 
         assert_eq!(vm.registers.r[0], u16::MAX);
         assert_eq!(vm.registers.r[1], u16::MAX);
+    }
+
+    #[test]
+    fn test_pc_overflow_halts_vm() {
+        let mut vm = VM::new();
+        assert!(vm.registers.halt == false);
+
+        vm.registers.pc = 0xFFFF;
+        vm.run_single_command();
+
+        assert!(vm.registers.halt == true);
     }
 }
