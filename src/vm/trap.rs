@@ -1,4 +1,5 @@
-use super::{io::Lc3IO, memory::Memory, registers::Registers};
+use super::{memory::Memory, registers::Registers};
+use crate::io::Lc3IO;
 pub struct Trap;
 
 impl Trap {
@@ -42,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_out() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut reg = Registers::new();
         let trap = Trap {};

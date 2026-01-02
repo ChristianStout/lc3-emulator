@@ -1,8 +1,8 @@
 pub mod asm;
 pub mod cli;
-pub mod output;
 pub mod vm;
 pub mod web;
+pub mod io;
 
 use crate::asm::asm::Asm;
 use crate::vm::vm::VM;
@@ -28,7 +28,7 @@ fn main() {
         return;
     }
 
-    if cli.emit_bin {
+    if cli.emit_binary {
         asm.emit_bin(&binary_file, "out.bin".to_string());
     }
 

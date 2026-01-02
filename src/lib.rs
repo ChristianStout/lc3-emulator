@@ -1,7 +1,7 @@
 mod asm;
-mod output;
 mod vm;
 mod web;
+mod io;
 use crate::asm::lexer::*;
 use crate::asm::token::*;
 use wasm_bindgen::prelude::*;

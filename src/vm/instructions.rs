@@ -1,4 +1,4 @@
-use super::io::Lc3IO;
+use crate::io::Lc3IO;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
@@ -514,7 +514,7 @@ mod test {
 
     #[test]
     fn test_add() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
@@ -559,7 +559,7 @@ mod test {
 
     #[test]
     fn test_and() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
@@ -608,7 +608,7 @@ mod test {
 
     #[test]
     fn test_jmp() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
@@ -634,7 +634,7 @@ mod test {
 
     #[test]
     fn test_ret() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
@@ -688,7 +688,7 @@ mod test {
 
     #[test]
     fn test_not() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
@@ -781,7 +781,7 @@ mod test {
 
     #[test]
     fn test_negative_pc_offsets() {
-        use crate::vm::io;
+        use crate::io;
         let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
