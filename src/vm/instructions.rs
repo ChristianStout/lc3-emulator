@@ -877,17 +877,101 @@ mod test {
     //     // unimplemented!(); going to implement in later version.
     // }
 
-    // #[test]
-    // fn test_st() {
-    // }
+    #[test]
+    fn test_st() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let st = super::St {};
 
-    // #[test]
-    // fn test_sti() {
-    // }
+        reg.pc = 3000;
+        let ins: u16 = 0b0000_001_111111111;
 
-    // #[test]
-    // fn test_str() {
-    // }
+        let location = 2999;
+        let val: i16 = -16;
+        reg.set(1, val as u16);
+
+        assert!(mem.get(location) != val as u16);
+        st.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(location) == val as u16);
+
+
+        let ins: u16 = 0b0000_001_000000001;
+        let location = 3001;
+        let val: i16 = 42;
+        reg.set(1, val as u16);
+        
+        assert!(mem.get(location) != val as u16);
+        st.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(location) == val as u16);
+    }
+
+    #[test]
+    fn test_sti() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let sti = super::Sti {};
+
+        reg.pc = 3000;
+        let ins: u16 = 0b0000_001_111111111;
+
+        let location = 2999;
+        let ptr: u16 = 0x12F2;
+        let val: i16 = -16;
+        mem.set(location, ptr);
+        reg.set(1, val as u16);
+
+        assert!(mem.get(ptr) != val as u16);
+        sti.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(ptr) == val as u16);
+
+
+        let ins: u16 = 0b0000_001_000000001;
+        let location = 3001;
+        let ptr = 0x0A1C;
+        let val: i16 = 42;
+        mem.set(location, ptr);
+        reg.set(1, val as u16);
+        
+        assert!(mem.get(ptr) != val as u16);
+        sti.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(ptr) == val as u16);
+    }
+
+    #[test]
+    fn test_str() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let str = super::Str {};
+
+        reg.pc = 3000;
+        let ins: u16 = 0b0000_001_111_111111;
+
+        let ptr: u16 = 0x12F2;
+        let val: i16 = -16;
+        reg.set(1, val as u16);
+        reg.set(7, ptr);
+
+        assert!(mem.get(ptr - 1) != val as u16);
+        str.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(ptr - 1) == val as u16);
+
+
+        let ins: u16 = 0b0000_001_111_000001;
+        let ptr: u16 = 0x0A1C;
+        let val: u16 = 42;
+        reg.set(1, val);
+        reg.set(7, ptr);
+        
+        assert!(mem.get(ptr + 1) != val as u16);
+        str.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(mem.get(ptr + 1) == val as u16);
+    }
 
     #[test]
     fn test_set_nzp() {
