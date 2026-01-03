@@ -334,6 +334,7 @@ impl Instruction for Lea {
         let ptr = get_offset(value, 9);
 
         let address = get_pcoffset_location(reg, ptr);
+        set_nzp(reg, address);
         reg.set(dr as usize, address);
     }
 }
@@ -792,14 +793,31 @@ mod test {
         assert!(reg.z == true);
     }
 
-    // #[test]
-    // fn test_lea() {
-        // use crate::io;
-        // let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
-        // let mut mem = super::Memory::new();
-        // let mut reg = super::Registers::new();
-        // let jmp = super::JmpRet {};
-    // }
+    #[test]
+    fn test_lea() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let lea = super::Lea {};
+
+        reg.pc = 3000;
+        let ins: u16 = 0b0000_001_111111111;
+
+        assert!(reg.get(1) != 2999);
+        assert!(reg.p != true);
+        lea.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == 2999);
+        assert!(reg.p == true);
+ 
+        reg.pc = 1;
+
+        assert!(reg.get(1) != 0);
+        assert!(reg.z != true);
+        lea.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == 0);
+        assert!(reg.z == true);
+    }
 
     #[test]
     fn test_not() {
