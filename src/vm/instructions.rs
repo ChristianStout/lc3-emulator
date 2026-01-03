@@ -2,7 +2,7 @@ use crate::io::Lc3IO;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
-use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL};
+use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL, PUTSP_VAL};
 
 /*
 Uses the command pattern to execute functions dynamically
@@ -437,6 +437,7 @@ impl Instruction for Trap {
             OUT_VAL => self.out(reg, io),
             PUTS_VAL => self.put_s(reg, mem, io),
             IN_VAL => self.r#in(reg, mem, io),
+            PUTSP_VAL => self.put_sp(reg, mem, io),
             HALT_VAL => self.halt(reg),
             _ => unreachable!(),
         }

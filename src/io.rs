@@ -14,6 +14,7 @@ pub struct Lc3IO {
 pub trait IOTarget {
     fn get_char(&self) -> char;
     fn print_string(&self, reg: &mut Registers, mem: &mut Memory);
+    fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory);
     fn print_single_char(&self, reg: &mut Registers);
     fn print_asm_error(&self, err_msg: &str);
     fn print_vm_error(&self, error_name: &str, error_msg: &str);
@@ -36,6 +37,10 @@ impl Lc3IO {
 
     pub fn print_string(&self, reg: &mut Registers, mem: &mut Memory) {
         self.target.print_string(reg, mem);
+    }
+
+    pub fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory) {
+        self.target.print_string_special(reg, mem);
     }
 
     pub fn print_single_char(&self, reg: &mut Registers) {
@@ -117,6 +122,21 @@ impl IOTarget for StdIOTarget {
         std::io::stdout()
             .flush()
             .expect("Expected to be able to flush stdout after printing a string to the console.");
+    }
+
+    fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory) {
+        // let mut i = reg.get(0);
+        // let mut c = mem.get(i) as u8 as char;
+
+        // while c != '\0' {
+        //     print!("{c}");
+        //     i += 1;
+        //     c = mem.get(i) as u8 as char;
+        // }
+        // std::io::stdout()
+        //     .flush()
+        //     .expect("Expected to be able to flush stdout after printing a string to the console.");
+        println!("PUTSP executed!");
     }
 
     fn print_single_char(&self, reg: &mut Registers) {
