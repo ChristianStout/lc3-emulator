@@ -28,7 +28,7 @@ fn main() {
         return;
     }
 
-    if cli.emit_binary {
+    if cli.emit_bin {
         asm.emit_bin(&binary_file, "out.bin".to_string());
     }
 
