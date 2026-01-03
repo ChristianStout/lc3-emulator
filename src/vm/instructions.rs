@@ -271,9 +271,10 @@ impl Instruction for Ld {
         */
         let dr = value >> 9;
         let pcoffset9 = get_offset(value, 9);
-
         let relative_pc_address = get_pcoffset_location(reg, pcoffset9);
+
         let new_value = mem.get(relative_pc_address);
+        set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
     }
 }
@@ -285,12 +286,13 @@ impl Instruction for Ldi {
               | ---- --- --------- |
               | op   dr  pcoffset9 |
         */
-        let dr = value << 9;
-        let ptr = get_offset(value, 9);
+        let dr = value >> 9;
+        let pcoffset9 = get_offset(value, 9);
+        let relative_pc_address = get_pcoffset_location(reg, pcoffset9); 
 
-        let pcoffset9 = mem.get(ptr);
-        let relative_pc_address = get_pcoffset_location(reg, pcoffset9);
-        let new_value = mem.get(relative_pc_address);
+        let ptr = mem.get(relative_pc_address);
+        let new_value = mem.get(ptr);
+        set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
     }
 }
@@ -666,23 +668,105 @@ mod test {
     //     unimplemented!();
     // }
 
-    // #[test]
-    // fn test_ld() {
-    //     unimplemented!();
-    // }
+    #[test]
+    fn test_ld() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let ld = super::Ld {};
+    
+        reg.pc = 3000;
+        let val: i16 = -16;
+        let ins = 0b0000_001_111111111;
+        mem.set(2999, val as u16);
 
-    // #[test]
-    // fn test_ldi() {
-    //     unimplemented!();
-    // }
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.n != true);
+        ld.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.n == true);
+
+        let val: i16 = 32;
+        mem.set(2999, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.p != true);
+        ld.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.p == true);
+ 
+
+        let val: i16 = 0;
+        mem.set(2999, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.z != true);
+        ld.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.z == true);
+     }
+
+
+    #[test]
+    fn test_ldi() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let ldi = super::Ldi {};
+    
+        reg.pc = 3000;
+        let ptr: u16 = 0x3145;
+        mem.set(2999, ptr);
+
+        let val: i16 = -16;
+        let ins = 0b0000_001_111111111;
+        mem.set(ptr, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.n != true);
+        ldi.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.n == true);
+
+        let val: i16 = 32;
+        mem.set(ptr, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.p != true);
+        ldi.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.p == true);
+ 
+
+        let val: i16 = 0;
+        mem.set(ptr, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.z != true);
+        ldi.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.z == true);
+    }
 
     // #[test]
     // fn test_ldr() {
+        // use crate::io;
+        // let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        // let mut mem = super::Memory::new();
+        // let mut reg = super::Registers::new();
+        // let jmp = super::JmpRet {};
     //     unimplemented!();
     // }
 
     // #[test]
     // fn test_lea() {
+        // use crate::io;
+        // let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        // let mut mem = super::Memory::new();
+        // let mut reg = super::Registers::new();
+        // let jmp = super::JmpRet {};
     //     unimplemented!();
     // }
 
@@ -804,5 +888,10 @@ mod test {
         reg.set(7, u16::MAX);
         let ldr = Ldr {};
         ldr.exe(0b0000_111_111_111111, &mut reg, &mut mem, &mut io);
+    }
+
+    #[test]
+    fn test_load_ins_set_nzp() {
+
     }
 }
