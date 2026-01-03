@@ -315,6 +315,7 @@ impl Instruction for Ldr {
         let target_location = calculate_relative_offset(address, offset);
 
         let new_value = mem.get(target_location);
+        set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
     }
 }
@@ -750,15 +751,46 @@ mod test {
         assert!(reg.z == true);
     }
 
-    // #[test]
-    // fn test_ldr() {
-        // use crate::io;
-        // let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
-        // let mut mem = super::Memory::new();
-        // let mut reg = super::Registers::new();
-        // let jmp = super::JmpRet {};
-    //     unimplemented!();
-    // }
+    #[test]
+    fn test_ldr() {
+        use crate::io;
+        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut mem = super::Memory::new();
+        let mut reg = super::Registers::new();
+        let ldr = super::Ldr {};
+
+        let location = 2999;
+        let ins: u16 = 0b0000_001_010_111111;
+
+        let val: i16 = -16;
+        reg.set(2, 3000);
+        mem.set(location, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.n != true);
+        ldr.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.n == true);
+
+        let val: i16 = 32;
+        mem.set(location, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.p != true);
+        ldr.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.p == true);
+ 
+
+        let val: i16 = 0;
+        mem.set(location, val as u16);
+
+        assert!(reg.get(1) != val as u16);
+        assert!(reg.z != true);
+        ldr.exe(ins, &mut reg, &mut mem, &mut io);
+        assert!(reg.get(1) == val as u16);
+        assert!(reg.z == true);
+    }
 
     // #[test]
     // fn test_lea() {
@@ -767,7 +799,6 @@ mod test {
         // let mut mem = super::Memory::new();
         // let mut reg = super::Registers::new();
         // let jmp = super::JmpRet {};
-    //     unimplemented!();
     // }
 
     #[test]
@@ -830,17 +861,14 @@ mod test {
 
     // #[test]
     // fn test_st() {
-    //     unimplemented!();
     // }
 
     // #[test]
     // fn test_sti() {
-    //     unimplemented!();
     // }
 
     // #[test]
     // fn test_str() {
-    //     unimplemented!();
     // }
 
     #[test]
