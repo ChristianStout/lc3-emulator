@@ -7,10 +7,6 @@ use wasm_bindgen::prelude::*;
 #[derive(Debug, PartialEq, Clone, Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub enum Directive {
-    // ORIG(u16),
-    // FILL(u16),
-    // BLKW(i16),
-    // STRINGZ(String),
     ORIG,
     FILL,
     BLKW,

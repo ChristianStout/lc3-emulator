@@ -14,8 +14,8 @@ start       LD      R0, A
             LD      R0, char
             OUT
             LD      R0, nl
+            PUTSP
             HALT
-            add r0, r1, #409
             BR      start
 
 .END

@@ -20,6 +20,10 @@ impl Trap {
         io.print_string(reg, mem);
     }
 
+    pub fn put_sp(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
+        io.print_string_special(reg, mem);
+    }
+
     /// Prints a prompt string pointed to by R0,
     /// then takes a single char as input from the console and puts it in R0
     pub fn r#in(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {

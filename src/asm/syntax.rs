@@ -39,7 +39,7 @@ impl SyntaxChecker {
         ).unwrap();
 
         let ins_name = Regex::new(
-            r#"^((BR[N]?[Z]?[P]?)|ADD|AND|JMP|JSR|JSRR|LD|LDI|LDR|LEA|NOT|RET|RTI|ST|STI|STR|GETC|OUT|PUTS|IN|HALT)$"#
+            r#"^((BR[N]?[Z]?[P]?)|ADD|AND|JMP|JSR|JSRR|LD|LDI|LDR|LEA|NOT|RET|RTI|ST|STI|STR|GETC|OUT|PUTS|IN|PUTSP|HALT)$"#
         ).unwrap();
         let dir_name = Regex::new(r"[.](ORIG|FILL|BLKW|STRINGZ|END)$").unwrap();
 
@@ -291,6 +291,7 @@ mod tests {
         assert!(s.is_instruction_name("OUT"));
         assert!(s.is_instruction_name("PUTS"));
         assert!(s.is_instruction_name("IN"));
+        assert!(s.is_instruction_name("PUTSP"));
         assert!(s.is_instruction_name("HALT"));
 
         assert!(!s.is_instruction_name("SIN"));

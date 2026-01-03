@@ -470,6 +470,10 @@ mod tests {
             TokenType::Instruction(OpcodeIns::Trap(0x23))
         );
         assert_eq!(
+            lexer.run(String::from(" PUTSP "))[0].inner_token,
+            TokenType::Instruction(OpcodeIns::Trap(0x24))
+        );
+        assert_eq!(
             lexer.run(String::from(" HALT "))[0].inner_token,
             TokenType::Instruction(OpcodeIns::Trap(0x25))
         );

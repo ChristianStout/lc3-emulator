@@ -7,6 +7,7 @@ pub const GETC_VAL: u16 = 0x20;
 pub const OUT_VAL: u16 = 0x21;
 pub const PUTS_VAL: u16 = 0x22;
 pub const IN_VAL: u16 = 0x23;
+pub const PUTSP_VAL: u16 = 0x24;
 pub const HALT_VAL: u16 = 0x25;
 
 pub enum OperandType {
@@ -88,6 +89,7 @@ impl OpcodeIns {
             "OUT" => return OpcodeIns::Trap(OUT_VAL),
             "PUTS" => return OpcodeIns::Trap(PUTS_VAL),
             "IN" => return OpcodeIns::Trap(IN_VAL),
+            "PUTSP"  => return OpcodeIns::Trap(PUTSP_VAL),
             "HALT" => return OpcodeIns::Trap(HALT_VAL),
             _ => return OpcodeIns::INVALID,
         }
@@ -142,6 +144,7 @@ impl OpcodeIns {
             0x21 => vec![].into_iter().collect(),
             0x22 => vec![].into_iter().collect(),
             0x23 => vec![].into_iter().collect(),
+            0x24 => vec![].into_iter().collect(),
             0x25 => vec![].into_iter().collect(),
             _ => {
                 panic!(

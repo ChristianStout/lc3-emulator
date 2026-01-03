@@ -858,6 +858,7 @@ mod tests {
             TokenType::Instruction(OpcodeIns::Trap(21)), // out
             TokenType::Instruction(OpcodeIns::Trap(22)), // puts
             TokenType::Instruction(OpcodeIns::Trap(23)), // in
+            TokenType::Instruction(OpcodeIns::Trap(24)), // putsp
             TokenType::Instruction(OpcodeIns::Trap(25)), // halt
             TokenType::Instruction(OpcodeIns::Trap(32)), // maybe some other instruction someday?
         ]);
@@ -868,8 +869,9 @@ mod tests {
         assert_eq!(bin[2], 0b1111_0000_0001_0101);
         assert_eq!(bin[3], 0b1111_0000_0001_0110);
         assert_eq!(bin[4], 0b1111_0000_0001_0111);
-        assert_eq!(bin[5], 0b1111_0000_0001_1001);
-        assert_eq!(bin[6], 0b1111_0000_0010_0000);
+        assert_eq!(bin[5], 0b1111_0000_0001_1000);
+        assert_eq!(bin[6], 0b1111_0000_0001_1001);
+        assert_eq!(bin[7], 0b1111_0000_0010_0000);
     }
 
     #[test]
