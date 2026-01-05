@@ -35,7 +35,7 @@ impl Trap {
 
     /// Triggers the halt register to signal to the VM to end the program
     pub fn halt(&self, reg: &mut Registers) {
-        println!("\nHALT TRIGGERED!");
+        // println!("\nHALT TRIGGERED!");
         reg.halt = true;
     }
 }

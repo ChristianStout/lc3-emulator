@@ -4,6 +4,8 @@ pub struct Registers {
     pub n: bool,
     pub z: bool,
     pub p: bool,
+    pub ir: u16,
+    pub psr: u16,
     pub halt: bool,
 }
 
@@ -16,6 +18,8 @@ impl Registers {
             n: false,
             z: false,
             p: false,
+            ir: 0,
+            psr: 0,
             halt: false,
         }
     }
