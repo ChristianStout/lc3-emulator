@@ -6,7 +6,7 @@ nl          .FILL   #10
 char        .FILL   #0
 A           .FILL   #65
 
-start       LD      R0, A
+start       GETC
             OUT
             ST      R0, char
             LD      R0, nl
@@ -14,8 +14,6 @@ start       LD      R0, A
             LD      R0, char
             OUT
             LD      R0, nl
-            PUTSP
             HALT
-            BR      start
 
 .END
