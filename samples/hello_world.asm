@@ -5,8 +5,7 @@
 hw      .STRINGZ    "Hello, World!\n"
 
 START   LEA         R0, hw  ; Load the address of `hw` into R0
-        OUTS                ; Print string to console
+        PUTS                ; Print string to console
         HALT
 
         .END
-        
