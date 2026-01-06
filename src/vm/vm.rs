@@ -1,16 +1,21 @@
+use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+
 use super::instructions::{
     Add, And, Br, Instruction, JmpRet, Jsr, Ld, Ldi, Ldr, Lea, Not, Rti, St, Sti, Str,
 };
-use crate::io::*;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
+use crate::io::*;
 use std::collections::HashMap;
 
 const CMD_SIZE: u8 = 16;
 const OPCODE_SIZE: u8 = 4;
 const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
 
+#[derive(Tsify, Serialize, Deserialize)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct VM {
     instructions: HashMap<u8, Box<dyn Instruction>>,
     registers: Registers,
@@ -21,6 +26,10 @@ pub struct VM {
 #[allow(dead_code)]
 impl VM {
     pub fn new() -> VM {
+        return VM::new_with_io_target(Box::new(StdIOTarget {}));
+    }
+
+    pub fn new_with_io_target(io_target: Box<dyn IOTarget>) -> VM {
         let mut ins: HashMap<u8, Box<dyn Instruction>> = HashMap::new();
 
         ins.insert(0, Box::new(Br {}));
@@ -44,7 +53,7 @@ impl VM {
             instructions: ins,
             registers: Registers::new(),
             memory: Memory::new(),
-            io: Lc3IO::new(Box::new(StdIOTarget {})),
+            io: Lc3IO::new(io_target),
         }
     }
 
@@ -69,7 +78,10 @@ impl VM {
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            self.io.print_vm_error("Overflow Error:", "The PC attempted to increment past maximum xFFFF");
+            self.io.print_vm_error(
+                "Overflow Error:",
+                "The PC attempted to increment past maximum xFFFF",
+            );
             self.registers.halt = true;
             return;
         }

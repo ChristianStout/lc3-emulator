@@ -1,14 +1,17 @@
-use crate::io::Lc3IO;
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
 use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL, PUTSP_VAL};
+use crate::io::Lc3IO;
+use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use typetag;
 
 /*
 Uses the command pattern to execute functions dynamically
 */
 
-#[allow(dead_code)]
+#[typetag::serde(tag = "type")]
 pub trait Instruction {
     /*
     value is the raw instruction interpreted from the asm,
@@ -20,22 +23,49 @@ pub trait Instruction {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO);
 }
 
-#[allow(dead_code, unused_variables)]
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Add;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct And;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Br;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct JmpRet;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Jsr;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Ld;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Ldi;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Ldr;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Lea;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Not;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Rti;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct St;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Sti;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Str;
 
+#[typetag::serde]
 impl Instruction for Add {
     /// Add adds two numbers together, and stores it in a separate register. If the control code (6th from the end)
     /// is 0, then the last three bits are the second source register. If the control
@@ -106,6 +136,7 @@ impl Instruction for Add {
     }
 }
 
+#[typetag::serde]
 impl Instruction for And {
     /// And does a bitwise `&` operation. If the control code (6th from the end)
     /// is 0, then the last three bits are the second source register. If the control
@@ -185,6 +216,7 @@ impl Instruction for And {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Br {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -210,6 +242,7 @@ impl Instruction for Br {
     }
 }
 
+#[typetag::serde]
 impl Instruction for JmpRet {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -227,6 +260,7 @@ impl Instruction for JmpRet {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Jsr {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -262,6 +296,7 @@ impl Instruction for Jsr {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Ld {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -279,6 +314,7 @@ impl Instruction for Ld {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Ldi {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -288,7 +324,7 @@ impl Instruction for Ldi {
         */
         let dr = value >> 9;
         let pcoffset9 = get_offset(value, 9);
-        let relative_pc_address = get_pcoffset_location(reg, pcoffset9); 
+        let relative_pc_address = get_pcoffset_location(reg, pcoffset9);
 
         let ptr = mem.get(relative_pc_address);
         let new_value = mem.get(ptr);
@@ -297,6 +333,7 @@ impl Instruction for Ldi {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Ldr {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -321,6 +358,7 @@ impl Instruction for Ldr {
 }
 
 /// Loads memory location of the label into memory
+#[typetag::serde]
 impl Instruction for Lea {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -339,6 +377,7 @@ impl Instruction for Lea {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Not {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -361,6 +400,7 @@ impl Instruction for Not {
 }
 
 // TODO: Impl rti
+#[typetag::serde]
 impl Instruction for Rti {
     fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -372,6 +412,7 @@ impl Instruction for Rti {
     }
 }
 
+#[typetag::serde]
 impl Instruction for St {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -387,6 +428,7 @@ impl Instruction for St {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Sti {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -403,6 +445,7 @@ impl Instruction for Sti {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Str {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -423,6 +466,7 @@ impl Instruction for Str {
     }
 }
 
+#[typetag::serde]
 impl Instruction for Trap {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
         /*
@@ -678,7 +722,7 @@ mod test {
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let ld = super::Ld {};
-    
+
         reg.pc = 3000;
         let val: i16 = -16;
         let ins = 0b0000_001_111111111;
@@ -698,7 +742,6 @@ mod test {
         ld.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(reg.get(1) == val as u16);
         assert!(reg.p == true);
- 
 
         let val: i16 = 0;
         mem.set(2999, val as u16);
@@ -708,8 +751,7 @@ mod test {
         ld.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(reg.get(1) == val as u16);
         assert!(reg.z == true);
-     }
-
+    }
 
     #[test]
     fn test_ldi() {
@@ -718,7 +760,7 @@ mod test {
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let ldi = super::Ldi {};
-    
+
         reg.pc = 3000;
         let ptr: u16 = 0x3145;
         mem.set(2999, ptr);
@@ -741,7 +783,6 @@ mod test {
         ldi.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(reg.get(1) == val as u16);
         assert!(reg.p == true);
- 
 
         let val: i16 = 0;
         mem.set(ptr, val as u16);
@@ -782,7 +823,6 @@ mod test {
         ldr.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(reg.get(1) == val as u16);
         assert!(reg.p == true);
- 
 
         let val: i16 = 0;
         mem.set(location, val as u16);
@@ -810,7 +850,7 @@ mod test {
         lea.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(reg.get(1) == 2999);
         assert!(reg.p == true);
- 
+
         reg.pc = 1;
 
         assert!(reg.get(1) != 0);
@@ -897,12 +937,11 @@ mod test {
         st.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(location) == val as u16);
 
-
         let ins: u16 = 0b0000_001_000000001;
         let location = 3001;
         let val: i16 = 42;
         reg.set(1, val as u16);
-        
+
         assert!(mem.get(location) != val as u16);
         st.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(location) == val as u16);
@@ -929,14 +968,13 @@ mod test {
         sti.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(ptr) == val as u16);
 
-
         let ins: u16 = 0b0000_001_000000001;
         let location = 3001;
         let ptr = 0x0A1C;
         let val: i16 = 42;
         mem.set(location, ptr);
         reg.set(1, val as u16);
-        
+
         assert!(mem.get(ptr) != val as u16);
         sti.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(ptr) == val as u16);
@@ -962,13 +1000,12 @@ mod test {
         str.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(ptr - 1) == val as u16);
 
-
         let ins: u16 = 0b0000_001_111_000001;
         let ptr: u16 = 0x0A1C;
         let val: u16 = 42;
         reg.set(1, val);
         reg.set(7, ptr);
-        
+
         assert!(mem.get(ptr + 1) != val as u16);
         str.exe(ins, &mut reg, &mut mem, &mut io);
         assert!(mem.get(ptr + 1) == val as u16);
@@ -1022,7 +1059,5 @@ mod test {
     }
 
     #[test]
-    fn test_load_ins_set_nzp() {
-
-    }
+    fn test_load_ins_set_nzp() {}
 }

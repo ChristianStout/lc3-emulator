@@ -1,5 +1,9 @@
 use super::{memory::Memory, registers::Registers};
 use crate::io::Lc3IO;
+use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+
+#[derive(Tsify, Serialize, Deserialize)]
 pub struct Trap;
 
 impl Trap {
