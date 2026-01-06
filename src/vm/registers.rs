@@ -1,3 +1,7 @@
+use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+
+#[derive(Serialize, Deserialize, Tsify)]
 pub struct Registers {
     pub r: [u16; 8],
     pub pc: u16,
