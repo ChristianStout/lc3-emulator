@@ -1,11 +1,5 @@
 import { get_tokens, highlight_text } from "../../pkg/lc3_emulator.js";
 
-const select = document.getElementById("themeSelect");
-document.body.dataset.theme = select.value; // to make sure that the default is loaded on init
-select.addEventListener("change", () => {
-  document.body.dataset.theme = select.value;
-});
-
 /*
 The following three functions and corresponding html & css are from:
 https://css-tricks.com/creating-an-editable-textarea-that-supports-syntax-highlighted-code/

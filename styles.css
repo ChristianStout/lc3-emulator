@@ -1,3 +1,7 @@
+:root {
+    --info-panel-width: 370px;
+}
+
 body[data-theme="light"] {
     --bg: rgb(239, 241, 245);
     --fg: rgb(76, 79, 105);
@@ -8,8 +12,9 @@ body[data-theme="light"] {
     --panel-bg: rgb(204, 208, 218);
     --border: rgb(220, 224, 232);
     --editor-bg: rgb(239, 241, 245);
-    --run-button: rgb(64, 160, 43);
-    --run-button-hover: rgb(23, 146, 153);
+    --console-bg: rgb(188, 192, 204);
+    --run-button: rgb(4, 165, 229);
+    --run-button-hover: rgb(30, 102, 245);
     --button: rgb(239, 241, 245);
     --button-hover: rgb(230, 233, 239);
 }
@@ -24,7 +29,11 @@ body[data-theme="dark"] {
     --panel-bg: rgb(48, 52, 70);
     --border: rgb(65, 69, 89);
     --editor-bg: rgb(41, 44, 60);
-    --run-button: rgb(166, 218, 149);
+    --console-bg: rgb(54, 58, 79);
+    --run-button: rgb(73, 77, 100);
+    --run-button-hover: rgb(54, 58, 79);
+    --button: rgb(91, 96, 120);
+    --button-hover: rgb(54, 58, 79);
 }
 
 * {
@@ -33,8 +42,8 @@ body[data-theme="dark"] {
     padding: 0;
     color: var(--fg);
     transition:
-        color 0.1s,
-        background-color 0.1s;
+        color 0.2s,
+        background-color 0.2s;
 }
 
 html,
@@ -67,6 +76,7 @@ body {
     background-color: var(--bottom-bar-bg);
     color: var(--bottom-bar-fg);
     height: 24px;
+    border-top: 1px solid var(--border);
 }
 
 .ide {
@@ -79,7 +89,6 @@ body {
 .editor {
     flex: 1;
     resize: none;
-    border: none;
     outline: none;
     padding: 12px;
     margin: 12px;
@@ -91,8 +100,64 @@ body {
     background-color: var(--editor-bg);
 }
 
+.panel-item {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    outline: none;
+    margin-top: 12px;
+}
+
+.registers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /*padding-top: 12px;
+    padding-bottom: 12px;*/
+    font-family: monospace;
+    font-size: 11pt;
+    /*padding-left: 8px;*/
+}
+
+.reg-listing {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    /*margin: 3px;*/
+    border: 1px solid var(--border);
+    /*margin-top: 24px;
+    margin-bottom: 24px;
+    padding-top: 12px;*/
+}
+
+.reg-label {
+    border-right: 1px solid var(--border);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.reg-info {
+    align-items: center;
+    text-align: center;
+    padding-left: 19px; /* Because the text wont actually align? */
+}
+
+.console {
+    height: 30%;
+}
+
+.inner-console {
+    flex: 1;
+    resize: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background-color: var(--console-bg);
+    padding: 5px;
+}
+
 .info-panel {
-    width: 360px;
+    width: var(--info-panel-width);
     background: var(--panel-bg);
     padding: 12px;
     margin: 12px;
@@ -115,7 +180,7 @@ body {
 
 .button {
     min-width: 50px;
-    height: 25px;
+    height: 27px;
     border-color: var(--border);
     border: 1px solid var(--border);
     border-radius: 5px;
@@ -125,6 +190,8 @@ body {
     text-align: center;
     padding-left: 8px;
     padding-right: 8px;
+    align-items: center;
+    font-size: 10pt;
 }
 
 .button:hover {
@@ -133,10 +200,18 @@ body {
 
 .run-button {
     background-color: var(--run-button);
+    border-color: var(--run-button);
 }
 
 .run-button:hover {
     background-color: var(--run-button-hover);
+    border-color: var(--button-hover);
+}
+
+.context-menu-button {
+    max-width: 30px;
+    min-width: 30px;
+    align-items: left;
 }
 
 .icon {
@@ -144,7 +219,6 @@ body {
     max-width: 14px;
     color: var(--fg);
     text-align: center;
-    margin-top: 3px;
 }
 
 /*
