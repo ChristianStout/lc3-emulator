@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta xharset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>LC-3 Emulator</title>
         <link rel="stylesheet" href="styles.css" />
+        <script src="src/web/before.js" type="module"></script>
         <script src="src/web/main.js" type="module" defer></script>
         <script src="src/web/mod.js" type="module" defer></script>
     </head>
@@ -39,17 +40,33 @@
             <main class="ide">
                 <textarea
                     class="editor"
-                    placeholder=".ORIG x3000 ..."
+                    placeholder=".orig x3000 ..."
+                    spellcheck="false"
                 ></textarea>
                 <aside class="info-panel">
-                    <!--<h3>Info Panel</h3>
-                    <p>Dummy info goes here.</p>
-                    <p>Status: OK</p>
-                    <p>Lines: 0</p>-->
                     <button class="button run-button">
                         <svg
-                            width="14px"
-                            height="14px"
+                            width="12px"
+                            height="12px"
+                            viewBox="0 0 16 16"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M2.78 2L2 2.41v12l.78.42 9-6V8l-9-6zM3 13.48V3.35l7.6 5.07L3 13.48z"
+                            />
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M6 14.683l8.78-5.853V8L6 2.147V3.35l7.6 5.07L6 13.48v1.203z"
+                            />
+                        </svg>
+                        Load & Run
+                    </button>
+                    <button class="button run-button">
+                        <svg
+                            width="12px"
+                            height="12px"
                             viewBox="0 0 16 16"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
@@ -60,9 +77,69 @@
                         </svg>
                         Run
                     </button>
-                    <button class="button">Step</button>
-                    <button class="button">Enter</button>
-                    <button class="button">Download Binary</button>
+                    <button class="button">
+                        <svg
+                            width="12px"
+                            height="12px"
+                            viewBox="0 0 16 16"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M14.25 5.75v-4h-1.5v2.542c-1.145-1.359-2.911-2.209-4.84-2.209-3.177 0-5.92 2.307-6.16 5.398l-.02.269h1.501l.022-.226c.212-2.195 2.202-3.94 4.656-3.94 1.736 0 3.244.875 4.05 2.166h-2.83v1.5h4.163l.962-.975V5.75h-.004zM8 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+                            />
+                        </svg>
+                        Step
+                    </button>
+                    <button class="button">
+                        <svg
+                            width="12px"
+                            height="12px"
+                            viewBox="0 0 16 16"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M8 9.532h.542l3.905-3.905-1.061-1.06-2.637 2.61V1H7.251v6.177l-2.637-2.61-1.061 1.06 3.905 3.905H8zm1.956 3.481a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"
+                            />
+                        </svg>
+                        Enter
+                    </button>
+
+                    <button class="button context-menu-button">
+                        <svg
+                          width="12px"
+                          height="12px"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <circle cx="12" cy="5" r="2" />
+                          <circle cx="12" cy="12" r="2" />
+                          <circle cx="12" cy="19" r="2" />
+                        </svg>
+                    </button>
+                    <div class="registers panel-item">
+                        <span class="reg-listing"><label class="reg-label">R0</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R1</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R2</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R3</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R4</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R5</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R6</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">R7</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">PC</label><span class="reg-info">x0000</span></span>
+                        <span class="reg-listing"><label class="reg-label">IR</label><span class="reg-info">x0000</span></span>
+                    </div>
+
+                    <div class="console panel-item">
+                        <textarea class="inner-console" spellcheck="false"></textarea>
+                        <div>
                 </aside>
             </main>
 
