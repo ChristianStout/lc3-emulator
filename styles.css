@@ -1,0 +1,249 @@
+body[data-theme="light"] {
+    --bg: rgb(239, 241, 245);
+    --fg: rgb(76, 79, 105);
+    --top-bar-bg: rgb(220, 224, 232);
+    --top-bar-fg: rgb(76, 79, 105);
+    --bottom-bar-bg: rgb(220, 224, 232);
+    --bottom-bar-fg: rgb(76, 79, 105);
+    --panel-bg: rgb(204, 208, 218);
+    --border: rgb(220, 224, 232);
+    --editor-bg: rgb(239, 241, 245);
+    --run-button: rgb(64, 160, 43);
+    --run-button-hover: rgb(23, 146, 153);
+    --button: rgb(239, 241, 245);
+    --button-hover: rgb(230, 233, 239);
+}
+
+body[data-theme="dark"] {
+    --bg: rgb(36, 39, 58);
+    --fg: rgb(202, 211, 245);
+    --top-bar-bg: rgb(41, 44, 60);
+    --top-bar-fg: rgb(202, 211, 245);
+    --bottom-bar-bg: rgb(35, 38, 52);
+    --bottom-bar-fg: rgb(198, 208, 245);
+    --panel-bg: rgb(48, 52, 70);
+    --border: rgb(65, 69, 89);
+    --editor-bg: rgb(41, 44, 60);
+    --run-button: rgb(166, 218, 149);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: var(--fg);
+    transition:
+        color 0.1s,
+        background-color 0.1s;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar,
+.bottom-bar {
+    height: 48px;
+    background: var(--top-bar-bg);
+    color: var(--top-bar-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.bottom-bar {
+    background-color: var(--bottom-bar-bg);
+    color: var(--bottom-bar-fg);
+    height: 24px;
+}
+
+.ide {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background-color: var(--bg);
+}
+
+.editor {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 12px;
+    margin: 12px;
+    margin-right: 6px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 14px;
+    background-color: var(--editor-bg);
+}
+
+.info-panel {
+    width: 360px;
+    background: var(--panel-bg);
+    padding: 12px;
+    margin: 12px;
+    margin-left: 6px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.theme-select {
+    background: var(--panel-bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 8px;
+    margin-left: auto;
+    float: right;
+    min-width: 80px;
+}
+
+.button {
+    min-width: 50px;
+    height: 25px;
+    border-color: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background-color: var(--button);
+    transition: 0.1s;
+    color: var(--fg);
+    text-align: center;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.button:hover {
+    background-color: var(--button-hover);
+}
+
+.run-button {
+    background-color: var(--run-button);
+}
+
+.run-button:hover {
+    background-color: var(--run-button-hover);
+}
+
+.icon {
+    max-height: 16px;
+    max-width: 14px;
+    color: var(--fg);
+    text-align: center;
+    margin-top: 3px;
+}
+
+/*
+    For note on how I did syntax highlighting in the
+    previous version, I have left the HTML and CSS commented out
+    until I reimplement it.
+*/ /*
+body {
+    background-color: #2a2e2c;
+    color:antiquewhite;
+}
+
+div#buttons {
+    display: flex;
+    width: 300px;
+    height: 25px;
+    margin: 30px;
+    text-align: center;
+    position: absolute;
+    border-radius: 12px;
+}
+
+div > button#run-button {
+    background-color: #50EBB7;
+    border: #50EBB7;
+    border-radius: 3px;
+    width: 60px;
+    margin-left: 3px;
+}
+
+div > button#debug-button {
+    background-color: tomato;
+    border: tomato;
+    border-radius: 3px;
+    width: 60px;
+    margin-left: 3px;
+}
+
+#editing, #highlighting {
+    /* Both elements need the same text and space styling so they are directly on top of each other */ /*
+    margin: 30px;
+    padding: 15px;
+    border: 0;
+    width: calc(100% - 32px);
+    height: calc(100 - 32px);
+    border: black solid 3px;
+    margin-top: 90px;
+}
+
+#editing, #highlighting, #highlighting * {
+    /* Also add text styles to highlighting tokens */ /*
+    font-size: 13pt;
+    font-family: monospace;
+    line-height: 20pt;
+}
+
+textarea#editing, pre#highlighting {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 90%;
+    width: 80%;
+}
+
+textarea#editing {
+    z-index: 1;
+    color: transparent;
+    background: transparent;
+    caret-color: white;
+    resize: none;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: scroll;
+}
+
+#highlighting {
+    z-index: 0;
+}
+
+#highlighted-content {
+    color: #ebe1ca;
+}
+
+code > span#highlight-instruction {
+    color: #EBC054;
+}
+
+code > span#highlight-directive {
+    color: #cf54eb;
+}
+
+code > span#highlight-register {
+    color: #50EBB7;
+}
+
+code > span#highlight-comment {
+    color: #909996;
+}
+
+code > span#highlight-string {
+    color: #c2b07e;
+}*/

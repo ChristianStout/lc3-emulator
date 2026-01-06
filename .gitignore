@@ -1,4 +1,6 @@
 /target
+/.zed
+.directory
 LC-3InstructionSet.pdf
 SecretProject.asm
 out.bin
