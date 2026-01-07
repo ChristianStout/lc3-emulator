@@ -1,5 +1,5 @@
-use crate::asm::lexer::*;
-use crate::asm::token::*;
+use lc3::asm::lexer::*;
+use lc3::asm::token::*;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

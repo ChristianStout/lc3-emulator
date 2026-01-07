@@ -52,7 +52,7 @@ mod tests {
     #[test]
     fn test_out() {
         use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(io::DebugIO::new()));
         let mut reg = Registers::new();
         let trap = Trap {};
 

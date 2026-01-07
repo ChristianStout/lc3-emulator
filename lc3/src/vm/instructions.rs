@@ -75,7 +75,7 @@ impl Instruction for Add {
     /// If the result is negative, then n == true, z, p == false.
     /// If the result is zero, te z == true, n, p == false.
     /// If the result is positive, then p == true, n, z == false
-    ///
+    /// ```text
     ///        AND - | 0101 000 000 000 000  |
     ///              | ---- --- --- - -- --- |
     ///              | op   dr  sr1 c -- sr2 |
@@ -83,19 +83,22 @@ impl Instruction for Add {
     ///        AND - | 0101 000 000 1 00000  |
     ///              | ---- --- --- - -----  |
     ///              | op   dr  sr1 c imm5   |
-    ///
+    /// ```
     /// Legend:
+    /// ```text
     ///     op ---> opcode,
     ///     dr ---> desitination register
     ///     sr1 --> source register 1
     ///     sr2 --> source register 2
     ///     imm5 -> immediate value (5-bit 2's compliement)
+    /// ```
     ///
     /// Example:
-    ///
+    /// ```text
     ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] + memory[R2]
     ///
     ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] + 2
+    /// ```
     ///
     /// **NOTE**:
     /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
@@ -148,7 +151,7 @@ impl Instruction for And {
     /// If the result is positive, then p == true, n, z == false
     ///
     /// # Instruction Layout
-    ///
+    /// ```text
     ///        AND - | 0101 000 000 0 00 000 |
     ///              | ---- --- --- - -- --- |
     ///              | op   dr  sr1 c -- sr2 |
@@ -156,9 +159,9 @@ impl Instruction for And {
     ///        AND - | 0101 000 000 1 00000  |
     ///              | ---- --- --- - -----  |
     ///              | op   dr  sr1 c imm5   |
-    ///
-    /// ## Legend:
     /// ```
+    /// ## Legend:
+    /// ```text
     ///     op ---> opcode,
     ///     dr ---> desitination register
     ///     sr1 --> source register 1
@@ -167,11 +170,11 @@ impl Instruction for And {
     ///```
     ///
     /// # Example:
-    ///
+    /// ```text
     ///     ADD R0, R1, R2 ; -> memory[R0] = memory[R1] & memory[R2]
     ///
     ///     ADD R0, R1, #2 ; -> memory[R0] = memory[R1] & 2
-    ///
+    /// ```
     /// **NOTE**:
     /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
     /// an immediate value is [-16, 15].
@@ -560,11 +563,11 @@ fn get_pcoffset_location(reg: &Registers, value: u16) -> u16 {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::io::*;
 
     #[test]
     fn test_add() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let add = super::Add {};
@@ -608,8 +611,7 @@ mod test {
 
     #[test]
     fn test_and() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let and = super::And {};
@@ -657,8 +659,7 @@ mod test {
 
     #[test]
     fn test_jmp() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let jmp = super::JmpRet {};
@@ -683,8 +684,7 @@ mod test {
 
     #[test]
     fn test_ret() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let jmp = super::JmpRet {};
@@ -717,8 +717,7 @@ mod test {
 
     #[test]
     fn test_ld() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let ld = super::Ld {};
@@ -755,8 +754,7 @@ mod test {
 
     #[test]
     fn test_ldi() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let ldi = super::Ldi {};
@@ -796,8 +794,7 @@ mod test {
 
     #[test]
     fn test_ldr() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let ldr = super::Ldr {};
@@ -836,8 +833,7 @@ mod test {
 
     #[test]
     fn test_lea() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let lea = super::Lea {};
@@ -862,8 +858,7 @@ mod test {
 
     #[test]
     fn test_not() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let not = super::Not {};
@@ -920,8 +915,7 @@ mod test {
 
     #[test]
     fn test_st() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let st = super::St {};
@@ -949,8 +943,7 @@ mod test {
 
     #[test]
     fn test_sti() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let sti = super::Sti {};
@@ -982,8 +975,7 @@ mod test {
 
     #[test]
     fn test_str() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         let str = super::Str {};
@@ -1033,8 +1025,7 @@ mod test {
 
     #[test]
     fn test_negative_pc_offsets() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::StdIOTarget {}));
+        let mut io = super::Lc3IO::new(Box::new(DebugIO::new()));
         let mut mem = super::Memory::new();
         let mut reg = super::Registers::new();
         reg.pc = 3000;

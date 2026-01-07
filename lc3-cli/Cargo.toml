@@ -1,0 +1,13 @@
+[package]
+name = "lc3-cli"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "lc3"
+path = "src/main.rs"
+
+[dependencies]
+lc3 = {path = "../lc3"}
+clap = { version = "4.5.46", features = ["derive"] }
+crossterm = "0.29.0"

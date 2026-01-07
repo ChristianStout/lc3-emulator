@@ -264,12 +264,32 @@ dependencies = [
 ]
 
 [[package]]
-name = "lc3-emulator"
+name = "lc3"
 version = "0.1.0"
 dependencies = [
  "clap",
  "crossterm",
  "regex",
+ "serde",
+ "tsify",
+ "typetag",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "lc3-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "crossterm",
+ "lc3",
+]
+
+[[package]]
+name = "lc3-web"
+version = "0.1.0"
+dependencies = [
+ "lc3",
  "serde",
  "tsify",
  "typetag",

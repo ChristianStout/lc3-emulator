@@ -1,12 +1,12 @@
-pub mod asm;
-pub mod cli;
-pub mod vm;
-pub mod web;
-pub mod io;
+mod cli;
+mod stdio;
 
-use crate::asm::asm::Asm;
-use crate::vm::vm::VM;
+use lc3;
+use lc3::asm::asm::Asm;
+use lc3::io::Lc3IO;
+use lc3::vm::vm::VM;
 use std::fs;
+use stdio::*;
 
 fn main() {
     let cli = cli::get_cli();
@@ -32,6 +32,8 @@ fn main() {
         asm.emit_bin(&binary_file, "out.bin".to_string());
     }
 
+    let mut io = Lc3IO::new(Box::new(StdIOTarget {}));
+
     let mut vm = VM::new();
-    vm.run(binary_file);
+    vm.run(binary_file, &mut io);
 }
