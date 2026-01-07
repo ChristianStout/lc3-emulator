@@ -6,5 +6,5 @@ pub fn get_vm() -> VM {
     return VM::new();
 }
 
-#[wasm_bindgen]
-pub fn
+// #[wasm_bindgen]
+// pub fn

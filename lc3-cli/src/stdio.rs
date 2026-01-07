@@ -1,72 +1,12 @@
-use super::vm::memory::Memory;
-use super::vm::registers::Registers;
 use crossterm::event::*;
 use crossterm::terminal;
-use serde::{Deserialize, Serialize};
-use std::collections::VecDeque;
+use lc3::io::IOTarget;
+use lc3::vm::memory::Memory;
+use lc3::vm::registers::Registers;
 use std::io::*;
-use tsify::Tsify;
-use typetag;
 
-#[allow(unused)]
-#[derive(Serialize, Deserialize, Tsify)]
-pub struct Lc3IO {
-    stdin: VecDeque<u8>,
-    stdout: VecDeque<u8>,
-    target: Box<dyn IOTarget>,
-}
-
-#[typetag::serde(tag = "type")]
-pub trait IOTarget {
-    fn get_char(&self) -> char;
-    fn print_string(&self, reg: &mut Registers, mem: &mut Memory);
-    fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory);
-    fn print_single_char(&self, reg: &mut Registers);
-    fn print_asm_error(&self, err_msg: &str);
-    fn print_vm_error(&self, error_name: &str, error_msg: &str);
-}
-
-#[derive(Serialize, Deserialize, Tsify)]
 pub struct StdIOTarget;
 
-#[derive(Serialize, Deserialize, Tsify)]
-pub struct WebIOTarget;
-
-impl Lc3IO {
-    pub fn new(target: Box<dyn IOTarget>) -> Lc3IO {
-        Lc3IO {
-            stdin: VecDeque::new(),
-            stdout: VecDeque::new(),
-            target: target,
-        }
-    }
-
-    pub fn get_char(&self) -> char {
-        return self.target.get_char();
-    }
-
-    pub fn print_string(&self, reg: &mut Registers, mem: &mut Memory) {
-        self.target.print_string(reg, mem);
-    }
-
-    pub fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory) {
-        self.target.print_string_special(reg, mem);
-    }
-
-    pub fn print_single_char(&self, reg: &mut Registers) {
-        self.target.print_single_char(reg);
-    }
-
-    pub fn print_vm_error(&self, error_name: &str, error_msg: &str) {
-        self.target.print_vm_error(error_name, error_msg);
-    }
-
-    pub fn print_asm_error(&self, error: &str) {
-        self.target.print_asm_error(error);
-    }
-}
-
-#[typetag::serde]
 impl IOTarget for StdIOTarget {
     fn get_char(&self) -> char {
         terminal::enable_raw_mode().expect("Expected to be able to enter raw mode in get_char()");

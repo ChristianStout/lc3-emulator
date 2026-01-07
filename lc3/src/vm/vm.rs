@@ -7,7 +7,7 @@ use super::instructions::{
 use super::memory::Memory;
 use super::registers::Registers;
 use super::trap::Trap;
-use crate::io::*;
+use crate::io::Lc3IO;
 use std::collections::HashMap;
 
 const CMD_SIZE: u8 = 16;
@@ -20,16 +20,11 @@ pub struct VM {
     instructions: HashMap<u8, Box<dyn Instruction>>,
     registers: Registers,
     memory: Memory,
-    io: Lc3IO,
 }
 
 #[allow(dead_code)]
 impl VM {
     pub fn new() -> VM {
-        return VM::new_with_io_target(Box::new(StdIOTarget {}));
-    }
-
-    pub fn new_with_io_target(io_target: Box<dyn IOTarget>) -> VM {
         let mut ins: HashMap<u8, Box<dyn Instruction>> = HashMap::new();
 
         ins.insert(0, Box::new(Br {}));
@@ -53,11 +48,10 @@ impl VM {
             instructions: ins,
             registers: Registers::new(),
             memory: Memory::new(),
-            io: Lc3IO::new(io_target),
         }
     }
 
-    pub fn run(&mut self, file: Vec<u16>) {
+    pub fn run(&mut self, file: Vec<u16>, io: &mut Lc3IO) {
         self.registers.pc = file[0];
 
         self.memory.load_file(file);
@@ -66,11 +60,11 @@ impl VM {
             // print!("\n{:#06x}\t : ", self.registers.pc);
             // print!("\n{:#04}\t : ", self.registers.pc);
 
-            self.run_single_command();
+            self.run_single_command(io);
         }
     }
 
-    pub fn run_single_command(&mut self) {
+    pub fn run_single_command(&mut self, io: &mut Lc3IO) {
         if self.registers.halt == true {
             return;
         }
@@ -78,7 +72,7 @@ impl VM {
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            self.io.print_vm_error(
+            io.print_vm_error(
                 "Overflow Error:",
                 "The PC attempted to increment past maximum xFFFF",
             );
@@ -89,12 +83,7 @@ impl VM {
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
         let value: u16 = cmd - (opcode << OPCODE_DELTA);
-        self.instructions[&(opcode as u8)].exe(
-            value,
-            &mut self.registers,
-            &mut self.memory,
-            &mut self.io,
-        );
+        self.instructions[&(opcode as u8)].exe(value, &mut self.registers, &mut self.memory, io);
     }
 }
 
@@ -102,6 +91,7 @@ impl VM {
 mod tests {
     use super::*;
     use crate::asm::asm::Asm;
+    use crate::io::*;
 
     fn run_vm(file: &str) -> VM {
         let file = format!(
@@ -126,7 +116,8 @@ mod tests {
 
         let mut vm = VM::new();
 
-        vm.run(binary_file);
+        let mut io = Lc3IO::new(Box::new(DebugIO::new()));
+        vm.run(binary_file, &mut io);
 
         return vm;
     }
@@ -269,7 +260,8 @@ start   ld r1, max
         assert!(vm.registers.halt == false);
 
         vm.registers.pc = 0xFFFF;
-        vm.run_single_command();
+        let mut io = Lc3IO::new(Box::new(DebugIO::new()));
+        vm.run_single_command(&mut io);
 
         assert!(vm.registers.halt == true);
     }
