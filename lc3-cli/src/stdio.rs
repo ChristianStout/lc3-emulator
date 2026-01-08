@@ -8,7 +8,7 @@ use std::io::*;
 pub struct StdIOTarget;
 
 impl IOTarget for StdIOTarget {
-    fn get_char(&self) -> char {
+    fn get_char(&mut self) -> char {
         terminal::enable_raw_mode().expect("Expected to be able to enter raw mode in get_char()");
 
         let out_c: char;
@@ -61,7 +61,7 @@ impl IOTarget for StdIOTarget {
         return out_c;
     }
 
-    fn print_string(&self, reg: &mut Registers, mem: &mut Memory) {
+    fn print_string(&mut self, reg: &mut Registers, mem: &mut Memory) {
         let mut i = reg.get(0);
         let mut c = mem.get(i) as u8 as char;
 
@@ -75,7 +75,7 @@ impl IOTarget for StdIOTarget {
             .expect("Expected to be able to flush stdout after printing a string to the console.");
     }
 
-    fn print_string_special(&self, reg: &mut Registers, mem: &mut Memory) {
+    fn print_string_special(&mut self, reg: &mut Registers, mem: &mut Memory) {
         // let mut i = reg.get(0);
         // let mut c = mem.get(i) as u8 as char;
 
@@ -90,18 +90,18 @@ impl IOTarget for StdIOTarget {
         println!("PUTSP executed!");
     }
 
-    fn print_single_char(&self, reg: &mut Registers) {
+    fn print_single_char(&mut self, reg: &mut Registers) {
         print!("{}", reg.get(0) as u8 as char);
         std::io::stdout().flush().expect(
             "Expected to be able to flush stdout after printing a char to the console in out().",
         );
     }
 
-    fn print_vm_error(&self, error_name: &str, error_msg: &str) {
+    fn print_vm_error(&mut self, error_name: &str, error_msg: &str) {
         println!("{error_name}: {error_msg}\n");
     }
 
-    fn print_asm_error(&self, err_msg: &str) {
+    fn print_asm_error(&mut self, err_msg: &str) {
         println!("{}", err_msg);
     }
 }

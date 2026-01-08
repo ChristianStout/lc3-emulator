@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>LC-3 Emulator</title>
         <link rel="stylesheet" href="styles.css" />
-        <script src="src/web/before.js" type="module"></script>
-        <script src="src/web/main.js" type="module" defer></script>
-        <script src="src/web/mod.js" type="module" defer></script>
+        <script src="lc3-web/src/before.js" type="module"></script>
+        <script src="lc3-web/src/main.js" type="module" defer></script>
+        <script src="lc3-web/src/mod.js" type="module" defer></script>
     </head>
     <body>
         <!--<div id="app-contents">
@@ -48,7 +48,7 @@
 
 
                 <aside class="info-panel">
-                    <button class="button run-button">
+                    <button class="button run-button" id="loadAndRunButton">
                         <svg
                             width="12px"
                             height="12px"
@@ -67,7 +67,7 @@
                         </svg>
                         Load & Run
                     </button>
-                    <button class="button run-button">
+                    <button class="button run-button" id="runButton">
                         <svg
                             width="12px"
                             height="12px"
@@ -81,7 +81,7 @@
                         </svg>
                         Run
                     </button>
-                    <button class="button">
+                    <button class="button" id="stepButton">
                         <svg
                             width="12px"
                             height="12px"
@@ -97,7 +97,7 @@
                         </svg>
                         Step
                     </button>
-                    <button class="button">
+                    <button class="button" id="enterButton">
                         <svg
                             width="12px"
                             height="12px"
@@ -114,7 +114,7 @@
                         Enter
                     </button>
 
-                    <button class="button context-menu-button">
+                    <button class="button context-menu-button" id="contextMenuButton">
                         <svg
                           width="12px"
                           height="12px"

@@ -10,6 +10,4 @@ console.log("Initialized");
 select.addEventListener("change", () => {
   document.body.dataset.theme = select.value;
   localStorage.setItem("theme", select.value);
-  console.log("This is a thing!!");
-  console.log(th);
 });
