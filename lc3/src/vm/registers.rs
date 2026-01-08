@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use tsify::Tsify;
 
 #[derive(Serialize, Deserialize, Tsify)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct Registers {
     pub r: [u16; 8],
     pub pc: u16,

@@ -4,6 +4,7 @@ use tsify::Tsify;
 const POW_2_16: usize = 2_usize.pow(16);
 
 #[derive(Serialize, Deserialize, Tsify)]
+#[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct Memory {
     #[serde(
         serialize_with = "serialize_memory",
@@ -29,6 +30,12 @@ impl Memory {
 
             vec_i += 1;
             mem_i += 1;
+        }
+    }
+
+    pub fn clear(&mut self) {
+        for i in self.inner {
+            self.inner[i as usize] = 0;
         }
     }
 
