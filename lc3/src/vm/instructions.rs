@@ -3,15 +3,18 @@ use super::registers::Registers;
 use super::trap::Trap;
 use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL, PUTSP_VAL};
 use crate::io::Lc3IO;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "serde")]
 use tsify::Tsify;
+#[cfg(feature = "serde")]
 use typetag;
 
 /*
 Uses the command pattern to execute functions dynamically
 */
 
-#[typetag::serde(tag = "type")]
+#[cfg_attr(feature = "serde", typetag::serde(tag = "type"))]
 pub trait Instruction {
     /*
     value is the raw instruction interpreted from the asm,
@@ -23,49 +26,49 @@ pub trait Instruction {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO);
 }
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Add;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct And;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Br;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct JmpRet;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Jsr;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Ld;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Ldi;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Ldr;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Lea;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Not;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Rti;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct St;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Sti;
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 pub struct Str;
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Add {
     /// Add adds two numbers together, and stores it in a separate register. If the control code (6th from the end)
     /// is 0, then the last three bits are the second source register. If the control
@@ -139,7 +142,7 @@ impl Instruction for Add {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for And {
     /// And does a bitwise `&` operation. If the control code (6th from the end)
     /// is 0, then the last three bits are the second source register. If the control
@@ -219,7 +222,7 @@ impl Instruction for And {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Br {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -245,7 +248,7 @@ impl Instruction for Br {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for JmpRet {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -263,7 +266,7 @@ impl Instruction for JmpRet {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Jsr {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -299,7 +302,7 @@ impl Instruction for Jsr {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ld {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -317,7 +320,7 @@ impl Instruction for Ld {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ldi {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -336,7 +339,7 @@ impl Instruction for Ldi {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ldr {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -361,7 +364,7 @@ impl Instruction for Ldr {
 }
 
 /// Loads memory location of the label into memory
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Lea {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -380,7 +383,7 @@ impl Instruction for Lea {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Not {
     fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -403,7 +406,7 @@ impl Instruction for Not {
 }
 
 // TODO: Impl rti
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Rti {
     fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -415,7 +418,7 @@ impl Instruction for Rti {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for St {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -431,7 +434,7 @@ impl Instruction for St {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Sti {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -448,7 +451,7 @@ impl Instruction for Sti {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Str {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
         /*
@@ -469,7 +472,7 @@ impl Instruction for Str {
     }
 }
 
-#[typetag::serde]
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Trap {
     fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
         /*

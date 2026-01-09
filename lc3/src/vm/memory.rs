@@ -1,14 +1,19 @@
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde")]
 use tsify::Tsify;
 
 const POW_2_16: usize = 2_usize.pow(16);
 
-#[derive(Serialize, Deserialize, Tsify)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct Memory {
-    #[serde(
-        serialize_with = "serialize_memory",
-        deserialize_with = "deserialize_memory"
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            serialize_with = "serialize_memory",
+            deserialize_with = "deserialize_memory"
+        )
     )]
     inner: [u16; POW_2_16],
 }
@@ -48,6 +53,7 @@ impl Memory {
     }
 }
 
+#[cfg(feature = "serde")]
 fn serialize_memory<S>(data: &[u16; POW_2_16], serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
@@ -55,6 +61,7 @@ where
     serializer.collect_seq(data.iter())
 }
 
+#[cfg(feature = "serde")]
 fn deserialize_memory<'de, D>(deserializer: D) -> Result<[u16; POW_2_16], D::Error>
 where
     D: Deserializer<'de>,

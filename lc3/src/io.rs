@@ -1,7 +1,15 @@
 use super::vm::memory::Memory;
 use super::vm::registers::Registers;
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
+#[cfg(feature = "serde")]
+use tsify::Tsify;
+#[cfg(feature = "serde")]
+use typetag;
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct Lc3IO {
     target: Box<dyn IOTarget>,
 }
@@ -36,6 +44,7 @@ impl Lc3IO {
     }
 }
 
+#[cfg_attr(feature = "serde", typetag::serde(tag = "type"))]
 pub trait IOTarget {
     fn get_char(&mut self) -> char;
     fn print_string(&mut self, reg: &mut Registers, mem: &mut Memory);
@@ -45,6 +54,8 @@ pub trait IOTarget {
     fn print_vm_error(&mut self, error_name: &str, error_msg: &str);
 }
 
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct DebugIO {
     input_stream: VecDeque<u8>,
     output_stream: VecDeque<u8>,
@@ -59,6 +70,7 @@ impl DebugIO {
     }
 }
 
+#[cfg_attr(feature = "serde", typetag::serde)]
 impl IOTarget for DebugIO {
     fn get_char(&mut self) -> char {
         return '0';

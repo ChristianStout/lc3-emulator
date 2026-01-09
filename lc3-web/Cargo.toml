@@ -7,7 +7,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-lc3 = {path = "../lc3"}
+lc3 = {path = "../lc3", features = ["serde"]}
 serde = { version = "1.0", features = ["derive"] }
 tsify = "0.4.5"
 typetag = "0.2.21"

@@ -1,11 +1,13 @@
 use super::asm_ins::OperandType;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
+#[cfg(feature = "serde")]
 use tsify::Tsify;
-use wasm_bindgen::prelude::*;
 
-#[derive(Debug, PartialEq, Clone, Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(Tsify, Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub enum Directive {
     ORIG,
     FILL,

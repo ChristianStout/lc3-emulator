@@ -6,6 +6,7 @@ use lc3::vm::registers::Registers;
 use serde::Deserialize;
 use serde::Serialize;
 use tsify::Tsify;
+use typetag;
 use wasm_bindgen::prelude::*;
 
 #[derive(Serialize, Deserialize, Tsify)]
@@ -24,6 +25,7 @@ impl WebIO {
     }
 }
 
+#[typetag::serde]
 impl IOTarget for WebIO {
     fn get_char(&mut self) -> char {
         while self.input_stream.len() == 0 {}
