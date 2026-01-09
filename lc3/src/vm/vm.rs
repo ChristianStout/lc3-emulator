@@ -21,13 +21,14 @@ const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 #[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct VM {
-    instructions: HashMap<u8, Box<dyn Instruction>>,
-    registers: Registers,
-    memory: Memory,
+    pub instructions: HashMap<u8, Box<dyn Instruction>>,
+    pub registers: Registers,
+    pub memory: Memory,
+    pub io: Lc3IO,
 }
 
 impl VM {
-    pub fn new() -> VM {
+    pub fn new(io: Lc3IO) -> VM {
         let mut ins: HashMap<u8, Box<dyn Instruction>> = HashMap::new();
 
         ins.insert(0, Box::new(Br {}));
@@ -51,10 +52,11 @@ impl VM {
             instructions: ins,
             registers: Registers::new(),
             memory: Memory::new(),
+            io: io,
         }
     }
 
-    pub fn run(&mut self, file: Vec<u16>, io: &mut Lc3IO) {
+    pub fn run(&mut self, file: Vec<u16>) {
         self.registers.pc = file[0];
 
         self.memory.load_file(file);
@@ -63,11 +65,11 @@ impl VM {
             // print!("\n{:#06x}\t : ", self.registers.pc);
             // print!("\n{:#04}\t : ", self.registers.pc);
 
-            self.run_single_command(io);
+            self.run_single_command();
         }
     }
 
-    pub fn run_single_command(&mut self, io: &mut Lc3IO) {
+    pub fn run_single_command(&mut self) {
         if self.registers.halt == true {
             return;
         }
@@ -75,7 +77,7 @@ impl VM {
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            io.print_vm_error(
+            self.io.print_vm_error(
                 "Overflow Error:",
                 "The PC attempted to increment past maximum xFFFF",
             );
@@ -86,7 +88,12 @@ impl VM {
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
         let value: u16 = cmd - (opcode << OPCODE_DELTA);
-        self.instructions[&(opcode as u8)].exe(value, &mut self.registers, &mut self.memory, io);
+        self.instructions[&(opcode as u8)].exe(
+            value,
+            &mut self.registers,
+            &mut self.memory,
+            &mut self.io,
+        );
     }
 }
 
@@ -117,10 +124,10 @@ mod tests {
 
         println!("\nBinary file:");
 
-        let mut vm = VM::new();
+        let io = Lc3IO::new(Box::new(DebugIO::new()));
+        let mut vm = VM::new(io);
 
-        let mut io = Lc3IO::new(Box::new(DebugIO::new()));
-        vm.run(binary_file, &mut io);
+        vm.run(binary_file);
 
         return vm;
     }
@@ -259,13 +266,12 @@ start   ld r1, max
 
     #[test]
     fn test_pc_overflow_halts_vm() {
-        let mut vm = VM::new();
+        let io = Lc3IO::new(Box::new(DebugIO::new()));
+        let mut vm = VM::new(io);
         assert!(vm.registers.halt == false);
 
         vm.registers.pc = 0xFFFF;
-        let mut io = Lc3IO::new(Box::new(DebugIO::new()));
-        vm.run_single_command(&mut io);
-
+        vm.run_single_command();
         assert!(vm.registers.halt == true);
     }
 }

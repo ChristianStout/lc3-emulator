@@ -11,12 +11,18 @@ use typetag;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 #[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct Lc3IO {
+    input_stream: VecDeque<char>,
+    output_stream: String,
     target: Box<dyn IOTarget>,
 }
 
 impl Lc3IO {
     pub fn new(target: Box<dyn IOTarget>) -> Lc3IO {
-        Lc3IO { target: target }
+        Lc3IO {
+            input_stream: VecDeque::new(),
+            output_stream: String::new(),
+            target: target,
+        }
     }
 
     pub fn get_char(&mut self) -> char {
