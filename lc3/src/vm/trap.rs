@@ -19,22 +19,38 @@ impl Trap {
 
     /// Outputs the value in R0 as a char to the console
     pub fn out(&self, reg: &mut Registers, io: &mut Lc3IO) {
-        io.print_single_char(reg);
+        let c = reg.get(0) as u8 as char;
+        io.put_char(c);
     }
 
     /// prints a string to the console pointed to by R0
     pub fn put_s(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
-        io.print_string(reg, mem);
+        let mut i = reg.get(0);
+        let mut c = mem.get(i) as u8 as char;
+
+        while c != '\0' {
+            io.put_char(c);
+            i += 1;
+            c = mem.get(i) as u8 as char;
+        }
     }
 
     pub fn put_sp(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
-        io.print_string_special(reg, mem);
+        // io.print_string_special(reg, mem);
+        unimplemented!();
     }
 
     /// Prints a prompt string pointed to by R0,
     /// then takes a single char as input from the console and puts it in R0
     pub fn r#in(&self, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
-        io.print_string(reg, mem);
+        let mut i = reg.get(0);
+        let mut c = mem.get(i) as u8 as char;
+
+        while c != '\0' {
+            io.put_char(c);
+            i += 1;
+            c = mem.get(i) as u8 as char;
+        }
 
         let c = io.get_char();
         reg.set(0, c as u16);
@@ -51,11 +67,11 @@ impl Trap {
 mod tests {
     use super::*;
     use crate::vm::registers::Registers;
+    use crate::io::*;
 
     #[test]
     fn test_out() {
-        use crate::io;
-        let mut io = super::Lc3IO::new(Box::new(io::DebugIO::new()));
+        let mut io = Lc3IO::new(Box::new(DebugIO::new()));
         let mut reg = Registers::new();
         let trap = Trap {};
 
