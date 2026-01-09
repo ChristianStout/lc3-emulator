@@ -1,16 +1,10 @@
 // import { highlight_text, update, sync_scroll, check_tab } from './main.js';
 import init from "../pkg/lc3_web.js";
-import {
-  get_tokens,
-  highlight_text,
-  get_vm,
-  get_io,
-  assemble,
-} from "../pkg/lc3_web.js";
+import { get_tokens, highlight_text, assemble, WebVM } from "../pkg/lc3_web.js";
 await init();
 
-const VM = get_vm();
-const IO = get_io();
+const VM = new WebVM();
+// const IO = get_io();
 
 const Error = Object.freeze({ NONE: 0, FAIL: 1 });
 
@@ -67,7 +61,7 @@ runButton.addEventListener("click", (e) => {
 });
 
 function run() {
-  while (!VM.registers.halt) {
+  while (!VM.is_halted()) {
     if (IO.output_stream.length > 0) {
       let out = "";
       for (c in IO.output_stream) {
@@ -102,10 +96,10 @@ function loadToMachine(file) {
     return false;
   }
 
-  VM.registers.pc = binary[0];
+  VM.set_pc(binary[0]);
 
-  // VM.memory.clear();
-  VM.memory.load_file(binary);
+  VM.clear_memory();
+  VM.load_into_memory(binary);
 
   return true;
 }

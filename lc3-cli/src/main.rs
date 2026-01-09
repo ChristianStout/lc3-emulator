@@ -32,8 +32,8 @@ fn main() {
         asm.emit_bin(&binary_file, "out.bin".to_string());
     }
 
-    let mut io = Lc3IO::new(Box::new(StdIOTarget {}));
+    let io = Lc3IO::new(Box::new(StdIOTarget {}));
 
-    let mut vm = VM::new();
-    vm.run(binary_file, &mut io);
+    let mut vm = VM::new(io);
+    vm.run(binary_file);
 }
