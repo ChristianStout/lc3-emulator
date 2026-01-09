@@ -8,7 +8,7 @@ pub struct Cli {
 
     /// Emit bin file as `out.bin`
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
-    pub emit_bin: bool,
+    pub emit_binary: bool,
     // #[command(subcommand)]
     // pub command: Option<Commands>,
 }

@@ -77,10 +77,10 @@ impl VM {
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            self.io.print_vm_error(
+            self.io.print_error(format!("{} {}",
                 "Overflow Error:",
                 "The PC attempted to increment past maximum xFFFF",
-            );
+            ));
             self.registers.halt = true;
             return;
         }

@@ -34,32 +34,13 @@ impl IOTarget for WebIO {
             .pop_front()
             .expect("Should not been able to pop from the input stream while empty");
     }
-    fn print_string(&mut self, reg: &mut Registers, mem: &mut Memory) {
-        let mut i = reg.get(0);
-        let mut c = mem.get(i) as u8 as char;
-
-        while c != '\0' {
-            self.output_stream.push_back(c);
-            i += 1;
-            c = mem.get(i) as u8 as char;
-        }
-    }
-    fn print_string_special(&mut self, _reg: &mut Registers, _mem: &mut Memory) {}
-    fn print_single_char(&mut self, reg: &mut Registers) {
-        self.output_stream.push_back(reg.get(0) as u8 as char);
-    }
-
-    fn print_vm_error(&mut self, error_name: &str, error_msg: &str) {
-        let msg = format!("{error_name}: {error_msg}\n");
-        for c in msg.chars() {
-            self.output_stream.push_back(c);
-        }
-    }
-
-    fn print_asm_error(&mut self, err_msg: &str) {
-        let msg = format!("{}", err_msg);
-        for c in msg.chars() {
-            self.output_stream.push_back(c);
-        }
+    
+    fn put_char(&mut self, c: char) {
+        // let console = document.getElementById("innerConsole");
+        // if c == {DELETE KEY} {
+        //   console.value = console.value[:-1];
+        //   return;
+        // }
+        // console.value += c;
     }
 }

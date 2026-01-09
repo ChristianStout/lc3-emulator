@@ -70,8 +70,8 @@ impl AsmError {
         self.from_to = Some((from, to));
     }
 
-    pub fn print(&self, io: &mut Box<dyn IOTarget>) {
-        io.print_asm_error(&self.generate_msg());
+    pub fn print(&self, io: &mut Lc3IO) {
+        io.print_error(self.generate_msg());
     }
 
     pub fn generate_msg(&self) -> String {
