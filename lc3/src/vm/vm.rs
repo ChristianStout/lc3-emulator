@@ -1,5 +1,9 @@
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "serde")]
 use tsify::Tsify;
+#[cfg(feature = "serde")]
+use wasm_bindgen::prelude::*;
 
 use super::instructions::{
     Add, And, Br, Instruction, JmpRet, Jsr, Ld, Ldi, Ldr, Lea, Not, Rti, St, Sti, Str,
@@ -14,15 +18,14 @@ const CMD_SIZE: u8 = 16;
 const OPCODE_SIZE: u8 = 4;
 const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
 
-#[derive(Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct VM {
     instructions: HashMap<u8, Box<dyn Instruction>>,
     registers: Registers,
     memory: Memory,
 }
 
-#[allow(dead_code)]
 impl VM {
     pub fn new() -> VM {
         let mut ins: HashMap<u8, Box<dyn Instruction>> = HashMap::new();

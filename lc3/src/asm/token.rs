@@ -1,10 +1,15 @@
 use super::asm_ins::*;
 use super::directive::*;
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "serde")]
 use tsify::Tsify;
+#[cfg(feature = "serde")]
 use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Tsify, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(Tsify, Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub enum TokenType {
     Label(String),
     Instruction(OpcodeIns),
@@ -15,8 +20,9 @@ pub enum TokenType {
     INVALID(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(Tsify, Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct Token {
     pub inner_token: TokenType,
     pub to: usize,
@@ -27,8 +33,8 @@ pub struct Token {
     pub original_match: String,
 }
 
-#[derive(Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
+#[cfg_attr(feature = "serde", derive(Tsify, Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct TokenCollection {
     pub tokens: Vec<Token>,
 }

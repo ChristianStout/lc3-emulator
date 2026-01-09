@@ -1,6 +1,9 @@
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
+#[cfg(feature = "serde")]
 use tsify::Tsify;
+#[cfg(feature = "serde")]
 use wasm_bindgen::prelude::*;
 
 pub const GETC_VAL: u16 = 0x20;
@@ -23,9 +26,9 @@ pub enum OperandType {
     String,
 }
 
-#[derive(Debug, PartialEq, Clone, Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi)]
-#[allow(dead_code)]
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(Tsify, Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub enum OpcodeIns {
     Add,
     And,
@@ -89,7 +92,7 @@ impl OpcodeIns {
             "OUT" => return OpcodeIns::Trap(OUT_VAL),
             "PUTS" => return OpcodeIns::Trap(PUTS_VAL),
             "IN" => return OpcodeIns::Trap(IN_VAL),
-            "PUTSP"  => return OpcodeIns::Trap(PUTSP_VAL),
+            "PUTSP" => return OpcodeIns::Trap(PUTSP_VAL),
             "HALT" => return OpcodeIns::Trap(HALT_VAL),
             _ => return OpcodeIns::INVALID,
         }
