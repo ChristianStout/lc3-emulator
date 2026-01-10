@@ -1,4 +1,3 @@
-use super::vm::registers::Registers;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;

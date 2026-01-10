@@ -1,8 +1,6 @@
 use crossterm::event::*;
 use crossterm::terminal;
 use lc3::io::IOTarget;
-use lc3::vm::memory::Memory;
-use lc3::vm::registers::Registers;
 use std::io::*;
 
 pub struct StdIOTarget;
@@ -61,47 +59,10 @@ impl IOTarget for StdIOTarget {
         return out_c;
     }
 
-    // fn print_string(&mut self, reg: &mut Registers, mem: &mut Memory) {
-    //     let mut i = reg.get(0);
-    //     let mut c = mem.get(i) as u8 as char;
-
-    //     while c != '\0' {
-    //         print!("{c}");
-    //         i += 1;
-    //         c = mem.get(i) as u8 as char;
-    //     }
-    //     std::io::stdout()
-    //         .flush()
-    //         .expect("Expected to be able to flush stdout after printing a string to the console.");
-    // }
-
-    // fn print_string_special(&mut self, reg: &mut Registers, mem: &mut Memory) {
-    //     // let mut i = reg.get(0);
-    //     // let mut c = mem.get(i) as u8 as char;
-
-    //     // while c != '\0' {
-    //     //     print!("{c}");
-    //     //     i += 1;
-    //     //     c = mem.get(i) as u8 as char;
-    //     // }
-    //     // std::io::stdout()
-    //     //     .flush()
-    //     //     .expect("Expected to be able to flush stdout after printing a string to the console.");
-    //     println!("PUTSP executed!");
-    // }
-
     fn put_char(&mut self,c:char) {
         print!("{}", c);
         std::io::stdout().flush().expect(
             "Expected to be able to flush stdout after printing a char to the console in out().",
         );
     }
-
-    // fn print_vm_error(&mut self, error_name: &str, error_msg: &str) {
-    //     println!("{error_name}: {error_msg}\n");
-    // }
-
-    // fn print_asm_error(&mut self, err_msg: &str) {
-    //     println!("{}", err_msg);
-    // }
 }

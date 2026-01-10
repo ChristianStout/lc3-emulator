@@ -11,6 +11,11 @@ use stdio::*;
 fn main() {
     let cli = cli::get_cli();
 
+    if cli.emit_binary && cli.binary_file {
+        println!("Cannot both emit a binary file and run from a binary file.");
+        return;
+    }
+
     let file_path_input = cli.file_path;
     let file;
     if let Ok(path) = fs::read_to_string(file_path_input) {
