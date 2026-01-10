@@ -1,4 +1,3 @@
-use super::file::AsmFile;
 use super::token::*;
 use super::{
     asm_error::{AsmError, ErrorType},
@@ -33,12 +32,10 @@ const CODE_FILE_EMPTY: &'static str = "SM018";
 pub struct SemanticChecker {
     pub symbol_table: HashMap<String, (i32, Token)>,
     pub errors: Vec<AsmError>,
-    original_file: AsmFile,
+    original_file: Vec<String>,
     used_labels: HashMap<String, Token>,
     memory_location: i32,
     in_blkw_directive: bool,
-
-    // refactor items
     expected_operands: VecDeque<OperandType>,
     curr_ins_token: Token,
     end_encountered: bool,
@@ -50,7 +47,7 @@ impl SemanticChecker {
         SemanticChecker {
             symbol_table: HashMap::new(),
             errors: vec![],
-            original_file: AsmFile::new("".to_string()),
+            original_file: vec![],
             used_labels: HashMap::new(),
             memory_location: 0,
             in_blkw_directive: false,
@@ -62,7 +59,11 @@ impl SemanticChecker {
 
     #[allow(unused_variables)]
     pub fn run(&mut self, tokens: &Vec<Token>, file: String) {
-        self.original_file = AsmFile::new(file);
+        self.original_file = format!("{}{}", " \n", file)
+            .lines()
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect();
 
         if self.tokens_is_empty(tokens) {
             return;
@@ -113,7 +114,7 @@ impl SemanticChecker {
         if token.line_num == self.curr_ins_token.line_num {
             self.errors.push(AsmError::from(
                 String::from(CODE_INS_NO_OPERAND),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::OperandError,
                 "an instruction cannot be an operand. Instructions MUST be separated by line.",
@@ -123,7 +124,7 @@ impl SemanticChecker {
         if self.expected_operands.len() > 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_RECEIVED_UNEXPECTED_INS),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::OperandError,
                 &format!(
@@ -143,7 +144,7 @@ impl SemanticChecker {
             // Syntactically, it is not possible to get a directive as an argument, so an instruction must have terminated early
             self.errors.push(AsmError::from(
                 String::from(CODE_DIR_WRONG_OPERAND),
-                &self.original_file.get_line(self.curr_ins_token.line_num),
+                &self.original_file[self.curr_ins_token.line_num],
                 self.curr_ins_token.clone(),
                 ErrorType::OperandError,
                 &format!(
@@ -168,7 +169,7 @@ impl SemanticChecker {
             if token.line_num == self.curr_ins_token.line_num {
                 self.errors.push(AsmError::from(
                     String::from(CODE_EXPECTED_NOTHING_RECEIVED_LABEL),
-                    &self.original_file.get_line(token.line_num),
+                    &self.original_file[token.line_num],
                     token.clone(),
                     ErrorType::OperandError,
                     "no operands were expected, but received a label instead.",
@@ -190,7 +191,7 @@ impl SemanticChecker {
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_LABEL),
-                    &self.original_file.get_line(token.line_num),
+                    &self.original_file[token.line_num],
                     token.clone(),
                     ErrorType::OperandError,
                     &format!(
@@ -206,7 +207,7 @@ impl SemanticChecker {
         if self.expected_operands.len() == 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_EXPECTED_NOTHING_RECEIVED_NUMBER),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::OperandError,
                 &format!("no operands were expected, but received a number instead."),
@@ -228,7 +229,7 @@ impl SemanticChecker {
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_NUMBER),
-                    &self.original_file.get_line(token.line_num),
+                    &self.original_file[token.line_num],
                     token.clone(),
                     ErrorType::OperandError,
                     &format!(
@@ -244,7 +245,7 @@ impl SemanticChecker {
         if self.expected_operands.len() == 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_EXPECTED_NOTHING_RECEIVED_REGISTER),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::OperandError,
                 &format!("no operands were expected, but received a register instead."),
@@ -258,7 +259,7 @@ impl SemanticChecker {
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_REGISTER),
-                    &self.original_file.get_line(token.line_num),
+                    &self.original_file[token.line_num],
                     token.clone(),
                     ErrorType::OperandError,
                     &format!(
@@ -274,7 +275,7 @@ impl SemanticChecker {
         if self.expected_operands.len() == 0 {
             self.errors.push(AsmError::from(
                 String::from(CODE_EXPECTED_NOTHING_RECEIVED_STRING),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::OperandError,
                 &format!("no operands were expected, but received a string instead."),
@@ -291,7 +292,7 @@ impl SemanticChecker {
             _ => {
                 self.errors.push(AsmError::from(
                     String::from(CODE_RECEIVED_UNEXPECTED_STRING),
-                    &self.original_file.get_line(token.line_num),
+                    &self.original_file[token.line_num],
                     token.clone(),
                     ErrorType::OperandError,
                     &format!(
@@ -324,7 +325,7 @@ impl SemanticChecker {
         if !self.orig_at_top(&tokens) {
             self.errors.push(AsmError::from(
                 String::from(CODE_NO_ORIG),
-                &self.original_file.get_line(tokens[0].line_num),
+                &self.original_file[tokens[0].line_num],
                 tokens[0].clone(),
                 ErrorType::LogicalError,
                 "the `.ORIG` directive must be at the top of the file. To resolve this error, add `.ORIG x3000` at the top of the file.",
@@ -335,7 +336,7 @@ impl SemanticChecker {
         } else {
             self.errors.push(AsmError::new(
                 String::from(CODE_FILE_NOT_VALID),
-                &self.original_file.get_line(tokens[0].line_num),
+                &self.original_file[tokens[0].line_num],
                 tokens[0].line_num as i32,
                 ErrorType::LogicalError,
                 "The provided file is not valid, because it only contains a `.ORIG` directive without arguments, and no `.END` directive",
@@ -361,7 +362,7 @@ impl SemanticChecker {
             _ => {
                 AsmError::from(
                     String::from(CODE_ORIG_NOT_GIVEN_NUMBER),
-                    &self.original_file.get_line(tokens[1].line_num),
+                    &self.original_file[tokens[1].line_num],
                     tokens[1].clone(),
                     ErrorType::OperandError,
                     &format!(
@@ -402,7 +403,7 @@ impl SemanticChecker {
             let (_, other) = self.symbol_table.get(&label).unwrap();
             self.errors.push(AsmError::from(
                 String::from(CODE_REDEFINED_LABEL),
-                &self.original_file.get_line(token.line_num),
+                &self.original_file[token.line_num],
                 token.clone(),
                 ErrorType::LabelError,
                 &format!(
@@ -424,8 +425,7 @@ impl SemanticChecker {
                 self.errors.push(AsmError::from(
                     String::from(CODE_USED_UNDEFINED_LABEL),
                     &self
-                        .original_file
-                        .get_line(self.used_labels.get(label).unwrap().line_num),
+                        .original_file[self.used_labels.get(label).unwrap().line_num],
                     self.used_labels.get(label).unwrap().clone(),
                     ErrorType::LabelError,
                     &format!("the label `{}` was never defined within the file.", label),
@@ -460,7 +460,7 @@ impl SemanticChecker {
                 if number < lower || number > upper {
                     self.errors.push(AsmError::from(
                         String::from(CODE_NUMBER_OUT_OF_BOUNDS),
-                        &self.original_file.get_line(value.line_num),
+                        &self.original_file[value.line_num],
                         value.clone(),
                         ErrorType::BoundError,
                         &format!(
