@@ -9,14 +9,11 @@ pub struct Cli {
     /// Emit bin file as `out.bin`
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     pub emit_binary: bool,
-    // #[command(subcommand)]
-    // pub command: Option<Commands>,
+
+    /// Indicates that the path given is a binary file
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    pub binary_file: bool,
 }
-
-// #[derive(Subcommand)]
-// pub enum Commands {
-
-// }
 
 pub fn get_cli() -> Cli {
     Cli::parse()
