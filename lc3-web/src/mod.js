@@ -9,6 +9,10 @@ const VM = new WebVM();
 const Error = Object.freeze({ NONE: 0, FAIL: 1 });
 
 // // EVENT LISTENERS --------------------------------
+const inputStream = document.getElementById("inputStream");
+inputStream.addEventListener("keydown", (e) => {
+  console.log("hi");
+});
 const innerConsole = document.getElementById("innerConsole");
 innerConsole.addEventListener("keydown", (e) => {
   e.preventDefault();
@@ -62,15 +66,7 @@ runButton.addEventListener("click", (e) => {
 
 function run() {
   while (!VM.is_halted()) {
-    if (IO.output_stream.length > 0) {
-      let out = "";
-      for (c in IO.output_stream) {
-        out = out + c;
-      }
-      innerConsole.value = innerConsole.value + out;
-      IO.output_stream = [];
-    }
-    VM.run_single_command(IO);
+    stepInstruction();
   }
 }
 
@@ -102,6 +98,14 @@ function loadToMachine(file) {
   VM.load_into_memory(binary);
 
   return true;
+}
+
+function stepInstruction() {
+  if (VM.is_halted()) {
+    return;
+  }
+
+  VM.step();
 }
 
 // let textarea = document.querySelector("#editing");

@@ -292,6 +292,7 @@ dependencies = [
  "tsify",
  "typetag",
  "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

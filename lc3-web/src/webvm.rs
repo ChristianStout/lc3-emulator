@@ -11,6 +11,7 @@ struct WebVM {
     vm: VM,
 }
 
+#[allow(dead_code)]
 #[wasm_bindgen]
 impl WebVM {
     #[wasm_bindgen(constructor)]

@@ -1,5 +1,8 @@
 :root {
     --info-panel-width: 370px;
+    --info-panel-margin: 12px;
+    --info-panel-padding: 12px;
+    --console-height: 330px;
 }
 
 body[data-theme="light"] {
@@ -142,25 +145,33 @@ body {
 }
 
 .console {
-    height: 30%;
+    height: var(--console-height);
 }
 
 .inner-console {
     flex: 1;
+    position: absolute;
     resize: none;
     border: none;
-    width: 100%;
-    height: 100%;
+    width: calc(var(--info-panel-width) - var(--info-panel-margin) * 2);
+    height: var(--console-height);
     border-radius: 5px;
     background-color: var(--console-bg);
     padding: 5px;
+    z-index: -1;
+}
+
+.invisible {
+    color: transparent;
+    background: transparent;
+    z-index: 0;
 }
 
 .info-panel {
     width: var(--info-panel-width);
     background: var(--panel-bg);
-    padding: 12px;
-    margin: 12px;
+    padding: var(--info-panel-padding);
+    margin: var(--info-panel-margin);
     margin-left: 6px;
     border: 1px solid var(--border);
     border-radius: 5px;
