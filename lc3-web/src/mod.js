@@ -4,11 +4,10 @@ import { get_tokens, highlight_text, assemble, WebVM } from "../pkg/lc3_web.js";
 await init();
 
 const VM = new WebVM();
-// const IO = get_io();
 
 const Error = Object.freeze({ NONE: 0, FAIL: 1 });
 
-// // EVENT LISTENERS --------------------------------
+// EVENT LISTENERS -----------------------------------------
 const inputStream = document.getElementById("inputStream");
 inputStream.addEventListener("keydown", (e) => {
   console.log("hi");
