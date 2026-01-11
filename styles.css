@@ -146,6 +146,7 @@ body {
 
 .console {
     height: var(--console-height);
+    color: var(--fg);
 }
 
 .inner-console {
@@ -158,13 +159,14 @@ body {
     border-radius: 5px;
     background-color: var(--console-bg);
     padding: 5px;
-    z-index: -1;
+    z-index: 0;
 }
 
 .invisible {
-    color: transparent;
+    color: black;
     background: transparent;
-    z-index: 0;
+    z-index: 1;
+    /*visibility: hidden;*/
 }
 
 .info-panel {
