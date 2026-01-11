@@ -1,9 +1,14 @@
 pub mod highlight;
 pub mod webio;
 pub mod webvm;
-use lc3::{asm::asm::Asm, vm::vm::VM};
+use lc3::asm::asm::Asm;
 use wasm_bindgen::prelude::*;
-use webio::WebIO;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn log(s: &str);
+}
 
 #[wasm_bindgen]
 pub fn assemble(file: String) -> Option<Vec<u16>> {
@@ -17,13 +22,3 @@ pub fn assemble(file: String) -> Option<Vec<u16>> {
 
     return Some(binary_file);
 }
-
-// #[wasm_bindgen]
-// pub fn get_vm() -> VM {
-//     return VM::new();
-// }
-
-// #[wasm_bindgen]
-// pub fn get_io() -> WebIO {
-//     return WebIO::new();
-// }

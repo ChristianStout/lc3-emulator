@@ -14,9 +14,7 @@ pub struct Lc3IO {
 
 impl Lc3IO {
     pub fn new(target: Box<dyn IOTarget>) -> Lc3IO {
-        Lc3IO {
-            target: target,
-        }
+        Lc3IO { target: target }
     }
 
     pub fn get_char(&mut self) -> char {
@@ -64,7 +62,10 @@ impl DebugIO {
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl IOTarget for DebugIO {
     fn get_char(&mut self) -> char {
-        return self.input_stream.pop_front().expect("You forgot to put something in DebugIO input stream.")
+        return self
+            .input_stream
+            .pop_front()
+            .expect("You forgot to put something in DebugIO input stream.");
     }
     fn put_char(&mut self, c: char) {
         self.output_stream.push_back(c);
