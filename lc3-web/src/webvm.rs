@@ -3,8 +3,10 @@
  */
 use super::webio::WebIO;
 use lc3::io::Lc3IO;
+use lc3::vm::vm::InstructionResult;
 use lc3::vm::vm::VM;
 use wasm_bindgen::prelude::*;
+use web_sys::js_sys;
 
 #[wasm_bindgen]
 struct WebVM {
@@ -25,8 +27,15 @@ impl WebVM {
         self.vm.run(file);
     }
 
-    pub fn step(&mut self) {
+    pub async fn step(&mut self) -> Result<(), JsValue> {
         self.vm.run_single_command();
+        match self.vm.run_single_command() {
+            InstructionResult::AwaitingInput => {
+                wasm_bindgen_futures::yield_now().await;
+            }
+            _ => {}
+        }
+        return Ok(());
     }
 
     pub fn load_into_memory(&mut self, file: Vec<u16>) {

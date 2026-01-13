@@ -18,6 +18,13 @@ const CMD_SIZE: u8 = 16;
 const OPCODE_SIZE: u8 = 4;
 const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
 
+pub enum InstructionResult {
+    Ready,
+    AwaitingInput,
+    Halted,
+    RuntimePanic,
+}
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
 #[cfg_attr(feature = "serde", tsify(into_wasm_abi, from_wasm_abi))]
 pub struct VM {
@@ -69,26 +76,26 @@ impl VM {
         }
     }
 
-    pub fn run_single_command(&mut self) {
+    pub fn run_single_command(&mut self) -> InstructionResult {
         if self.registers.halt == true {
-            return;
+            return InstructionResult::Halted;
         }
         let cmd = self.memory.get(self.registers.pc);
 
         if self.registers.pc == u16::MAX {
             // throw error for trying to increment PC past xFFFF
-            self.io.print_error(format!("{} {}",
-                "Overflow Error:",
-                "The PC attempted to increment past maximum xFFFF",
+            self.io.print_error(format!(
+                "{} {}",
+                "Overflow Error:", "The PC attempted to increment past maximum xFFFF",
             ));
             self.registers.halt = true;
-            return;
+            return InstructionResult::RuntimePanic;
         }
         self.registers.pc += 1;
 
         let opcode: u16 = cmd >> OPCODE_DELTA;
         let value: u16 = cmd - (opcode << OPCODE_DELTA);
-        self.instructions[&(opcode as u8)].exe(
+        return self.instructions[&(opcode as u8)].exe(
             value,
             &mut self.registers,
             &mut self.memory,
