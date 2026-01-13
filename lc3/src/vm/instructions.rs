@@ -3,6 +3,7 @@ use super::registers::Registers;
 use super::trap::Trap;
 use crate::asm::asm_ins::{GETC_VAL, HALT_VAL, IN_VAL, OUT_VAL, PUTS_VAL, PUTSP_VAL};
 use crate::io::Lc3IO;
+use crate::vm::vm::InstructionResult;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "serde")]
@@ -23,7 +24,13 @@ pub trait Instruction {
     This is because we already had to obtain that information
     in order to dynamically call the correct instruction.
     */
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO);
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        io: &mut Lc3IO,
+    ) -> InstructionResult;
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
@@ -107,7 +114,13 @@ impl Instruction for Add {
     /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
     /// an immediate value is [-16, 15].
     /// -------------------------------------------------------------------------------
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         let mut i = value;
 
         let dr = i >> 9;
@@ -139,6 +152,7 @@ impl Instruction for Add {
         reg.set(dr as usize, new_value);
 
         set_nzp(reg, new_value);
+        return InstructionResult::Ready;
     }
 }
 
@@ -182,7 +196,13 @@ impl Instruction for And {
     /// The immeidate value is only a 5-bit 2's complement number. Therefore the range accepted as
     /// an immediate value is [-16, 15].
     /// -------------------------------------------------------------------------------
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         let mut i = value;
 
         let dr = i >> 9;
@@ -219,12 +239,19 @@ impl Instruction for And {
         reg.set(dr as usize, new_value);
 
         set_nzp(reg, new_value);
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Br {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         BR  - | 0000 000 000000000 |
               | ---- --- --------- |
@@ -245,12 +272,19 @@ impl Instruction for Br {
             let target_location = get_pcoffset_location(&reg, pcoffset9);
             reg.pc = target_location;
         }
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for JmpRet {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         JMP - | 1100 000 000 000000 |
               | ---- --- --- ------ |
@@ -263,12 +297,20 @@ impl Instruction for JmpRet {
         let base_reg = value >> 6;
 
         reg.pc = reg.get(base_reg as usize);
+
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Jsr {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         JSR - | 0100 1 00000000000   |
               | ---- - -----------   |
@@ -299,12 +341,19 @@ impl Instruction for Jsr {
 
         // link back to the instruction after Jsr by putting PC in R7
         reg.r[7] = inc_pc;
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ld {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         LD  - | 0010 000 000000000 |
               | ---- --- --------- |
@@ -317,12 +366,19 @@ impl Instruction for Ld {
         let new_value = mem.get(relative_pc_address);
         set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ldi {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         LDI - | 1010 000 000000000 |
               | ---- --- --------- |
@@ -336,12 +392,19 @@ impl Instruction for Ldi {
         let new_value = mem.get(ptr);
         set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Ldr {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         LDR - | 0110 000 000 000000 |
               | ---- --- --- ------ |
@@ -360,13 +423,20 @@ impl Instruction for Ldr {
         let new_value = mem.get(target_location);
         set_nzp(reg, new_value);
         reg.set(dr as usize, new_value);
+        return InstructionResult::Ready;
     }
 }
 
 /// Loads memory location of the label into memory
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Lea {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         LEA - | 1110 000 000000000 |
               | ---- --- --------- |
@@ -380,12 +450,19 @@ impl Instruction for Lea {
         let address = get_pcoffset_location(reg, ptr);
         set_nzp(reg, address);
         reg.set(dr as usize, address);
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Not {
-    fn exe(&self, value: u16, reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         NOT - | 1001 000 000 111111 |
               | ---- --- --- ------ |
@@ -402,13 +479,20 @@ impl Instruction for Not {
         reg.set(dr as usize, not_val);
 
         set_nzp(reg, not_val);
+        return InstructionResult::Ready;
     }
 }
 
 // TODO: Impl rti
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Rti {
-    fn exe(&self, _value: u16, _reg: &mut Registers, _mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        _value: u16,
+        _reg: &mut Registers,
+        _mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         RTI - | 1000 000000000000 |
               | ---- ------------ |
@@ -420,7 +504,13 @@ impl Instruction for Rti {
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for St {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         ST  - | 0011 000 000000000 |
               | ---- --- --------- |
@@ -431,12 +521,19 @@ impl Instruction for St {
         let location = get_pcoffset_location(&reg, pcoffset9);
 
         mem.set(location, reg.get(sr as usize));
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Sti {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         STI - | 1011 000 000000000 |
               | ---- --- --------- |
@@ -448,12 +545,19 @@ impl Instruction for Sti {
         let indirect = mem.get(location);
 
         mem.set(indirect, reg.get(sr as usize));
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Str {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, _io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        _io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         STR - | 0111 000 000 000000  |
               | ---- --- --- ------  |
@@ -469,12 +573,19 @@ impl Instruction for Str {
         let relative_offeset = calculate_relative_offset(reg.get(base_r as usize), offset6);
 
         mem.set(relative_offeset, reg.get(sr as usize));
+        return InstructionResult::Ready;
     }
 }
 
 #[cfg_attr(feature = "serde", typetag::serde)]
 impl Instruction for Trap {
-    fn exe(&self, value: u16, reg: &mut Registers, mem: &mut Memory, io: &mut Lc3IO) {
+    fn exe(
+        &self,
+        value: u16,
+        reg: &mut Registers,
+        mem: &mut Memory,
+        io: &mut Lc3IO,
+    ) -> InstructionResult {
         /*
         TRAP - | 1111 0000 00000000 |
                | ---- ---- -------- |
@@ -482,7 +593,7 @@ impl Instruction for Trap {
         */
         let code = get_offset(value, 8);
 
-        match code {
+        return match code {
             GETC_VAL => self.get_c(reg, io),
             OUT_VAL => self.out(reg, io),
             PUTS_VAL => self.put_s(reg, mem, io),
@@ -490,7 +601,7 @@ impl Instruction for Trap {
             PUTSP_VAL => self.put_sp(reg, mem, io),
             HALT_VAL => self.halt(reg),
             _ => unreachable!(),
-        }
+        };
     }
 }
 

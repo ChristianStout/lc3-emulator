@@ -28,15 +28,8 @@ impl WebIO {
 
 #[typetag::serde]
 impl IOTarget for WebIO {
-    fn get_char(&mut self) -> char {
-        let mut maybe_c = pop_from_input_stream();
-        while maybe_c == None {
-            maybe_c = pop_from_input_stream();
-        }
-
-        let c = maybe_c.expect("Expected to get a char after the loop broke in get_char()");
-
-        return c;
+    fn get_char(&mut self) -> Option<char> {
+        return pop_from_input_stream();
     }
 
     fn put_char(&mut self, c: char) {

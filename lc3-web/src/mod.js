@@ -59,11 +59,11 @@ editor.addEventListener("keydown", function (e) {
 });
 
 const runButton = document.getElementById("runButton");
-runButton.addEventListener("click", (e) => {
-  run();
+runButton.addEventListener("click", async (e) => {
+  await run();
 });
 
-function run() {
+async function run() {
   while (!VM.is_halted()) {
     stepInstruction();
   }
@@ -75,7 +75,7 @@ loadAndRunButton.addEventListener("click", (e) => {
   loadAndRun(file);
 });
 
-function loadAndRun(file) {
+async function loadAndRun(file) {
   console.log("Hello from load and run");
   if (!loadToMachine(file)) {
     console.log("COULD NOT LOAD FILE TO MACHINE, ERROR LIKELY OCCURRED");
@@ -84,7 +84,7 @@ function loadAndRun(file) {
   run();
 }
 
-function loadToMachine(file) {
+async function loadToMachine(file) {
   let binary = assemble(file);
 
   if (binary === undefined) {
@@ -99,12 +99,12 @@ function loadToMachine(file) {
   return true;
 }
 
-function stepInstruction() {
+async function stepInstruction() {
   if (VM.is_halted()) {
     return;
   }
 
-  VM.step();
+  let setResult = await VM.step();
 }
 
 // let textarea = document.querySelector("#editing");

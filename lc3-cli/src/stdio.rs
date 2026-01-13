@@ -6,7 +6,7 @@ use std::io::*;
 pub struct StdIOTarget;
 
 impl IOTarget for StdIOTarget {
-    fn get_char(&mut self) -> char {
+    fn get_char(&mut self) -> Option<char> {
         terminal::enable_raw_mode().expect("Expected to be able to enter raw mode in get_char()");
 
         let out_c: char;
@@ -56,10 +56,10 @@ impl IOTarget for StdIOTarget {
 
         terminal::disable_raw_mode()
             .expect("Expected to be able to turn off raw mode after getting a char from stdin");
-        return out_c;
+        return Some(out_c);
     }
 
-    fn put_char(&mut self,c:char) {
+    fn put_char(&mut self, c: char) {
         print!("{}", c);
         std::io::stdout().flush().expect(
             "Expected to be able to flush stdout after printing a char to the console in out().",
