@@ -163,7 +163,7 @@ body {
 }
 
 .invisible {
-    color: transparent;
+    color: red;
     background: transparent;
     z-index: 1;
     /*visibility: hidden;*/

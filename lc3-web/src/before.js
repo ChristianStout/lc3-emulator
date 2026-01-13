@@ -11,3 +11,9 @@ select.addEventListener("change", () => {
   document.body.dataset.theme = select.value;
   localStorage.setItem("theme", select.value);
 });
+
+const inputStream = document.getElementById("inputStream");
+inputStream.value = "";
+
+const innerConsole = document.getElementById("innerConsole");
+innerConsole.value = "";

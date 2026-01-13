@@ -40,7 +40,7 @@ impl Trap {
         let mut i = reg.get(0);
         let mut c = mem.get(i) as u8 as char;
 
-        while c != '\0' {
+        while c as u8 != 0 {
             io.put_char(c);
             i += 1;
             c = mem.get(i) as u8 as char;
@@ -72,7 +72,6 @@ impl Trap {
         }
 
         let maybe_c = io.get_char();
-        reg.set(0, c as u16);
 
         match maybe_c {
             Some(c) => {

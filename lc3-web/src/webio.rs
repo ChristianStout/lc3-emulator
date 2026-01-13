@@ -29,10 +29,13 @@ impl WebIO {
 #[typetag::serde]
 impl IOTarget for WebIO {
     fn get_char(&mut self) -> Option<char> {
-        return pop_from_input_stream();
+        let pop_item = pop_from_input_stream();
+        log(&format!("get_char result = {:?}", pop_item));
+        return pop_item;
     }
 
     fn put_char(&mut self, c: char) {
+        log(&format!("put_char = {:?}", c as u8));
         push_char_to_output(c);
     }
 }
@@ -51,7 +54,7 @@ pub fn pop_from_input_stream() -> Option<char> {
         .expect("Expected to be able to get the input stream value");
 
     let input_stream_value = text_area.value();
-    log(&format!("{:?}", input_stream_value));
+    log(&format!("from pop_input_stream(): value = {:?}, len = {}", input_stream_value, input_stream_value.len()));
 
     if input_stream_value.len() == 0 {
         return None;
