@@ -9,11 +9,8 @@ const Error = Object.freeze({ NONE: 0, FAIL: 1 });
 
 // EVENT LISTENERS -----------------------------------------
 const inputStream = document.getElementById("inputStream");
-inputStream.addEventListener("keydown", (e) => {
-  console.log("hi");
-});
-const innerConsole = document.getElementById("innerConsole");
-innerConsole.addEventListener("keydown", (e) => {
+inputStream.addEventListener("keydown", async (e) => {
+  console.log("hi from input stream event hanlder");
   e.preventDefault();
   let key = e.key;
   if (
@@ -25,23 +22,31 @@ innerConsole.addEventListener("keydown", (e) => {
     key == "ArrowLeft" ||
     key == "ArrowRight" ||
     key == "ArrowUp" ||
-    key == "ArrowDown"
+    key == "ArrowDown" ||
+    key == "Backspace"
   ) {
     return;
   }
 
   if (key == "Enter") {
-    IO.input_stream.push("\n".charCodeAt(0));
+    inputStream.value += "\n";
     return;
   }
   if (key == "Tab") {
-    IO.input_stream.push("\t".charCodeAt(0));
+    inputStream.value += "\t";
     return;
   }
 
-  IO.input_stream.push(key.charCodeAt(0));
-  console.log(IO.input_stream.toString());
+  inputStream.value += key;
+  console.log(inputStream.value);
+
+  if (VM.is_awaiting_input()) {
+    VM.set_awaiting_input(false);
+    await run(); // continue execution
+  }
 });
+const innerConsole = document.getElementById("innerConsole");
+innerConsole.addEventListener("keydown", (e) => {});
 
 const editor = document.getElementById("editor");
 editor.addEventListener("keydown", function (e) {
@@ -65,23 +70,29 @@ runButton.addEventListener("click", async (e) => {
 
 async function run() {
   while (!VM.is_halted()) {
-    stepInstruction();
+    await stepInstruction();
+
+    if (VM.is_awaiting_input()) {
+      return;
+    }
   }
 }
 
 const loadAndRunButton = document.getElementById("loadAndRunButton");
-loadAndRunButton.addEventListener("click", (e) => {
+loadAndRunButton.addEventListener("click", async (e) => {
   let file = editor.value;
-  loadAndRun(file);
+  await loadAndRun(file);
 });
 
 async function loadAndRun(file) {
   console.log("Hello from load and run");
-  if (!loadToMachine(file)) {
+  let result = await loadToMachine(file);
+  if (!result) {
     console.log("COULD NOT LOAD FILE TO MACHINE, ERROR LIKELY OCCURRED");
+    return;
   }
 
-  run();
+  await run();
 }
 
 async function loadToMachine(file) {
@@ -104,8 +115,57 @@ async function stepInstruction() {
     return;
   }
 
+  const isAwaitingInput = VM.is_awaiting_input();
+
   let setResult = await VM.step();
+
+  await updateRegisterDisplay();
+
+  if (VM.is_awaiting_input()) {
+    VM.set_pc(VM.registers.pc - 1);
+    return;
+  }
+
+  if (isAwaitingInput && !VM.is_awaiting_input()) {
+    VM.set_awaiting_input(false);
+  }
 }
+
+async function updateRegisterDisplay() {
+  let r0 = await VM.get_reg_value_as_hex(0);
+  let r1 = await VM.get_reg_value_as_hex(1);
+  let r2 = await VM.get_reg_value_as_hex(2);
+  let r3 = await VM.get_reg_value_as_hex(3);
+  let r4 = await VM.get_reg_value_as_hex(4);
+  let r5 = await VM.get_reg_value_as_hex(5);
+  let r6 = await VM.get_reg_value_as_hex(6);
+  let r7 = await VM.get_reg_value_as_hex(7);
+  let pc = await VM.get_pc_value_as_hex();
+  let ir = await VM.get_ir_value_as_hex();
+
+  document.getElementById("r0Value").value = r0;
+  document.getElementById("r1Value").value = r1;
+  document.getElementById("r2Value").value = r2;
+  document.getElementById("r3Value").value = r3;
+  document.getElementById("r4Value").value = r4;
+  document.getElementById("r5Value").value = r5;
+  document.getElementById("r6Value").value = r6;
+  document.getElementById("r7Value").value = r7;
+  document.getElementById("pcValue").value = pc;
+  document.getElementById("irValue").value = ir;
+}
+
+const clearConsoleButton = document.getElementById("clearConsoleButton");
+clearConsoleButton.addEventListener("click", async (e) => {
+  innerConsole.value = "";
+});
+
+const clearInputBufferButton = document.getElementById(
+  "clearInputStreamButton",
+);
+clearInputBufferButton.addEventListener("click", async (e) => {
+  inputStream.value = "";
+});
 
 // let textarea = document.querySelector("#editing");
 // textarea.addEventListener("input", (event) => {

@@ -13,12 +13,5 @@ extern "C" {
 #[wasm_bindgen]
 pub fn assemble(file: String) -> Option<Vec<u16>> {
     let mut asm = Asm::new();
-    let binary_file: Vec<u16>;
-    if let Some(out) = asm.run(file) {
-        binary_file = out;
-    } else {
-        return None;
-    }
-
-    return Some(binary_file);
+    return asm.run(file);
 }

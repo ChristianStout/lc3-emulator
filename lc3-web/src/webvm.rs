@@ -11,6 +11,7 @@ use web_sys::js_sys;
 #[wasm_bindgen]
 struct WebVM {
     vm: VM,
+    awaiting_input: bool,
 }
 
 #[allow(dead_code)]
@@ -20,20 +21,19 @@ impl WebVM {
     pub fn new() -> WebVM {
         WebVM {
             vm: VM::new(Lc3IO::new(Box::new(WebIO::new()))),
+            awaiting_input: false,
         }
     }
 
-    pub fn run(&mut self, file: Vec<u16>) {
-        self.vm.run(file);
-    }
-
     pub async fn step(&mut self) -> Result<(), JsValue> {
-        self.vm.run_single_command();
-        match self.vm.run_single_command() {
+        let result = self.vm.run_single_command();
+        match result {
             InstructionResult::AwaitingInput => {
-                wasm_bindgen_futures::yield_now().await;
+                self.awaiting_input = true;
             }
-            _ => {}
+            _ => {
+                self.awaiting_input = false;
+            }
         }
         return Ok(());
     }
@@ -52,5 +52,28 @@ impl WebVM {
 
     pub fn is_halted(&mut self) -> bool {
         return self.vm.registers.halt;
+    }
+
+    pub async fn get_reg_value_as_hex(&self, reg_value: usize) -> String {
+        let value = self.vm.registers.get(reg_value);
+        return format!("x{:04X}", value);
+    }
+
+    pub async fn get_pc_value_as_hex(&self) -> String {
+        let value = self.vm.registers.pc;
+        return format!("x{:04X}", value);
+    }
+
+    pub async fn get_ir_value_as_hex(&self) -> String {
+        let value = self.vm.registers.ir;
+        return format!("x{:04X}", value);
+    }
+
+    pub async fn is_awaiting_input(&self) -> bool {
+        return self.awaiting_input;
+    }
+
+    pub async fn set_awaiting_input(&mut self, is: bool) {
+        self.awaiting_input = is;
     }
 }
