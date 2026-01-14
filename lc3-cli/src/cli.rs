@@ -10,7 +10,7 @@ pub struct Cli {
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     pub emit_binary: bool,
 
-    /// Indicates that the path given is a binary file
+    /// Indicates that the path given is a binary file (UNIMPLEMENTED)
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     pub binary_file: bool,
 }
