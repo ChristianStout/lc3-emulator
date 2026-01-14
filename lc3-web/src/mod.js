@@ -122,7 +122,7 @@ async function stepInstruction() {
   await updateRegisterDisplay();
 
   if (VM.is_awaiting_input()) {
-    VM.set_pc(VM.registers.pc - 1);
+    VM.set_pc(VM.get_pc() - 1);
     return;
   }
 

@@ -50,6 +50,10 @@ impl WebVM {
         self.vm.registers.pc = new_pc;
     }
 
+    pub fn get_pc(&self) -> u16 {
+        return self.vm.registers.pc;
+    }
+
     pub fn is_halted(&mut self) -> bool {
         return self.vm.registers.halt;
     }

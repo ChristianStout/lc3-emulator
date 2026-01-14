@@ -1,4 +1,5 @@
 :root {
+    --top-bar-height: 48px;
     --info-panel-width: 370px;
     --info-panel-margin: 12px;
     --info-panel-padding: 12px;
@@ -64,7 +65,7 @@ body {
 
 .top-bar,
 .bottom-bar {
-    height: 48px;
+    height: var(--top-bar-height);
     background: var(--top-bar-bg);
     color: var(--top-bar-fg);
     display: flex;
@@ -73,6 +74,11 @@ body {
     flex-shrink: 0;
     padding-left: 18px;
     padding-right: 18px;
+}
+
+#logo {
+    height: calc(var(--top-bar-height) - 18px);
+    padding-right: 12px;
 }
 
 .bottom-bar {
