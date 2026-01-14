@@ -42,8 +42,10 @@ impl WebVM {
         self.vm.memory.load_file(file);
     }
 
-    pub fn clear_memory(&mut self) {
+    pub async fn reset_machine(&mut self) {
         self.vm.memory.clear();
+        self.vm.registers.halt = false;
+        self.awaiting_input = false;
     }
 
     pub fn set_pc(&mut self, new_pc: u16) {
@@ -56,6 +58,10 @@ impl WebVM {
 
     pub fn is_halted(&mut self) -> bool {
         return self.vm.registers.halt;
+    }
+
+    pub async fn set_reg(&mut self, reg: usize, value: u16) {
+        self.vm.registers.set(reg, value);
     }
 
     pub async fn get_reg_value_as_hex(&self, reg_value: usize) -> String {

@@ -41,7 +41,8 @@ inputStream.addEventListener("keydown", async (e) => {
   console.log(inputStream.value);
 
   if (VM.is_awaiting_input()) {
-    VM.set_awaiting_input(false);
+    await VM.set_reg(0, key.charCodeAt(0));
+    await VM.set_awaiting_input(false);
     await run(); // continue execution
   }
 });
@@ -69,10 +70,13 @@ runButton.addEventListener("click", async (e) => {
 });
 
 async function run() {
+  await VM.set_awaiting_input(false);
+
   while (!VM.is_halted()) {
     await stepInstruction();
 
-    if (VM.is_awaiting_input()) {
+    let result = await VM.is_awaiting_input();
+    if (result) {
       return;
     }
   }
@@ -104,7 +108,7 @@ async function loadToMachine(file) {
 
   VM.set_pc(binary[0]);
 
-  VM.clear_memory();
+  await VM.reset_machine();
   VM.load_into_memory(binary);
 
   return true;
@@ -115,19 +119,19 @@ async function stepInstruction() {
     return;
   }
 
-  const isAwaitingInput = VM.is_awaiting_input();
+  const isAwaitingInput = await VM.is_awaiting_input();
 
   let setResult = await VM.step();
 
   await updateRegisterDisplay();
 
-  if (VM.is_awaiting_input()) {
-    VM.set_pc(VM.get_pc() - 1);
+  if (await VM.is_awaiting_input()) {
     return;
   }
 
-  if (isAwaitingInput && !VM.is_awaiting_input()) {
-    VM.set_awaiting_input(false);
+  let result = await VM.is_awaiting_input();
+  if (isAwaitingInput && result) {
+    await VM.set_awaiting_input(false);
   }
 }
 
