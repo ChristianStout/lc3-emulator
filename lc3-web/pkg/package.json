@@ -1,0 +1,15 @@
+{
+  "name": "lc3-web",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "lc3_web_bg.wasm",
+    "lc3_web.js",
+    "lc3_web.d.ts"
+  ],
+  "main": "lc3_web.js",
+  "types": "lc3_web.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

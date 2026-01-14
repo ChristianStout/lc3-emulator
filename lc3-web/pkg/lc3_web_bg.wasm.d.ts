@@ -1,0 +1,33 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const pop_from_input_stream: () => number;
+export const push_char_to_output: (a: number) => void;
+export const webio_new: () => any;
+export const highlight_text: (a: number, b: number) => [number, number];
+export const assemble: (a: number, b: number) => [number, number];
+export const __wbg_webvm_free: (a: number, b: number) => void;
+export const webvm_get_ir_value_as_hex: (a: number) => any;
+export const webvm_get_pc: (a: number) => number;
+export const webvm_get_pc_value_as_hex: (a: number) => any;
+export const webvm_get_reg_value_as_hex: (a: number, b: number) => any;
+export const webvm_is_awaiting_input: (a: number) => any;
+export const webvm_is_halted: (a: number) => number;
+export const webvm_load_into_memory: (a: number, b: number, c: number) => void;
+export const webvm_new: () => number;
+export const webvm_reset_machine: (a: number) => any;
+export const webvm_set_awaiting_input: (a: number, b: number) => any;
+export const webvm_set_pc: (a: number, b: number) => void;
+export const webvm_set_reg: (a: number, b: number, c: number) => any;
+export const webvm_step: (a: number) => any;
+export const get_tokens: (a: number, b: number) => any;
+export const wasm_bindgen__convert__closures_____invoke__h3c2e84b3e9fef256: (a: number, b: number, c: any) => void;
+export const wasm_bindgen__closure__destroy__h4a27421dab78e708: (a: number, b: number) => void;
+export const wasm_bindgen__convert__closures_____invoke__h77f8c323bcd36638: (a: number, b: number, c: any, d: any) => void;
+export const __wbindgen_malloc_command_export: (a: number, b: number) => number;
+export const __wbindgen_realloc_command_export: (a: number, b: number, c: number, d: number) => number;
+export const __wbindgen_exn_store_command_export: (a: number) => void;
+export const __externref_table_alloc_command_export: () => number;
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __wbindgen_free_command_export: (a: number, b: number, c: number) => void;
+export const __wbindgen_start: () => void;
