@@ -1,3 +1,6 @@
+
+![16-bit LC-3 logo of my design](lc3-web/assets/lc-3.png "LC-3")
+
 # LC-3 Emulator
 ---------------
 
