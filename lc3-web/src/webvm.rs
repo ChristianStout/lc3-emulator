@@ -6,7 +6,6 @@ use lc3::io::Lc3IO;
 use lc3::vm::vm::InstructionResult;
 use lc3::vm::vm::VM;
 use wasm_bindgen::prelude::*;
-use web_sys::js_sys;
 
 #[wasm_bindgen]
 struct WebVM {

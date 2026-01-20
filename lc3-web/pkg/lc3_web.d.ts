@@ -9,33 +9,33 @@ export type OpcodeIns = "Add" | "And" | { Br: [boolean, boolean, boolean] } | "J
 
 export type Directive = "ORIG" | "FILL" | "BLKW" | "STRINGZ" | "END";
 
-export type And = null;
-
-export type Add = null;
-
-export type Not = null;
-
-export type St = null;
-
-export type Lea = null;
-
-export type Ld = null;
-
-export type Jsr = null;
-
 export type JmpRet = null;
-
-export type Br = null;
-
-export type Rti = null;
 
 export type Ldr = null;
 
-export type Sti = null;
+export type Jsr = null;
+
+export type Ld = null;
+
+export type Rti = null;
+
+export type Br = null;
+
+export type Lea = null;
+
+export type Add = null;
 
 export type Str = null;
 
+export type And = null;
+
+export type St = null;
+
 export type Ldi = null;
+
+export type Not = null;
+
+export type Sti = null;
 
 export interface VM {
     instructions: Record<number, Instruction>;
@@ -111,6 +111,8 @@ export function get_tokens(file: string): TokenCollection;
 
 export function highlight_text(text: string): string;
 
+export function make_memory_table(): Promise<void>;
+
 export function pop_from_input_stream(): string | undefined;
 
 export function push_char_to_output(c: string): void;
@@ -124,6 +126,7 @@ export interface InitOutput {
   readonly webio_new: () => any;
   readonly highlight_text: (a: number, b: number) => [number, number];
   readonly assemble: (a: number, b: number) => [number, number];
+  readonly make_memory_table: () => any;
   readonly __wbg_webvm_free: (a: number, b: number) => void;
   readonly webvm_get_ir_value_as_hex: (a: number) => any;
   readonly webvm_get_pc: (a: number) => number;

@@ -143,9 +143,37 @@
                         <span class="reg-listing"><label class="reg-label">IR</label><span class="reg-info" id="irValue">x0000</span></span>
                     </div>
 
-                    <button class="button" id="clearConsoleButton">Clear Console</button>
-                    <button class="button" id="clearInputStreamButton">Clear Input Stream</button>
+                    <div class="memory-table panel-item" id="memoryTable">
+                      <div class="memory-header">
+                        <div>Addr</div>
+                        <div>Hex</div>
+                        <div>Dec</div>
+                        <div>ASCII</div>
+                      </div>
 
+                      <div class="memory-body">
+                        <div class="memory-row">
+                          <div>x3000</div>
+                          <div>0xF025</div>
+                          <div>-4059</div>
+                          <div>.</div>
+                        </div>
+
+                        <div class="memory-row">
+                          <div>x3001</div>
+                          <div>0x0041</div>
+                          <div>65</div>
+                          <div>A</div>
+                        </div>
+
+                        <!-- many more rows -->
+                      </div>
+                    </div>
+
+                    <div class="panel-item" id="console-buttons">
+                        <button class="button" id="clearConsoleButton">Clear Console</button>
+                        <button class="button" id="clearInputStreamButton">Clear Input Stream</button>
+                    </div>
                     <div class="console panel-item">
                         <textarea class="inner-console invisible" id="inputStream" spellcheck="false"></textarea>
                         <textarea class="inner-console" id="innerConsole" spellcheck="false"></textarea>

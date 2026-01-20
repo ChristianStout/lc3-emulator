@@ -4,6 +4,7 @@
     --info-panel-margin: 12px;
     --info-panel-padding: 12px;
     --console-height: 330px;
+    --rounded-corners: 5px;
 }
 
 body[data-theme="light"] {
@@ -21,6 +22,7 @@ body[data-theme="light"] {
     --run-button-hover: rgb(30, 102, 245);
     --button: rgb(239, 241, 245);
     --button-hover: rgb(230, 233, 239);
+    --memory-loc-hover: rgb(172, 176, 190);
 }
 
 body[data-theme="dark"] {
@@ -38,6 +40,7 @@ body[data-theme="dark"] {
     --run-button-hover: rgb(54, 58, 79);
     --button: rgb(91, 96, 120);
     --button-hover: rgb(54, 58, 79);
+    --memory-loc-hover: rgb(24, 25, 38);
 }
 
 * {
@@ -103,7 +106,7 @@ body {
     margin: 12px;
     margin-right: 6px;
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     font-family: monospace;
     font-size: 14px;
     background-color: var(--editor-bg);
@@ -112,7 +115,7 @@ body {
 .panel-item {
     flex: 1;
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     outline: none;
     margin-top: 12px;
 }
@@ -150,6 +153,55 @@ body {
     padding-left: 19px; /* Because the text wont actually align? */
 }
 
+.memory-table {
+    display: flex;
+    flex-direction: column;
+    height: 30%;
+    /*border: 1px solid #444;*/
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.memory-header {
+    display: grid;
+    grid-template-columns: 8ch 8ch 8ch 6ch;
+    background: var(--console-bg);
+    /*color: var(--fg);*/
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-top-left-radius: var(--rounded-corners);
+    border-top-right-radius: var(--rounded-corners);
+}
+
+.memory-header > div {
+    padding: 4px 6px;
+    font-weight: bold;
+}
+
+/* Scrollable body */
+.memory-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Rows */
+.memory-row {
+    display: grid;
+    grid-template-columns: 8ch 8ch 8ch 6ch;
+    border-bottom: 1px solid var(--border);
+}
+
+.memory-row > div {
+    padding: 2px 6px;
+    white-space: nowrap;
+    border-left: 1px solid var(--border);
+}
+
+.memory-row:hover {
+    background: var(--memory-loc-hover);
+}
 .console {
     height: var(--console-height);
     color: var(--fg);
@@ -162,7 +214,7 @@ body {
     border: none;
     width: calc(var(--info-panel-width) - var(--info-panel-margin) * 2);
     height: var(--console-height);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     background-color: var(--console-bg);
     padding: 5px;
     z-index: 0;
@@ -182,7 +234,7 @@ body {
     margin: var(--info-panel-margin);
     margin-left: 6px;
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     flex-shrink: 0;
 }
 
@@ -190,7 +242,7 @@ body {
     background: var(--panel-bg);
     color: var(--fg);
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     padding: 4px 8px;
     margin-left: auto;
     float: right;
@@ -202,7 +254,7 @@ body {
     height: 27px;
     border-color: var(--border);
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: var(--rounded-corners);
     background-color: var(--button);
     transition: 0.1s;
     color: var(--fg);

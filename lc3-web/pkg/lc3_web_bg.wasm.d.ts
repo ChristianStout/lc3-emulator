@@ -6,6 +6,7 @@ export const push_char_to_output: (a: number) => void;
 export const webio_new: () => any;
 export const highlight_text: (a: number, b: number) => [number, number];
 export const assemble: (a: number, b: number) => [number, number];
+export const make_memory_table: () => any;
 export const __wbg_webvm_free: (a: number, b: number) => void;
 export const webvm_get_ir_value_as_hex: (a: number) => any;
 export const webvm_get_pc: (a: number) => number;

@@ -1,3 +1,8 @@
+import init from "../pkg/lc3_web.js";
+import { make_memory_table } from "../pkg/lc3_web.js";
+await init();
+await make_memory_table();
+
 let th = localStorage.getItem("theme");
 if (th === null) {
   th = "dark";
