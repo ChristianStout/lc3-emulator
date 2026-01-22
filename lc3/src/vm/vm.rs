@@ -22,6 +22,7 @@ pub enum InstructionResult {
     Ready,
     AwaitingInput,
     Halted,
+    PrivilegeModeException,
     RuntimePanic,
 }
 

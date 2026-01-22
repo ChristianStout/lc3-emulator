@@ -591,6 +591,7 @@ impl Instruction for Trap {
                | ---- ---- -------- |
                | op        trapvec8 |
         */
+        reg.set(7, reg.pc);
         let code = get_offset(value, 8);
 
         return match code {
