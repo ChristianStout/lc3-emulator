@@ -213,7 +213,7 @@ body {
     resize: none;
     border: none;
     width: calc(var(--info-panel-width) - var(--info-panel-margin) * 2);
-    height: var(--console-height);
+    height: 30%;
     border-radius: var(--rounded-corners);
     background-color: var(--console-bg);
     padding: 5px;
@@ -221,10 +221,10 @@ body {
 }
 
 .invisible {
-    color: red;
+    /*color: red;
     background: transparent;
-    z-index: 1;
-    /*visibility: hidden;*/
+    z-index: 1;*/
+    visibility: hidden;
 }
 
 .info-panel {

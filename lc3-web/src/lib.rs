@@ -85,7 +85,7 @@ pub fn u16_to_ascii_rep(n: u16) -> String {
         7 => "BEL".to_string(),
         8 => "BS".to_string(),
         9 => "TAB".to_string(),
-        10 => "LF".to_string(),
+        10 => "NEW LINE".to_string(),
         11 => "VT".to_string(),
         12 => "FF".to_string(),
         13 => "CR".to_string(),

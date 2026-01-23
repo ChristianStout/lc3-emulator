@@ -1,14 +1,16 @@
 // import { highlight_text, update, sync_scroll, check_tab } from './main.js';
 import init from "../pkg/lc3_web.js";
 import { get_tokens, highlight_text, assemble, WebVM } from "../pkg/lc3_web.js";
-import { VM } from "./before.js";
+import { VM, render_memory } from "./before.js";
 await init();
 
 const Error = Object.freeze({ NONE: 0, FAIL: 1 });
 
 // EVENT LISTENERS -----------------------------------------
 const inputStream = document.getElementById("inputStream");
-inputStream.addEventListener("keydown", async (e) => {
+// inputStream.addEventListener("keydown", async (e) => {});
+
+async function inputToStream(e) {
   console.log("hi from input stream event hanlder");
   e.preventDefault();
   let key = e.key;
@@ -44,9 +46,13 @@ inputStream.addEventListener("keydown", async (e) => {
     await VM.set_awaiting_input(false);
     await run(); // continue execution
   }
-});
+}
+
 const innerConsole = document.getElementById("innerConsole");
-innerConsole.addEventListener("keydown", (e) => {});
+innerConsole.addEventListener("keydown", async (e) => {
+  e.preventDefault();
+  await inputToStream(e);
+});
 
 const editor = document.getElementById("editor");
 editor.addEventListener("keydown", function (e) {
@@ -98,6 +104,12 @@ async function loadAndRun(file) {
   await run();
 }
 
+const loadButton = document.getElementById("loadButton");
+innerConsole.addEventListener("click", (e) => {
+  let file = editor.value;
+  loadToMachine(file);
+});
+
 async function loadToMachine(file) {
   let binary = assemble(file);
 
@@ -109,6 +121,9 @@ async function loadToMachine(file) {
 
   await VM.reset_machine();
   VM.load_into_memory(binary);
+
+  updateRegisterDisplay();
+  render_memory();
 
   return true;
 }
@@ -123,6 +138,7 @@ async function stepInstruction() {
   let setResult = await VM.step();
 
   await updateRegisterDisplay();
+  render_memory();
 
   if (await VM.is_awaiting_input()) {
     return;
