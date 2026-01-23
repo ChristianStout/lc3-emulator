@@ -2,9 +2,12 @@ pub mod highlight;
 pub mod webio;
 pub mod webvm;
 use lc3::asm::asm::Asm;
+use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::Document;
 use web_sys::Element;
+use web_sys::HtmlDivElement;
+use web_sys::js_sys;
 
 #[wasm_bindgen]
 extern "C" {
@@ -24,7 +27,7 @@ pub async fn make_memory_table() {
     let document = window.document().expect("should have a document on window");
 
     let memory_table = document
-        .get_element_by_id("memoryTable")
+        .get_element_by_id("memoryBody")
         .expect("expected to be able to get the memory body");
 
     for i in 0..u16::MAX {

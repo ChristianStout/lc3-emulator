@@ -21,4 +21,5 @@ web-sys = { version = "0.3.83", features = [
   "Element",
   "HtmlElement",
   "HtmlDivElement",
+  "EventTarget",
 ] }

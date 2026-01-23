@@ -85,4 +85,8 @@ impl WebVM {
     pub async fn set_awaiting_input(&mut self, is: bool) {
         self.awaiting_input = is;
     }
+
+    pub fn mem_get(&self, loc: u16) -> u16 {
+        return self.vm.memory.get(loc);
+    }
 }
