@@ -118,6 +118,8 @@ export function pop_from_input_stream(): string | undefined;
 
 export function push_char_to_output(c: string): void;
 
+export function u16_to_ascii_rep(n: number): string;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
@@ -125,10 +127,11 @@ export interface InitOutput {
     readonly pop_from_input_stream: () => number;
     readonly push_char_to_output: (a: number) => void;
     readonly webio_new: () => any;
-    readonly highlight_text: (a: number, b: number) => [number, number];
-    readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly assemble: (a: number, b: number) => [number, number];
     readonly make_memory_table: () => any;
+    readonly u16_to_ascii_rep: (a: number) => [number, number];
+    readonly highlight_text: (a: number, b: number) => [number, number];
+    readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly webvm_get_ir_value_as_hex: (a: number) => any;
     readonly webvm_get_pc: (a: number) => number;
     readonly webvm_get_pc_value_as_hex: (a: number) => any;

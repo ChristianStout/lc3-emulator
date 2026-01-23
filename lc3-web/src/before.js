@@ -1,5 +1,5 @@
 import init from "../pkg/lc3_web.js";
-import { make_memory_table, WebVM } from "../pkg/lc3_web.js";
+import { make_memory_table, WebVM, u16_to_ascii_rep } from "../pkg/lc3_web.js";
 await init();
 // await make_memory_table();
 
@@ -56,7 +56,7 @@ function render_memory() {
     row.className = "memory-row";
 
     const addr = document.createElement("div");
-    addr.textContents = `x${i.toString(16).padStart(4, "0").toUpperCase()}`;
+    addr.textContent = `x${i.toString(16).padStart(4, "0").toUpperCase()}`;
     row.appendChild(addr);
 
     const addr_val = VM.mem_get(i);
@@ -70,7 +70,8 @@ function render_memory() {
     row.appendChild(dec);
 
     const ascii = document.createElement("div");
-    ascii.textContent = String.fromCharCode(ascii);
+    ascii.textContent = u16_to_ascii_rep(addr_val);
+    // ascii.textContent = String.fromCharCode(ascii);
     row.appendChild(ascii);
 
     rowsContainer.appendChild(row);
