@@ -23,6 +23,7 @@ body[data-theme="light"] {
     --button: rgb(239, 241, 245);
     --button-hover: rgb(230, 233, 239);
     --memory-loc-hover: rgb(172, 176, 190);
+    --show-pc-loc: rgb(230, 69, 83);
 }
 
 body[data-theme="dark"] {
@@ -41,6 +42,7 @@ body[data-theme="dark"] {
     --button: rgb(91, 96, 120);
     --button-hover: rgb(54, 58, 79);
     --memory-loc-hover: rgb(24, 25, 38);
+    --show-pc-loc: rgb(238, 153, 160);
 }
 
 * {
@@ -156,8 +158,7 @@ body {
 .memory-table {
     display: flex;
     flex-direction: column;
-    height: 30%;
-    /*border: 1px solid #444;*/
+    height: 50%;
     font-family: monospace;
     font-size: 13px;
 }
@@ -166,7 +167,6 @@ body {
     display: grid;
     grid-template-columns: 8ch 8ch 8ch 6ch;
     background: var(--console-bg);
-    /*color: var(--fg);*/
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
@@ -180,13 +180,11 @@ body {
     font-weight: bold;
 }
 
-/* Scrollable body */
 .memory-body {
     flex: 1;
     overflow-y: auto;
 }
 
-/* Rows */
 .memory-row {
     display: grid;
     grid-template-columns: 8ch 8ch 8ch 6ch;
@@ -202,6 +200,37 @@ body {
 .memory-row:hover {
     background: var(--memory-loc-hover);
 }
+.memory-body {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    font-family: monospace;
+}
+
+.scroll-spacer {
+    height: calc(65536 * 20px); /* TOTAL_ROWS * ROW_HEIGHT */
+}
+
+.row-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+}
+
+.memory-row {
+    height: 20px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.mem-pc-loc {
+    background-color: var(--show-pc-loc);
+}
+
 .console {
     height: var(--console-height);
     color: var(--fg);
