@@ -104,6 +104,11 @@ async function loadAndRun(file) {
   await run();
 }
 
+const stepButton = document.getElementById("stepButton");
+stepButton.addEventListener("click", (e) => {
+  stepInstruction();
+});
+
 const loadButton = document.getElementById("loadButton");
 loadButton.addEventListener("click", async (e) => {
   let file = editor.value;
@@ -166,16 +171,16 @@ function updateRegisterDisplay() {
   let pc = VM.get_pc_value_as_hex();
   let ir = VM.get_ir_value_as_hex();
 
-  document.getElementById("r0Value").value = r0;
-  document.getElementById("r1Value").value = r1;
-  document.getElementById("r2Value").value = r2;
-  document.getElementById("r3Value").value = r3;
-  document.getElementById("r4Value").value = r4;
-  document.getElementById("r5Value").value = r5;
-  document.getElementById("r6Value").value = r6;
-  document.getElementById("r7Value").value = r7;
-  document.getElementById("pcValue").value = pc;
-  document.getElementById("irValue").value = ir;
+  document.getElementById("r0Value").innerHTML = r0;
+  document.getElementById("r1Value").innerHTML = r1;
+  document.getElementById("r2Value").innerHTML = r2;
+  document.getElementById("r3Value").innerHTML = r3;
+  document.getElementById("r4Value").innerHTML = r4;
+  document.getElementById("r5Value").innerHTML = r5;
+  document.getElementById("r6Value").innerHTML = r6;
+  document.getElementById("r7Value").innerHTML = r7;
+  document.getElementById("pcValue").innerHTML = pc;
+  document.getElementById("irValue").innerHTML = ir;
 }
 
 const clearConsoleButton = document.getElementById("clearConsoleButton");

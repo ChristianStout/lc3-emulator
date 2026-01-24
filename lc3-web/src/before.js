@@ -81,15 +81,12 @@ const BUFFER = 5;
 const memory_container = document.getElementById("memoryBody");
 const viewport = document.getElementById("rowViewport");
 
-// 1️⃣ Freeze scroll height ONCE
 memory_container.querySelector(".scroll-spacer").style.height =
   `${TOTAL_ROWS * ROW_HEIGHT}px`;
 
-// 2️⃣ Determine how many rows to render
 const visibleCount =
-  Math.ceil(memory_container.clientHeight / ROW_HEIGHT) + BUFFER * 2;
+  Math.ceil(memory_container.clientHeight / ROW_HEIGHT) + BUFFER * 4;
 
-// 3️⃣ Create fixed row pool
 const rows = [];
 for (let i = 0; i < visibleCount; i++) {
   const row = document.createElement("div");
@@ -97,8 +94,6 @@ for (let i = 0; i < visibleCount; i++) {
 
   const addr = document.createElement("div");
   row.appendChild(addr);
-
-  const addr_val = VM.mem_get(i);
 
   const hex = document.createElement("div");
   row.appendChild(hex);
