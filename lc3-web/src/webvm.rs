@@ -63,17 +63,17 @@ impl WebVM {
         self.vm.registers.set(reg, value);
     }
 
-    pub async fn get_reg_value_as_hex(&self, reg_value: usize) -> String {
+    pub fn get_reg_value_as_hex(&self, reg_value: usize) -> String {
         let value = self.vm.registers.get(reg_value);
         return format!("x{:04X}", value);
     }
 
-    pub async fn get_pc_value_as_hex(&self) -> String {
+    pub fn get_pc_value_as_hex(&self) -> String {
         let value = self.vm.registers.pc;
         return format!("x{:04X}", value);
     }
 
-    pub async fn get_ir_value_as_hex(&self) -> String {
+    pub fn get_ir_value_as_hex(&self) -> String {
         let value = self.vm.registers.ir;
         return format!("x{:04X}", value);
     }

@@ -90,10 +90,10 @@ export type Trap = null;
 export class WebVM {
     free(): void;
     [Symbol.dispose](): void;
-    get_ir_value_as_hex(): Promise<string>;
+    get_ir_value_as_hex(): string;
     get_pc(): number;
-    get_pc_value_as_hex(): Promise<string>;
-    get_reg_value_as_hex(reg_value: number): Promise<string>;
+    get_pc_value_as_hex(): string;
+    get_reg_value_as_hex(reg_value: number): string;
     is_awaiting_input(): Promise<boolean>;
     is_halted(): boolean;
     load_into_memory(file: Uint16Array): void;
@@ -112,8 +112,6 @@ export function get_tokens(file: string): TokenCollection;
 
 export function highlight_text(text: string): string;
 
-export function make_memory_table(): Promise<void>;
-
 export function pop_from_input_stream(): string | undefined;
 
 export function push_char_to_output(c: string): void;
@@ -127,15 +125,11 @@ export interface InitOutput {
     readonly pop_from_input_stream: () => number;
     readonly push_char_to_output: (a: number) => void;
     readonly webio_new: () => any;
-    readonly assemble: (a: number, b: number) => [number, number];
-    readonly make_memory_table: () => any;
-    readonly u16_to_ascii_rep: (a: number) => [number, number];
-    readonly highlight_text: (a: number, b: number) => [number, number];
     readonly __wbg_webvm_free: (a: number, b: number) => void;
-    readonly webvm_get_ir_value_as_hex: (a: number) => any;
+    readonly webvm_get_ir_value_as_hex: (a: number) => [number, number];
     readonly webvm_get_pc: (a: number) => number;
-    readonly webvm_get_pc_value_as_hex: (a: number) => any;
-    readonly webvm_get_reg_value_as_hex: (a: number, b: number) => any;
+    readonly webvm_get_pc_value_as_hex: (a: number) => [number, number];
+    readonly webvm_get_reg_value_as_hex: (a: number, b: number) => [number, number];
     readonly webvm_is_awaiting_input: (a: number) => any;
     readonly webvm_is_halted: (a: number) => number;
     readonly webvm_load_into_memory: (a: number, b: number, c: number) => void;
@@ -146,6 +140,9 @@ export interface InitOutput {
     readonly webvm_set_pc: (a: number, b: number) => void;
     readonly webvm_set_reg: (a: number, b: number, c: number) => any;
     readonly webvm_step: (a: number) => any;
+    readonly assemble: (a: number, b: number) => [number, number];
+    readonly u16_to_ascii_rep: (a: number) => [number, number];
+    readonly highlight_text: (a: number, b: number) => [number, number];
     readonly get_tokens: (a: number, b: number) => any;
     readonly wasm_bindgen__closure__destroy__h526b5303e2c7d6e8: (a: number, b: number) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h6ac4f0b2d2f61cf4: (a: number, b: number, c: any, d: any) => void;

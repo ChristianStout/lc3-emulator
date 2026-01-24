@@ -105,9 +105,13 @@ async function loadAndRun(file) {
 }
 
 const loadButton = document.getElementById("loadButton");
-innerConsole.addEventListener("click", (e) => {
+loadButton.addEventListener("click", async (e) => {
   let file = editor.value;
-  loadToMachine(file);
+  let result = await loadToMachine(file);
+  if (!result) {
+    console.log("COULD NOT LOAD FILE TO MACHINE, ERROR LIKELY OCCURRED");
+    return;
+  }
 });
 
 async function loadToMachine(file) {
@@ -123,7 +127,7 @@ async function loadToMachine(file) {
   VM.load_into_memory(binary);
 
   updateRegisterDisplay();
-  render_memory();
+  render_memory(true);
 
   return true;
 }
@@ -137,8 +141,8 @@ async function stepInstruction() {
 
   let setResult = await VM.step();
 
-  await updateRegisterDisplay();
-  render_memory();
+  updateRegisterDisplay();
+  render_memory(true);
 
   if (await VM.is_awaiting_input()) {
     return;
@@ -150,17 +154,17 @@ async function stepInstruction() {
   }
 }
 
-async function updateRegisterDisplay() {
-  let r0 = await VM.get_reg_value_as_hex(0);
-  let r1 = await VM.get_reg_value_as_hex(1);
-  let r2 = await VM.get_reg_value_as_hex(2);
-  let r3 = await VM.get_reg_value_as_hex(3);
-  let r4 = await VM.get_reg_value_as_hex(4);
-  let r5 = await VM.get_reg_value_as_hex(5);
-  let r6 = await VM.get_reg_value_as_hex(6);
-  let r7 = await VM.get_reg_value_as_hex(7);
-  let pc = await VM.get_pc_value_as_hex();
-  let ir = await VM.get_ir_value_as_hex();
+function updateRegisterDisplay() {
+  let r0 = VM.get_reg_value_as_hex(0);
+  let r1 = VM.get_reg_value_as_hex(1);
+  let r2 = VM.get_reg_value_as_hex(2);
+  let r3 = VM.get_reg_value_as_hex(3);
+  let r4 = VM.get_reg_value_as_hex(4);
+  let r5 = VM.get_reg_value_as_hex(5);
+  let r6 = VM.get_reg_value_as_hex(6);
+  let r7 = VM.get_reg_value_as_hex(7);
+  let pc = VM.get_pc_value_as_hex();
+  let ir = VM.get_ir_value_as_hex();
 
   document.getElementById("r0Value").value = r0;
   document.getElementById("r1Value").value = r1;

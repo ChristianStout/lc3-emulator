@@ -1,5 +1,5 @@
 import init from "../pkg/lc3_web.js";
-import { make_memory_table, WebVM, u16_to_ascii_rep } from "../pkg/lc3_web.js";
+import { WebVM, u16_to_ascii_rep } from "../pkg/lc3_web.js";
 await init();
 // await make_memory_table();
 
@@ -116,11 +116,11 @@ for (let i = 0; i < visibleCount; i++) {
 
 let lastFirst = -1;
 
-function render_memory() {
+function render_memory(refresh = false) {
   const scrollTop = memory_container.scrollTop;
   const firstVisible = Math.floor(scrollTop / ROW_HEIGHT);
 
-  if (firstVisible === lastFirst) return;
+  if (!refresh && firstVisible === lastFirst) return;
   lastFirst = firstVisible;
 
   const start = Math.max(0, firstVisible - BUFFER);
