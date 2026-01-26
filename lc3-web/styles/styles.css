@@ -122,6 +122,10 @@ body {
     margin-top: 12px;
 }
 
+.panel-buttons {
+    border: none;
+}
+
 .registers {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -242,7 +246,7 @@ body {
     resize: none;
     border: none;
     width: calc(var(--info-panel-width) - var(--info-panel-margin) * 2);
-    height: 30%;
+    height: 27%;
     border-radius: var(--rounded-corners);
     background-color: var(--console-bg);
     padding: 5px;
@@ -259,7 +263,8 @@ body {
 .info-panel {
     width: var(--info-panel-width);
     background: var(--panel-bg);
-    padding: var(--info-panel-padding);
+    padding-left: var(--info-panel-padding);
+    padding-right: var(--info-panel-padding);
     margin: var(--info-panel-margin);
     margin-left: 6px;
     border: 1px solid var(--border);

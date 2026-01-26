@@ -120,10 +120,8 @@ function render_memory(refresh = false) {
 
   const start = Math.max(0, firstVisible - BUFFER);
 
-  // 4️⃣ Move viewport instead of resizing spacers
   viewport.style.transform = `translateY(${start * ROW_HEIGHT}px)`;
 
-  // 5️⃣ Update row contents only
   for (let i = 0; i < rows.length; i++) {
     const addr = start + i;
     const row = rows[i];
@@ -149,6 +147,22 @@ function render_memory(refresh = false) {
     }
   }
 }
+
+// from stack overflow
+document.addEventListener(
+  "keydown",
+  function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.code === "KeyS") {
+      console.log("CTRL + S pressed");
+      e.preventDefault(); // Prevent default browser behavior
+
+      // save file to cache
+
+      // display modal that informs the user that the file saved
+    }
+  },
+  false,
+);
 
 memory_container.addEventListener("scroll", render_memory);
 window.addEventListener("resize", render_memory);

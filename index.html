@@ -7,8 +7,7 @@
         <link rel="icon" type="image/x-icon" href="lc3-web/assets/lc-3.png">
         <link rel="stylesheet" href="lc3-web/styles/styles.css" />
         <script src="lc3-web/src/before.js" type="module"></script>
-        <script src="lc3-web/src/main.js" type="module" defer></script>
-        <script src="lc3-web/src/mod.js" type="module" defer></script>
+        <script src="lc3-web/src/script.js" type="module" defer></script>
     </head>
     <body>
         <!--<div id="app-contents">
@@ -50,6 +49,7 @@
 
 
                 <aside class="info-panel">
+                    <div class="panel-item panel-buttons">
                     <button class="button run-button" id="loadAndRunButton">
                         <svg
                             width="12px"
@@ -130,6 +130,8 @@
                           <circle cx="12" cy="19" r="2" />
                         </svg>
                     </button>
+                    </div>
+
                     <div class="registers panel-item">
                         <span class="reg-listing"><label class="reg-label">R0</label><span class="reg-info" id="r0Value">x0000</span></span>
                         <span class="reg-listing"><label class="reg-label">R1</label><span class="reg-info" id="r1Value">x0000</span></span>
@@ -141,6 +143,17 @@
                         <span class="reg-listing"><label class="reg-label">R7</label><span class="reg-info" id="r7Value">x0000</span></span>
                         <span class="reg-listing"><label class="reg-label">PC</label><span class="reg-info" id="pcValue">x0000</span></span>
                         <span class="reg-listing"><label class="reg-label">IR</label><span class="reg-info" id="irValue">x0000</span></span>
+                    </div>
+
+                    <div class="panel-item panel-buttons">
+                        <button class="button" id="jumpPcButton">
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="12px" height="12px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1920 1546.993v106.666H533.341v-106.666H1920ZM357.651 442.668l304.425 304.319-304.425 304.318-75.306-75.306 175.572-175.68h-351.25v853.33H0V693.653h457.917L282.345 518.08l75.306-75.413ZM1920 1120.222v106.773H533.341v-106.773H1920Zm-853.329-426.558V800.33H853.34V693.664h213.332Zm426.665 0V800.33h-213.332V693.664h213.332Zm426.664 0V800.33h-213.332V693.664H1920ZM1920 267v106.666H533.341V267H1920Z" fill-rule="evenodd"/>
+                            </svg>
+                            Jump to PC
+                        </button>
+
                     </div>
 
                     <div class="memory-table panel-item" id="memoryTable">
@@ -159,7 +172,7 @@
 
 
 
-                    <div class="panel-item" id="console-buttons">
+                    <div class="panel-item panel-buttons" id="console-buttons">
                         <button class="button" id="clearConsoleButton">Clear Console</button>
                         <button class="button" id="clearInputStreamButton">Clear Input Stream</button>
                     </div>
@@ -170,7 +183,7 @@
                 </aside>
             </main>
 
-            <footer class="bottom-bar">bottom bar</footer>
+            <footer class="bottom-bar">&#169; Christian Stout (2026)</footer>
         </div>
     </body>
 </html>
