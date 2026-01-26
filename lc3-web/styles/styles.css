@@ -204,6 +204,7 @@ body {
 .memory-row:hover {
     background: var(--memory-loc-hover);
 }
+
 .memory-body {
     position: relative;
     height: 100%;
@@ -229,6 +230,9 @@ body {
     margin: 0;
     padding: 0;
     white-space: nowrap;
+    transition:
+        color 0s,
+        background-color 0s;
 }
 
 .mem-pc-loc {
