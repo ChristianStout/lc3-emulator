@@ -15,6 +15,7 @@ select.theme = th;
 document.body.dataset.theme = select.value; // to make sure that the default is loaded on init
 console.log("Initialized");
 select.addEventListener("change", () => {
+  console.log("Theme changed");
   document.body.dataset.theme = select.value;
   localStorage.setItem("theme", select.value);
 });
@@ -148,6 +149,17 @@ function render_memory(refresh = false) {
   }
 }
 
+function jumpToPc() {
+  console.log("Jumped to PC!");
+  memory_container.scrollTop = (VM.get_pc() - 3) * ROW_HEIGHT;
+  render_memory();
+}
+
+const jumpPcButton = document.getElementById("jumpPcButton");
+jumpPcButton.addEventListener("click", (e) => {
+  jumpToPc();
+});
+
 // from stack overflow
 document.addEventListener(
   "keydown",
@@ -157,6 +169,7 @@ document.addEventListener(
       e.preventDefault(); // Prevent default browser behavior
 
       // save file to cache
+      localStorage.setItem("file", editor.value);
 
       // display modal that informs the user that the file saved
     }
@@ -169,4 +182,4 @@ window.addEventListener("resize", render_memory);
 
 render_memory();
 
-export { VM, render_memory };
+export { VM, render_memory, jumpToPc };

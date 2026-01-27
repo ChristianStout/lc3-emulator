@@ -1,7 +1,7 @@
 // import { highlight_text, update, sync_scroll, check_tab } from './main.js';
 import init from "../pkg/lc3_web.js";
 import { get_tokens, highlight_text, assemble, WebVM } from "../pkg/lc3_web.js";
-import { VM, render_memory } from "./before.js";
+import { VM, jumpToPc, render_memory } from "./before.js";
 await init();
 
 const Error = Object.freeze({ NONE: 0, FAIL: 1 });
@@ -117,6 +117,7 @@ loadButton.addEventListener("click", async (e) => {
     console.log("COULD NOT LOAD FILE TO MACHINE, ERROR LIKELY OCCURRED");
     return;
   }
+  jumpToPc();
 });
 
 async function loadToMachine(file) {
@@ -157,6 +158,8 @@ async function stepInstruction() {
   if (isAwaitingInput && result) {
     await VM.set_awaiting_input(false);
   }
+
+  jumpToPc();
 }
 
 function updateRegisterDisplay() {
