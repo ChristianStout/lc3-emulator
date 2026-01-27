@@ -2,12 +2,10 @@ pub mod highlight;
 pub mod webio;
 pub mod webvm;
 use lc3::asm::asm::Asm;
-use wasm_bindgen::JsCast;
+use lc3::asm::lexer::*;
+use lc3::asm::token::*;
+use lc3::vm::vm::OPCODE_DELTA;
 use wasm_bindgen::prelude::*;
-use web_sys::Document;
-use web_sys::Element;
-use web_sys::HtmlDivElement;
-use web_sys::js_sys;
 
 #[wasm_bindgen]
 extern "C" {
@@ -19,6 +17,13 @@ extern "C" {
 pub fn assemble(file: String) -> Option<Vec<u16>> {
     let mut asm = Asm::new();
     return asm.run(file);
+}
+
+#[wasm_bindgen]
+pub fn get_tokens(file: String) -> TokenCollection {
+    return TokenCollection {
+        tokens: Lexer::new().run(file),
+    };
 }
 
 #[wasm_bindgen]
@@ -59,5 +64,56 @@ pub fn u16_to_ascii_rep(n: u16) -> String {
         32 => "SPACE".to_string(),
         127 => "DEL".to_string(),
         _ => String::from(n as u8 as char),
+    }
+}
+
+#[wasm_bindgen]
+pub fn u16_to_instr_rep(n: u16) -> String {
+    if n == 0 {
+        return "NO-OP".to_string();
+    }
+    let opcode = n >> OPCODE_DELTA;
+
+    match opcode {
+        0 => "BR".to_string(),
+        1 => "ADD".to_string(),
+        2 => "LD".to_string(),
+        3 => "ST".to_string(),
+        4 => {
+            let without_op = n - (opcode << OPCODE_DELTA);
+            let code = without_op >> OPCODE_DELTA - 1;
+            if code > 0 {
+                "JSR".to_string()
+            } else {
+                "JSRR".to_string()
+            }
+        } // TODO: Expand to JSR or JSRR, depending in the 5th bit
+        5 => "AND".to_string(),
+        6 => "LDR".to_string(),
+        7 => "STR".to_string(),
+        8 => "RTI".to_string(),
+        9 => "NOT".to_string(),
+        10 => "LDI".to_string(),
+        11 => "STI".to_string(),
+        12 => "JMP".to_string(),
+        13 => "RESERVED".to_string(),
+        14 => "LEA".to_string(),
+        15 => {
+            let without_op = n - (opcode << OPCODE_DELTA);
+            get_trap_string(without_op)
+        }
+        _ => "-".to_string(),
+    }
+}
+
+fn get_trap_string(without_op: u16) -> String {
+    match without_op {
+        0x20 => "GETC".to_string(),
+        0x21 => "OUT".to_string(),
+        0x22 => "PUTS".to_string(),
+        0x23 => "IN".to_string(),
+        0x24 => "PUTSP".to_string(),
+        0x25 => "HALT".to_string(),
+        _ => "TRAP".to_string(),
     }
 }

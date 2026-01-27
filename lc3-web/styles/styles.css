@@ -171,7 +171,7 @@ body {
 
 .memory-header {
     display: grid;
-    grid-template-columns: 8ch 8ch 8ch 6ch;
+    grid-template-columns: 8ch 8ch 8ch 12ch 8ch;
     background: var(--console-bg);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -193,12 +193,12 @@ body {
 
 .memory-row {
     display: grid;
-    grid-template-columns: 8ch 8ch 8ch 6ch;
+    grid-template-columns: 8ch 8ch 8ch 12ch 8ch;
     border-bottom: 1px solid var(--border);
 }
 
 .memory-row > div {
-    padding: 2px 6px;
+    padding: 0px 6px 0px 6px;
     white-space: nowrap;
     border-left: 1px solid var(--border);
 }

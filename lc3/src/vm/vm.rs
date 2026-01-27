@@ -16,7 +16,7 @@ use std::collections::HashMap;
 
 const CMD_SIZE: u8 = 16;
 const OPCODE_SIZE: u8 = 4;
-const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
+pub const OPCODE_DELTA: u8 = CMD_SIZE - OPCODE_SIZE;
 
 pub enum InstructionResult {
     Ready,

@@ -241,6 +241,23 @@ export function u16_to_ascii_rep(n) {
     }
 }
 
+/**
+ * @param {number} n
+ * @returns {string}
+ */
+export function u16_to_instr_rep(n) {
+    let deferred1_0;
+    let deferred1_1;
+    try {
+        const ret = wasm.u16_to_instr_rep(n);
+        deferred1_0 = ret[0];
+        deferred1_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free_command_export(deferred1_0, deferred1_1, 1);
+    }
+}
+
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
@@ -372,7 +389,7 @@ function __wbg_get_imports() {
             getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { dtor_idx: 197, function: Function { arguments: [Externref], shim_idx: 198, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { dtor_idx: 200, function: Function { arguments: [Externref], shim_idx: 201, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__h526b5303e2c7d6e8, wasm_bindgen__convert__closures_____invoke__h6753d1b549cb6a6f);
             return ret;
         },

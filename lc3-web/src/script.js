@@ -11,7 +11,6 @@ const inputStream = document.getElementById("inputStream");
 // inputStream.addEventListener("keydown", async (e) => {});
 
 async function inputToStream(e) {
-  console.log("hi from input stream event hanlder");
   e.preventDefault();
   let key = e.key;
   if (
@@ -41,7 +40,7 @@ async function inputToStream(e) {
   inputStream.value += key;
   console.log(inputStream.value);
 
-  if (VM.is_awaiting_input()) {
+  if (await VM.is_awaiting_input()) {
     await VM.set_reg(0, key.charCodeAt(0));
     await VM.set_awaiting_input(false);
     await run(); // continue execution
@@ -66,7 +65,7 @@ editor.addEventListener("keydown", function (e) {
     // put caret at right position again
     this.selectionStart = this.selectionEnd = start + 1;
   }
-  console.log(this.value);
+  localStorage.setItem("file", this.value);
 });
 
 const runButton = document.getElementById("runButton");
@@ -80,8 +79,8 @@ async function run() {
   while (!VM.is_halted()) {
     await stepInstruction();
 
-    let result = await VM.is_awaiting_input();
-    if (result) {
+    let awaiting_input = await VM.is_awaiting_input();
+    if (awaiting_input) {
       return;
     }
   }
@@ -145,7 +144,7 @@ async function stepInstruction() {
 
   const isAwaitingInput = await VM.is_awaiting_input();
 
-  let setResult = await VM.step();
+  let stepResult = await VM.step();
 
   updateRegisterDisplay();
   render_memory(true);

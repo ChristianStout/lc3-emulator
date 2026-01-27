@@ -36,11 +36,6 @@ impl Lc3IO {
 pub trait IOTarget {
     fn get_char(&mut self) -> Option<char>;
     fn put_char(&mut self, c: char);
-    // fn print_string(&mut self, reg: &mut Registers, mem: &mut Memory);
-    // fn print_string_special(&mut self, reg: &mut Registers, mem: &mut Memory);
-    // fn print_single_char(&mut self, reg: &mut Registers);
-    // fn print_asm_error(&mut self, err_msg: &str);
-    // fn print_vm_error(&mut self, error_name: &str, error_msg: &str);
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize, Tsify))]
@@ -67,9 +62,4 @@ impl IOTarget for DebugIO {
     fn put_char(&mut self, c: char) {
         self.output_stream.push_back(c);
     }
-    // fn print_string(&mut self, _reg: &mut Registers, _mem: &mut Memory) {}
-    // fn print_string_special(&mut self, _reg: &mut Registers, _mem: &mut Memory) {}
-    // fn print_single_char(&mut self, _reg: &mut Registers) {}
-    // fn print_asm_error(&mut self, _err_msg: &str) {}
-    // fn print_vm_error(&mut self, _error_name: &str, _error_msg: &str) {}
 }

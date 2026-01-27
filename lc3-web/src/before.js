@@ -1,5 +1,5 @@
 import init from "../pkg/lc3_web.js";
-import { WebVM, u16_to_ascii_rep } from "../pkg/lc3_web.js";
+import { WebVM, u16_to_ascii_rep, u16_to_instr_rep } from "../pkg/lc3_web.js";
 await init();
 // await make_memory_table();
 
@@ -31,46 +31,46 @@ let editor_contents = localStorage.getItem("file");
 if (editor_contents == "") {
   editor_contents = `.orig x3000
 
-                  br          begin
+                br          begin
 
-  prompt          .stringz    "\nwill you give this repo a star? (y/n) > "
+prompt          .stringz    "will you give this repo a star? (y/n) > "
 
-  begin           lea         r0, prompt
-                  in
-                  out
-                  br          calc
+begin           lea         r0, prompt
+                in
+                out
+                br          calc
 
-  char_y          .fill       #121
-  char_n          .fill       #110
+char_y          .fill       #121
+char_n          .fill       #110
 
-  calc            ld          r1, char_y
-                  not         r1, r1
-                  add         r1, r1, #1
-                  add         r1, r1, r0
-                  brz         thank
-                  ld          r1, char_n
-                  not         r1, r1
-                  add         r1, r1, #1
-                  add         r1, r1, r0
-                  brz         scold
+calc            ld          r1, char_y
+                not         r1, r1
+                add         r1, r1, #1
+                add         r1, r1, r0
+                brz         thank
+                ld          r1, char_n
+                not         r1, r1
+                add         r1, r1, #1
+                add         r1, r1, r0
+                brz         scold
 
-                  lea         r0, hmm
-                  puts
-                  br          begin
-  hmm             .stringz    "\n?"
+                lea         r0, hmm
+                puts
+                br          begin
+hmm             .stringz    "\\n?"
 
-  thx_msg         .stringz    "\nwow, tysm :) <3\n"
-  thank           lea         r0, thx_msg
-                  puts
-                  halt
+thx_msg         .stringz    "\\nwow, tysm :) <3\\n"
+thank           lea         r0, thx_msg
+                puts
+                halt
 
-  bad_msg         .stringz    "\nhow dare you"
-  scold           lea         r0, bad_msg
-                  puts
-                  br          begin
-                  halt
+bad_msg         .stringz    "\\nhow dare you"
+scold           lea         r0, bad_msg
+                puts
+                br          begin
+                halt
 
-  .end
+.end
 `;
 }
 editor.value = editor_contents;
@@ -105,6 +105,9 @@ for (let i = 0; i < visibleCount; i++) {
 
   const ascii = document.createElement("div");
   row.appendChild(ascii);
+
+  const instr = document.createElement("div");
+  row.appendChild(instr);
 
   row.className = "memory-row";
   viewport.appendChild(row);
@@ -146,6 +149,7 @@ function render_memory(refresh = false) {
       children[1].textContent = `x${mem_value.toString(16).padStart(4, "0").toUpperCase()}`;
       children[2].textContent = mem_value;
       children[3].textContent = u16_to_ascii_rep(mem_value);
+      children[4].textContent = u16_to_instr_rep(mem_value);
     }
   }
 }

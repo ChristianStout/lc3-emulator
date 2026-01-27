@@ -118,13 +118,16 @@ export function push_char_to_output(c: string): void;
 
 export function u16_to_ascii_rep(n: number): string;
 
+export function u16_to_instr_rep(n: number): string;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly pop_from_input_stream: () => number;
-    readonly push_char_to_output: (a: number) => void;
-    readonly webio_new: () => any;
+    readonly assemble: (a: number, b: number) => [number, number];
+    readonly get_tokens: (a: number, b: number) => any;
+    readonly u16_to_ascii_rep: (a: number) => [number, number];
+    readonly u16_to_instr_rep: (a: number) => [number, number];
     readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly webvm_get_ir_value_as_hex: (a: number) => [number, number];
     readonly webvm_get_pc: (a: number) => number;
@@ -140,10 +143,10 @@ export interface InitOutput {
     readonly webvm_set_pc: (a: number, b: number) => void;
     readonly webvm_set_reg: (a: number, b: number, c: number) => any;
     readonly webvm_step: (a: number) => any;
-    readonly assemble: (a: number, b: number) => [number, number];
-    readonly u16_to_ascii_rep: (a: number) => [number, number];
+    readonly pop_from_input_stream: () => number;
+    readonly push_char_to_output: (a: number) => void;
+    readonly webio_new: () => any;
     readonly highlight_text: (a: number, b: number) => [number, number];
-    readonly get_tokens: (a: number, b: number) => any;
     readonly wasm_bindgen__closure__destroy__h526b5303e2c7d6e8: (a: number, b: number) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h6ac4f0b2d2f61cf4: (a: number, b: number, c: any, d: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h6753d1b549cb6a6f: (a: number, b: number, c: any) => void;
