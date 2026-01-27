@@ -33,7 +33,7 @@ if (editor_contents == "") {
 
                 br          begin
 
-prompt          .stringz    "will you give this repo a star? (y/n) > "
+prompt          .stringz    "\\nwill you give this repo a star? (y/n) > "
 
 begin           lea         r0, prompt
                 in
