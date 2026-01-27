@@ -11,15 +11,17 @@ share the same underlying LC-3 implementation (found in `/lc3`).
 
 ## IMPORTANT NOTICE
 This is still an extremely early release, and the web front-end is not complete.
-The command-line tool seems to be fully function (other than privileged mode).
+The command-line tool seems to be fully function.
 
-As of now, this is an emulator. Soon, I plan to make this a full simulator by 
-implementing the OS and getting rid of trap magic.
+As of now, this is an emulator. At a high level, code runs and executes 
+as expected (as far as I am aware). Eventually, I want to make this a true simulator by implementing
+the OS, getting rid of trap magic, implementing RTI, true device interrupts,
+privileged mode, and computing NZP through the PSR register.
 
-## Setup
+# Setup
 To use the web front end, just click [here](https://christianstout.github.io/lc3-emulator)!
 
-# Command-line Runner
+## Command-line Runner
 Clone the repo and enter the repo:
 ```bash
 git clone https://github.com/ChristianStout/lc3-emulator.git && \
@@ -51,23 +53,27 @@ You can also emit the binary file as `out.bin` if you run:
 The following are goals that need to be met for each package/library
 
 ### Cli
-[ ] Implement running from a binary file with `--binary` flag
+- [ ] Implement running from a binary file with `--binary` flag
 
 ### LC-3 Backend
-[ ] Write OS in assembly and load into memory before file
-  [ ] Allow users to write their own OS by using a `.ORIG` in the privileged zone in memory
-[ ] Implement RTI
-[ ] Implement IR
-[ ] Have PSR reflect the internal state of the machine
-[ ] Make `Instruction.exe()` return an optional memory address that may have been modified (for front end to update the memory value)
+- [ ] Write OS in assembly and load into memory before file
+  - [ ] Allow users to write their own OS by using a `.ORIG` in the privileged zone in memory
+  - [ ] Implement RTI
+  - [ ] Implement IR
+  - [ ] Have PSR reflect the internal state of the machine
+  - [ ] Make `Instruction.exe()` return an optional memory address that may have been modified (for front end to update the memory value)
 
 ### Web Front-End
-[ ] Update register view on step
-[ ] Fix side panel
-  [ ] Add memory view
-  [ ] make console/memory view's height dynamic to the height of the panel
-  [ ] Properly position clear input/output button
-  [ ] Make a way to view the input stream + count
-[ ] Reimplement syntax highlighting into the editor
-[ ] Add Github link button
-[ ] Switch to Yew/React?
+- [x] Update register view on step
+- [ ] Fix side panel
+  - [x] Add memory view
+  - [ ] make console/memory view's height dynamic to the height of the panel
+  - [ ] Properly position clear input/output button
+  - [ ] Make a way to view the input stream + count
+  - [ ] Reimplement syntax highlighting into the editor
+  - [ ] Add Github link button
+  - [ ] Switch to Yew/React?
+  - [ ] Allow editing of register/memory values by clicking
+- [ ] Add useful notifications
+  - [ ] Display assembly errors to user
+  - [ ]
