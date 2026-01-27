@@ -74,6 +74,7 @@ if (editor_contents == "") {
 `;
 }
 editor.value = editor_contents;
+localStorage.setItem("file", editor.value);
 
 const TOTAL_ROWS = 65536;
 const ROW_HEIGHT = 20;

@@ -23,7 +23,8 @@ body[data-theme="light"] {
     --button: rgb(239, 241, 245);
     --button-hover: rgb(230, 233, 239);
     --memory-loc-hover: rgb(172, 176, 190);
-    --show-pc-loc: rgb(230, 69, 83);
+    --show-pc-loc: rgb(221, 120, 120);
+    --show-pc-loc-hover: rgb(220, 138, 120);
 }
 
 body[data-theme="dark"] {
@@ -42,7 +43,8 @@ body[data-theme="dark"] {
     --button: rgb(91, 96, 120);
     --button-hover: rgb(54, 58, 79);
     --memory-loc-hover: rgb(24, 25, 38);
-    --show-pc-loc: rgb(238, 153, 160);
+    --show-pc-loc: rgb(237, 135, 150);
+    --show-pc-loc-hover: rgb(238, 153, 160);
 }
 
 * {
@@ -237,6 +239,14 @@ body {
 
 .mem-pc-loc {
     background-color: var(--show-pc-loc);
+}
+
+.mem-pc-loc > div {
+    color: var(--bg);
+}
+
+.mem-pc-loc:hover {
+    background-color: var(--show-pc-loc-hover);
 }
 
 .console {
