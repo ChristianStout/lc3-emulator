@@ -333,6 +333,11 @@ body {
     align-items: left;
 }
 
+.stream {
+    resize: none;
+    width: 93px;
+}
+
 .icon {
     max-height: 16px;
     max-width: 14px;
@@ -345,6 +350,22 @@ body {
     position: absolute;
     float: bottom;
     visibility: hidden;
+}
+
+/*
+Source - https://stackoverflow.com/a/4407335
+Posted by Blowsie, modified by community. See post 'Timeline' for change history
+Retrieved 2026-01-29, License - CC BY-SA 4.0
+*/
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 /*
