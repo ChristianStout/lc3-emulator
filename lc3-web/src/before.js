@@ -9,6 +9,7 @@ let th = localStorage.getItem("theme");
 if (th === null) {
   th = "dark";
 }
+localStorage.setItem("theme", th);
 
 const select = document.getElementById("themeSelect");
 select.theme = th;

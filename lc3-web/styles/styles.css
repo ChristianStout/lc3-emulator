@@ -340,6 +340,13 @@ body {
     text-align: center;
 }
 
+.modal {
+    display: float;
+    position: absolute;
+    float: bottom;
+    visibility: hidden;
+}
+
 /*
     For note on how I did syntax highlighting in the
     previous version, I have left the HTML and CSS commented out
