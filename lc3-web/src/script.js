@@ -37,14 +37,13 @@ async function inputToStream(e) {
     return;
   }
 
-  inputStream.value += key;
-  console.log(inputStream.value);
-
   if (await VM.is_awaiting_input()) {
     await VM.set_reg(0, key.charCodeAt(0));
     await VM.set_awaiting_input(false);
     await run(); // continue execution
+    return;
   }
+  inputStream.value += key;
 }
 
 const innerConsole = document.getElementById("innerConsole");
