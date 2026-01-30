@@ -40,9 +40,8 @@ async function inputToStream(e) {
   if (await VM.is_awaiting_input()) {
     await VM.set_reg(0, key.charCodeAt(0));
     await VM.set_awaiting_input(false);
-    stepButton.disabled = false;
-    runButton.disabled = false;
-    if (VM.is_running) {
+    enableStepAndRunButtons();
+    if (VM.get_is_running()) {
       await run(); // continue execution
       return;
     }
@@ -80,6 +79,11 @@ runButton.addEventListener("click", async (e) => {
 async function run() {
   VM.set_is_running(true);
   await VM.set_awaiting_input(false);
+
+  if (!VM.get_program_loaded()) {
+    console.log("No program loaded");
+    return;
+  }
 
   while (!VM.is_halted()) {
     await stepInstruction();
@@ -143,6 +147,9 @@ async function loadToMachine(file) {
   updateRegisterDisplay();
   render_memory(true);
 
+  VM.set_program_loaded(true);
+  enableStepAndRunButtons();
+
   return true;
 }
 
@@ -163,8 +170,7 @@ async function stepInstruction() {
   jumpToPc();
 
   if (await VM.is_awaiting_input()) {
-    stepButton.disabled = true;
-    runButton.disabled = true;
+    disableStepAndRunButtons();
     return;
   }
 
@@ -209,6 +215,16 @@ const clearInputBufferButton = document.getElementById(
 clearInputBufferButton.addEventListener("click", async (e) => {
   inputStream.value = "";
 });
+
+function disableStepAndRunButtons() {
+  stepButton.disabled = true;
+  runButton.disabled = true;
+}
+
+function enableStepAndRunButtons() {
+  stepButton.disabled = false;
+  runButton.disabled = false;
+}
 
 // let textarea = document.querySelector("#editing");
 // textarea.addEventListener("input", (event) => {

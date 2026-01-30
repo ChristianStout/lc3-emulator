@@ -48,6 +48,13 @@ export class WebVM {
         }
     }
     /**
+     * @returns {boolean}
+     */
+    get_is_running() {
+        const ret = wasm.webvm_get_is_running(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
      * @returns {number}
      */
     get_pc() {
@@ -68,6 +75,13 @@ export class WebVM {
         } finally {
             wasm.__wbindgen_free_command_export(deferred1_0, deferred1_1, 1);
         }
+    }
+    /**
+     * @returns {boolean}
+     */
+    get_program_loaded() {
+        const ret = wasm.webvm_get_program_loaded(this.__wbg_ptr);
+        return ret !== 0;
     }
     /**
      * @param {number} reg_value
@@ -147,6 +161,12 @@ export class WebVM {
      */
     set_pc(new_pc) {
         wasm.webvm_set_pc(this.__wbg_ptr, new_pc);
+    }
+    /**
+     * @param {boolean} b
+     */
+    set_program_loaded(b) {
+        wasm.webvm_set_program_loaded(this.__wbg_ptr, b);
     }
     /**
      * @param {number} reg

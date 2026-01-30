@@ -91,8 +91,10 @@ export class WebVM {
     free(): void;
     [Symbol.dispose](): void;
     get_ir_value_as_hex(): string;
+    get_is_running(): boolean;
     get_pc(): number;
     get_pc_value_as_hex(): string;
+    get_program_loaded(): boolean;
     get_reg_value_as_hex(reg_value: number): string;
     is_awaiting_input(): Promise<boolean>;
     is_halted(): boolean;
@@ -103,6 +105,7 @@ export class WebVM {
     set_awaiting_input(is: boolean): Promise<void>;
     set_is_running(b: boolean): void;
     set_pc(new_pc: number): void;
+    set_program_loaded(b: boolean): void;
     set_reg(reg: number, value: number): Promise<void>;
     step(): Promise<void>;
 }
@@ -131,8 +134,10 @@ export interface InitOutput {
     readonly u16_to_instr_rep: (a: number) => [number, number];
     readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly webvm_get_ir_value_as_hex: (a: number) => [number, number];
+    readonly webvm_get_is_running: (a: number) => number;
     readonly webvm_get_pc: (a: number) => number;
     readonly webvm_get_pc_value_as_hex: (a: number) => [number, number];
+    readonly webvm_get_program_loaded: (a: number) => number;
     readonly webvm_get_reg_value_as_hex: (a: number, b: number) => [number, number];
     readonly webvm_is_awaiting_input: (a: number) => any;
     readonly webvm_is_halted: (a: number) => number;
@@ -143,6 +148,7 @@ export interface InitOutput {
     readonly webvm_set_awaiting_input: (a: number, b: number) => any;
     readonly webvm_set_is_running: (a: number, b: number) => void;
     readonly webvm_set_pc: (a: number, b: number) => void;
+    readonly webvm_set_program_loaded: (a: number, b: number) => void;
     readonly webvm_set_reg: (a: number, b: number, c: number) => any;
     readonly webvm_step: (a: number) => any;
     readonly pop_from_input_stream: () => number;

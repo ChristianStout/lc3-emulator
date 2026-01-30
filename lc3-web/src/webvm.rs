@@ -12,6 +12,7 @@ struct WebVM {
     vm: VM,
     awaiting_input: bool,
     is_running: bool,
+    program_loaded: bool,
 }
 
 #[allow(dead_code)]
@@ -23,6 +24,7 @@ impl WebVM {
             vm: VM::new(Lc3IO::new(Box::new(WebIO::new()))),
             awaiting_input: false,
             is_running: false,
+            program_loaded: false,
         }
     }
 
@@ -94,5 +96,17 @@ impl WebVM {
 
     pub fn set_is_running(&mut self, b: bool) {
         self.is_running = b;
+    }
+
+    pub fn get_is_running(&self) -> bool {
+        return self.is_running;
+    }
+
+    pub fn set_program_loaded(&mut self, b: bool) {
+        self.program_loaded = b;
+    }
+
+    pub fn get_program_loaded(&self) -> bool {
+        return self.program_loaded;
     }
 }
