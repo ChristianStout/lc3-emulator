@@ -351,11 +351,14 @@ body {
     align-items: left;
 }
 
-.stream {
+.stream:disabled {
     resize: none;
-    width: 93px;
+    width: 142px;
     outline: none;
     margin: none;
+    background-color: var(--console-bg);
+    color: var(--fg);
+    overflow-x: scroll;
 }
 
 .icon {

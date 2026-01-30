@@ -49,12 +49,16 @@ pub fn pop_from_input_stream() -> Option<char> {
         .get_element_by_id("inputStream")
         .expect("Was not able to get the element `inputStream` in WebIO::get_console_value");
 
-    let text_area = input_stream
-        .dyn_into::<HtmlTextAreaElement>()
+    let input_element = input_stream
+        .dyn_into::<HtmlInputElement>()
         .expect("Expected to be able to get the input stream value");
 
-    let input_stream_value = text_area.value();
-    log(&format!("from pop_input_stream(): value = {:?}, len = {}", input_stream_value, input_stream_value.len()));
+    let input_stream_value = input_element.value();
+    log(&format!(
+        "from pop_input_stream(): value = {:?}, len = {}",
+        input_stream_value,
+        input_stream_value.len()
+    ));
 
     if input_stream_value.len() == 0 {
         return None;
@@ -69,7 +73,7 @@ pub fn pop_from_input_stream() -> Option<char> {
         .get(1..)
         .expect("expected to be able to get a substring from the input stream value in pop_from_input_stream()");
 
-    text_area.set_value(new_stream);
+    input_element.set_value(new_stream);
 
     return Some(c);
 }
