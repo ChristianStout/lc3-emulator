@@ -137,6 +137,12 @@ export class WebVM {
         return ret;
     }
     /**
+     * @param {boolean} b
+     */
+    set_is_running(b) {
+        wasm.webvm_set_is_running(this.__wbg_ptr, b);
+    }
+    /**
      * @param {number} new_pc
      */
     set_pc(new_pc) {

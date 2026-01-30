@@ -17,6 +17,7 @@ export const webvm_mem_get: (a: number, b: number) => number;
 export const webvm_new: () => number;
 export const webvm_reset_machine: (a: number) => any;
 export const webvm_set_awaiting_input: (a: number, b: number) => any;
+export const webvm_set_is_running: (a: number, b: number) => void;
 export const webvm_set_pc: (a: number, b: number) => void;
 export const webvm_set_reg: (a: number, b: number, c: number) => any;
 export const webvm_step: (a: number) => any;

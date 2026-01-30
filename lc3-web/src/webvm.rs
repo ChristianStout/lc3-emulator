@@ -11,6 +11,7 @@ use wasm_bindgen::prelude::*;
 struct WebVM {
     vm: VM,
     awaiting_input: bool,
+    is_running: bool,
 }
 
 #[allow(dead_code)]
@@ -21,6 +22,7 @@ impl WebVM {
         WebVM {
             vm: VM::new(Lc3IO::new(Box::new(WebIO::new()))),
             awaiting_input: false,
+            is_running: false,
         }
     }
 
@@ -88,5 +90,9 @@ impl WebVM {
 
     pub fn mem_get(&self, loc: u16) -> u16 {
         return self.vm.memory.get(loc);
+    }
+
+    pub fn set_is_running(&mut self, b: bool) {
+        self.is_running = b;
     }
 }

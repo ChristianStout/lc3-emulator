@@ -1,7 +1,6 @@
 import init from "../pkg/lc3_web.js";
 import { WebVM, u16_to_ascii_rep, u16_to_instr_rep } from "../pkg/lc3_web.js";
 await init();
-// await make_memory_table();
 
 const VM = new WebVM();
 

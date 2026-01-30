@@ -101,6 +101,7 @@ export class WebVM {
     constructor();
     reset_machine(): Promise<void>;
     set_awaiting_input(is: boolean): Promise<void>;
+    set_is_running(b: boolean): void;
     set_pc(new_pc: number): void;
     set_reg(reg: number, value: number): Promise<void>;
     step(): Promise<void>;
@@ -140,6 +141,7 @@ export interface InitOutput {
     readonly webvm_new: () => number;
     readonly webvm_reset_machine: (a: number) => any;
     readonly webvm_set_awaiting_input: (a: number, b: number) => any;
+    readonly webvm_set_is_running: (a: number, b: number) => void;
     readonly webvm_set_pc: (a: number, b: number) => void;
     readonly webvm_set_reg: (a: number, b: number, c: number) => any;
     readonly webvm_step: (a: number) => any;

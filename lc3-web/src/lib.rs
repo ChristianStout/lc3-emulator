@@ -87,7 +87,7 @@ pub fn u16_to_instr_rep(n: u16) -> String {
             } else {
                 "JSRR".to_string()
             }
-        } // TODO: Expand to JSR or JSRR, depending in the 5th bit
+        }
         5 => "AND".to_string(),
         6 => "LDR".to_string(),
         7 => "STR".to_string(),

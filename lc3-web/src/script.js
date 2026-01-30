@@ -40,7 +40,12 @@ async function inputToStream(e) {
   if (await VM.is_awaiting_input()) {
     await VM.set_reg(0, key.charCodeAt(0));
     await VM.set_awaiting_input(false);
-    await run(); // continue execution
+    stepButton.disabled = false;
+    runButton.disabled = false;
+    if (VM.is_running) {
+      await run(); // continue execution
+      return;
+    }
     return;
   }
   inputStream.value += key;
@@ -73,6 +78,7 @@ runButton.addEventListener("click", async (e) => {
 });
 
 async function run() {
+  VM.set_is_running(true);
   await VM.set_awaiting_input(false);
 
   while (!VM.is_halted()) {
@@ -82,6 +88,10 @@ async function run() {
     if (awaiting_input) {
       return;
     }
+  }
+
+  if (VM.is_halted) {
+    VM.set_is_running(false);
   }
 }
 
@@ -141,23 +151,27 @@ async function stepInstruction() {
     return;
   }
 
-  const isAwaitingInput = await VM.is_awaiting_input();
+  // const isAwaitingInput = await VM.is_awaiting_input();
+  // if (isAwaitingInput) {
+  //   stepButton.disabled = true;
+  // }
 
   let stepResult = await VM.step();
 
   updateRegisterDisplay();
   render_memory(true);
+  jumpToPc();
 
   if (await VM.is_awaiting_input()) {
+    stepButton.disabled = true;
+    runButton.disabled = true;
     return;
   }
 
-  let result = await VM.is_awaiting_input();
-  if (isAwaitingInput && result) {
-    await VM.set_awaiting_input(false);
-  }
-
-  jumpToPc();
+  // let result = await VM.is_awaiting_input();
+  // if (isAwaitingInput && result) {
+  //   await VM.set_awaiting_input(false);
+  // }
 }
 
 function updateRegisterDisplay() {

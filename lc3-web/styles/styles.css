@@ -22,6 +22,8 @@ body[data-theme="light"] {
     --run-button-hover: rgb(30, 102, 245);
     --button: rgb(239, 241, 245);
     --button-hover: rgb(230, 233, 239);
+    --button-disabled: rgb(204, 208, 218);
+    --button-disabled-text: rgb(156, 160, 176);
     --memory-loc-hover: rgb(172, 176, 190);
     --show-pc-loc: rgb(221, 120, 120);
     --show-pc-loc-hover: rgb(220, 138, 120);
@@ -42,6 +44,8 @@ body[data-theme="dark"] {
     --run-button-hover: rgb(54, 58, 79);
     --button: rgb(91, 96, 120);
     --button-hover: rgb(54, 58, 79);
+    --button-disabled: rgb(128, 135, 162);
+    --button-disabled-text: rgb(91, 96, 120);
     --memory-loc-hover: rgb(24, 25, 38);
     --show-pc-loc: rgb(237, 135, 150);
     --show-pc-loc-hover: rgb(238, 153, 160);
@@ -256,6 +260,7 @@ body {
 
 .inner-console {
     flex: 1;
+    outline: none;
     position: absolute;
     resize: none;
     border: none;
@@ -269,7 +274,7 @@ body {
 
 .invisible {
     /*color: red;
-    background: transparent;
+    background: transparent2px solid;
     z-index: 1;*/
     visibility: hidden;
 }
@@ -317,6 +322,11 @@ body {
     background-color: var(--button-hover);
 }
 
+.button:disabled {
+    background-color: var(--button-disabled);
+    color: var(--button-disabled-text);
+}
+
 .run-button {
     background-color: var(--run-button);
     border-color: var(--run-button);
@@ -336,6 +346,8 @@ body {
 .stream {
     resize: none;
     width: 93px;
+    outline: none;
+    margin: none;
 }
 
 .icon {
@@ -358,7 +370,7 @@ Posted by Blowsie, modified by community. See post 'Timeline' for change history
 Retrieved 2026-01-29, License - CC BY-SA 4.0
 */
 
-.noselect {
+.no-select {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
     -khtml-user-select: none; /* Konqueror HTML */
