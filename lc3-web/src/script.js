@@ -191,6 +191,16 @@ function updateRegisterDisplay() {
   let r7 = VM.get_reg_value_as_hex(7);
   let pc = VM.get_pc_value_as_hex();
   let ir = VM.get_ir_value_as_hex();
+  let n = VM.get_n_reg_value();
+  let z = VM.get_z_reg_value();
+  let p = VM.get_p_reg_value();
+
+  const bool_to_int = (b) => {
+    if (b) {
+      return 1;
+    }
+    return 0;
+  };
 
   document.getElementById("r0Value").innerHTML = r0;
   document.getElementById("r1Value").innerHTML = r1;
@@ -202,6 +212,9 @@ function updateRegisterDisplay() {
   document.getElementById("r7Value").innerHTML = r7;
   document.getElementById("pcValue").innerHTML = pc;
   document.getElementById("irValue").innerHTML = ir;
+  document.getElementById("nRegValue").innerHTML = bool_to_int(n);
+  document.getElementById("zRegValue").innerHTML = bool_to_int(z);
+  document.getElementById("pRegValue").innerHTML = bool_to_int(p);
 }
 
 const clearConsoleButton = document.getElementById("clearConsoleButton");

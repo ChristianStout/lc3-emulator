@@ -55,6 +55,20 @@ export class WebVM {
         return ret !== 0;
     }
     /**
+     * @returns {boolean}
+     */
+    get_n_reg_value() {
+        const ret = wasm.webvm_get_n_reg_value(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
+     * @returns {boolean}
+     */
+    get_p_reg_value() {
+        const ret = wasm.webvm_get_p_reg_value(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
      * @returns {number}
      */
     get_pc() {
@@ -98,6 +112,13 @@ export class WebVM {
         } finally {
             wasm.__wbindgen_free_command_export(deferred1_0, deferred1_1, 1);
         }
+    }
+    /**
+     * @returns {boolean}
+     */
+    get_z_reg_value() {
+        const ret = wasm.webvm_get_z_reg_value(this.__wbg_ptr);
+        return ret !== 0;
     }
     /**
      * @returns {Promise<boolean>}

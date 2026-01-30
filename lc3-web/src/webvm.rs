@@ -109,4 +109,16 @@ impl WebVM {
     pub fn get_program_loaded(&self) -> bool {
         return self.program_loaded;
     }
+
+    pub fn get_n_reg_value(&self) -> bool {
+        return self.vm.registers.n;
+    }
+
+    pub fn get_z_reg_value(&self) -> bool {
+        return self.vm.registers.z;
+    }
+
+    pub fn get_p_reg_value(&self) -> bool {
+        return self.vm.registers.p;
+    }
 }
