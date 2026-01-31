@@ -149,6 +149,8 @@ body {
     font-family: monospace;
     font-size: 14px;
     background-color: var(--editor-bg);
+    overflow-x: scroll;
+    white-space: nowrap;
 }
 
 .panel-item {
@@ -207,6 +209,7 @@ body {
 
 .bit-enabled {
     background-color: var(--bit-enabled-bg);
+    color: var(--bg);
 }
 
 #haltValue {
@@ -366,6 +369,8 @@ body {
 .button:disabled {
     background-color: var(--button-disabled);
     color: var(--button-disabled-text);
+    cursor: not-allowed;
+    border-color: var(--fg);
 }
 
 .run-button {
@@ -376,6 +381,15 @@ body {
 .run-button:hover {
     background-color: var(--run-button-hover);
     border-color: var(--button-hover);
+}
+
+.run-button:disabled {
+    background-color: var(--button-disabled);
+    color: var(--button-disabled-text);
+}
+
+.run-button:disabled:hover {
+    border-color: var(--fg);
 }
 
 .context-menu-button {

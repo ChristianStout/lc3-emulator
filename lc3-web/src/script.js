@@ -97,6 +97,7 @@ async function run() {
   if (VM.is_halted) {
     updateRenderSidePanel();
     VM.set_is_running(false);
+    disableStepAndRunButtons();
   }
 }
 
