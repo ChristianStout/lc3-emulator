@@ -194,12 +194,21 @@ function updateRegisterDisplay() {
   let n = VM.get_n_reg_value();
   let z = VM.get_z_reg_value();
   let p = VM.get_p_reg_value();
+  let halt = VM.is_halted();
 
   const bool_to_int = (b) => {
     if (b) {
       return 1;
     }
     return 0;
+  };
+
+  const handle_enable_bit = (e, b, value) => {
+    e.classList.remove("bit-enabled");
+    if (b) {
+      e.classList.add("bit-enabled");
+    }
+    e.innerHTML = value;
   };
 
   document.getElementById("r0Value").innerHTML = r0;
@@ -212,9 +221,11 @@ function updateRegisterDisplay() {
   document.getElementById("r7Value").innerHTML = r7;
   document.getElementById("pcValue").innerHTML = pc;
   document.getElementById("irValue").innerHTML = ir;
-  document.getElementById("nRegValue").innerHTML = bool_to_int(n);
-  document.getElementById("zRegValue").innerHTML = bool_to_int(z);
-  document.getElementById("pRegValue").innerHTML = bool_to_int(p);
+
+  handle_enable_bit(document.getElementById("nRegValue"), n, bool_to_int(n));
+  handle_enable_bit(document.getElementById("zRegValue"), z, bool_to_int(z));
+  handle_enable_bit(document.getElementById("pRegValue"), p, bool_to_int(p));
+  handle_enable_bit(document.getElementById("haltValue"), halt, halt);
 }
 
 const clearConsoleButton = document.getElementById("clearConsoleButton");

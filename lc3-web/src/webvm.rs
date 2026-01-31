@@ -48,6 +48,9 @@ impl WebVM {
     pub async fn reset_machine(&mut self) {
         self.vm.memory.clear();
         self.vm.registers.halt = false;
+        self.vm.registers.n = false;
+        self.vm.registers.z = false;
+        self.vm.registers.p = false;
         self.awaiting_input = false;
     }
 

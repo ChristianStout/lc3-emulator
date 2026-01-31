@@ -27,6 +27,7 @@ body[data-theme="light"] {
     --memory-loc-hover: rgb(172, 176, 190);
     --show-pc-loc: rgb(221, 120, 120);
     --show-pc-loc-hover: rgb(220, 138, 120);
+    --bit-enabled-bg: rgb(221, 120, 120);
 }
 
 body[data-theme="dark"] {
@@ -49,6 +50,7 @@ body[data-theme="dark"] {
     --memory-loc-hover: rgb(24, 25, 38);
     --show-pc-loc: rgb(237, 135, 150);
     --show-pc-loc-hover: rgb(238, 153, 160);
+    --bit-enabled-bg: rgb(237, 135, 150);
 }
 
 * {
@@ -157,6 +159,7 @@ body {
     border-right: 1px solid var(--border);
     padding-left: 3px;
     padding-right: 3px;
+    background-color: var(--console-bg);
 }
 
 .reg-info {
@@ -171,6 +174,18 @@ body {
     padding-left: 7px;
     padding-right: 7px;
     border-right: 1px solid var(--border);
+}
+
+.bit-enabled {
+    background-color: var(--bit-enabled-bg);
+}
+
+#haltValue {
+    text-align: center;
+    align-items: center;
+    padding-left: 1px;
+    width: 67px;
+    border-bottom-right-radius: var(--rounded-corners);
 }
 
 .memory-table {
