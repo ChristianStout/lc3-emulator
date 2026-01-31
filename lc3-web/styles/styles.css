@@ -94,6 +94,35 @@ body {
     padding-right: 12px;
 }
 
+.top-bar-right {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-link {
+    color: var(--panel-bg);
+}
+
+.top-link:hover {
+    color: green;
+}
+
+.theme-select {
+    background: var(--panel-bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: var(--rounded-corners);
+    padding: 4px 8px;
+    float: right;
+    min-width: 80px;
+}
+
+.theme-select:hover {
+    background-color: var(--console-bg);
+}
+
 .bottom-bar {
     background-color: var(--bottom-bar-bg);
     color: var(--bottom-bar-fg);
@@ -312,17 +341,6 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--rounded-corners);
     flex-shrink: 0;
-}
-
-.theme-select {
-    background: var(--panel-bg);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    border-radius: var(--rounded-corners);
-    padding: 4px 8px;
-    margin-left: auto;
-    float: right;
-    min-width: 80px;
 }
 
 .button {

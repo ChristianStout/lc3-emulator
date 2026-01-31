@@ -28,17 +28,16 @@ async function inputToStream(e) {
     return;
   }
 
+  let c = key;
   if (key == "Enter") {
-    inputStream.value += "\n";
-    return;
+    c = "\n";
   }
   if (key == "Tab") {
-    inputStream.value += "\t";
-    return;
+    c = "\t";
   }
 
   if (await VM.is_awaiting_input()) {
-    await VM.set_reg(0, key.charCodeAt(0));
+    await VM.set_reg(0, c.charCodeAt(0));
     await VM.set_awaiting_input(false);
     enableStepAndRunButtons();
     if (VM.get_is_running()) {
@@ -47,7 +46,7 @@ async function inputToStream(e) {
     }
     return;
   }
-  inputStream.value += key;
+  inputStream.value += c;
 }
 
 const innerConsole = document.getElementById("innerConsole");
@@ -90,11 +89,13 @@ async function run() {
 
     let awaiting_input = await VM.is_awaiting_input();
     if (awaiting_input) {
+      updateRenderSidePanel();
       return;
     }
   }
 
   if (VM.is_halted) {
+    updateRenderSidePanel();
     VM.set_is_running(false);
   }
 }
@@ -165,9 +166,9 @@ async function stepInstruction() {
 
   let stepResult = await VM.step();
 
-  updateRegisterDisplay();
-  render_memory(true);
-  jumpToPc();
+  if (!VM.get_is_running()) {
+    updateRenderSidePanel();
+  }
 
   if (await VM.is_awaiting_input()) {
     disableStepAndRunButtons();
@@ -178,6 +179,12 @@ async function stepInstruction() {
   // if (isAwaitingInput && result) {
   //   await VM.set_awaiting_input(false);
   // }
+}
+
+function updateRenderSidePanel() {
+  updateRegisterDisplay();
+  render_memory(true);
+  jumpToPc();
 }
 
 function updateRegisterDisplay() {
