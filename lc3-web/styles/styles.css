@@ -308,6 +308,11 @@ body {
     background-color: var(--show-pc-loc-hover);
 }
 
+#inputStream:disabled {
+    border-color: var(--border);
+    cursor: default;
+}
+
 .console {
     height: var(--console-height);
     color: var(--fg);
