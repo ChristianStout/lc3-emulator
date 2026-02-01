@@ -258,6 +258,115 @@ function enableStepAndRunButtons() {
   runButton.disabled = false;
 }
 
+// DYNAMICALLY CHANGE SIDE PANEL HEIGHTS ON RESIZE
+
+// const infoPanel = document.getElementById("infoPanel");
+
+// let panelHeight = null;
+// let fixedHeight = null;
+// let resizeScheduled = false;
+
+// window.addEventListener("resize", () => {
+//   if (resizeScheduled) return;
+//   resizeScheduled = true;
+
+//   requestAnimationFrame(() => {
+//     resizeScheduled = false;
+//     recalcAndResize();
+//   });
+// });
+
+// window.addEventListener("load", () => {
+//   recalcAndResize(true);
+// });
+
+// function recalcAndResize(force = false) {
+//   const c = infoPanel.children;
+
+//   // Measure exactly once per resize
+//   panelHeight = infoPanel.getBoundingClientRect().height;
+
+//   if (fixedHeight === null || force) {
+//     fixedHeight =
+//       c[0].offsetHeight + // vm controls
+//       c[1].offsetHeight + // registers
+//       c[2].offsetHeight + // memory controls
+//       c[4].offsetHeight;  // console controls
+//   }
+
+//   const available = Math.max(0, panelHeight - fixedHeight);
+
+//   const memoryHeight = Math.floor(available * 0.6);
+//   const consoleHeight = available - memoryHeight;
+
+//   // WRITE ONLY BELOW THIS LINE
+//   c[3].style.height = `${memoryHeight}px`;
+//   c[5].style.height = `${consoleHeight}px`;
+//   c[5].children[0].style.height = `${consoleHeight}px`;
+// }
+
+// const infoPanel = document.getElementById("infoPanel");
+// const sizes = {};
+
+// window.addEventListener("resize", handleInfoPanelResize);
+// // window.addEventListener("DOMContentLoaded", handleInfoPanelResize);
+// handleInfoPanelResize();
+
+// let currentlyResizingSidePanel = false;
+// function handleInfoPanelResize() {
+//   if (currentlyResizingSidePanel) {
+//     return;
+//   }
+
+//   currentlyResizingSidePanel = true;
+//   resizeHeightInfoPanel();
+//   currentlyResizingSidePanel = false;
+// }
+
+// function calcConstInfoPanelHeights() {
+//   const children = infoPanel.children;
+
+//   const vmControlsHeight = children[0].offsetHeight;
+//   const registersHeight = children[1].offsetHeight;
+//   const memoryControlsHeight = children[2].offsetHeight;
+//   const consoleControlsHeight = children[4].offsetHeight;
+
+//   const margin = 12;
+
+//   const fixedHeight =
+//     vmControlsHeight +
+//     registersHeight +
+//     memoryControlsHeight +
+//     consoleControlsHeight +
+//     margin * (infoPanel.children.length + 1);
+
+//   sizes["constInfoPanelHeights"] = fixedHeight;
+// }
+
+// function resizeHeightInfoPanel() {
+//   const panelHeight = infoPanel.clientHeight;
+
+//   let fixedHeight = sizes["constInfoPanelHeights"];
+//   if (fixedHeight === undefined) {
+//     calcConstInfoPanelHeights();
+//     fixedHeight = sizes["constInfoPanelHeights"];
+//   }
+
+//   const available = Math.max(0, panelHeight - fixedHeight);
+
+//   const memoryHeight = Math.floor(available * 0.6);
+//   const consoleHeight = available - memoryHeight;
+
+//   const children = infoPanel.children;
+//   const memoryTable = children[3];
+//   const console = children[5];
+//   const innerConsole = console.children[0];
+
+//   memoryTable.style.height = `${memoryHeight}px`;
+//   console.style.height = `${consoleHeight}px`;
+//   innerConsole.style.height = `${consoleHeight}px`;
+// }
+
 // let textarea = document.querySelector("#editing");
 // textarea.addEventListener("input", (event) => {
 //     update(textarea.value);

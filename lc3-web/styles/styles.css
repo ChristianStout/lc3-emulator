@@ -223,7 +223,7 @@ body {
 .memory-table {
     display: flex;
     flex-direction: column;
-    height: 50%;
+    /*height: 50%;*/
     font-family: monospace;
     font-size: 13px;
 }
@@ -313,23 +313,25 @@ body {
     cursor: default;
 }
 
-.console {
-    height: var(--console-height);
+/*.console {
+    min-height: 0;
     color: var(--fg);
-}
+}*/
 
-.inner-console {
+.console {
     flex: 1;
     outline: none;
-    position: absolute;
+    /*position: absolute;*/
     resize: none;
     border: none;
     width: calc(var(--info-panel-width) - var(--info-panel-margin) * 2);
-    height: 27%;
+    min-height: 0;
     border-radius: var(--rounded-corners);
     background-color: var(--console-bg);
     padding: 5px;
     z-index: 0;
+    color: var(--fg);
+    margin-bottom: var(--info-panel-margin);
 }
 
 .invisible {
@@ -348,7 +350,15 @@ body {
     margin-left: 6px;
     border: 1px solid var(--border);
     border-radius: var(--rounded-corners);
-    flex-shrink: 0;
+    display: grid;
+    grid-template-rows: auto auto auto 3fr auto 2fr;
+}
+
+.memory-table,
+.console,
+.innerConsole {
+    min-height: 0;
+    overflow: auto;
 }
 
 .button {

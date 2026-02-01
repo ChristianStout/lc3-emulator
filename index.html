@@ -61,8 +61,8 @@
                 ></textarea>
 
 
-                <aside class="info-panel">
-                    <div class="panel-item panel-buttons">
+                <aside class="info-panel" id="infoPanel">
+                    <div class="panel-item panel-buttons" id="vmControlButtons">
                     <button class="button run-button" id="loadAndRunButton">
                         <svg
                             width="12px"
@@ -145,7 +145,7 @@
                     </button>
                     </div>
 
-                    <div class="registers panel-item">
+                    <div class="registers panel-item" id="registers">
                         <span class="reg-listing"><label class="reg-label">R0</label><span class="reg-info" id="r0Value">x0000</span></span>
                         <span class="reg-listing"><label class="reg-label">R1</label><span class="reg-info" id="r1Value">x0000</span></span>
                         <span class="reg-listing"><label class="reg-label">R2</label><span class="reg-info" id="r2Value">x0000</span></span>
@@ -164,7 +164,7 @@
                         <span class="reg-listing"><label class="reg-label">HALT</label><span class="reg-info" id="haltValue">false</span></span>
                     </div>
 
-                    <div class="panel-item panel-buttons">
+                    <div class="panel-item panel-buttons" id="memoryControlButtons">
                         <button class="button" id="jumpPcButton">
                             <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
                             <svg fill="currentColor" width="12px" height="12px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
@@ -192,14 +192,12 @@
 
 
 
-                    <div class="panel-item panel-buttons" id="console-buttons">
+                    <div class="panel-item panel-buttons" id="console-buttons" id="consoleControlButtons">
                         <button class="button" id="clearConsoleButton">Clear Console</button>
                         <button class="button" id="clearInputStreamButton">Clear Input</button>
                         <input class="button stream" id="inputStream" spellcheck="false" disabled></input>
                     </div>
-                    <div class="console panel-item">
-                        <textarea class="inner-console" id="innerConsole" spellcheck="false"></textarea>
-                        <div>
+                    <textarea class="panel-item console" id="innerConsole" spellcheck="false"></textarea>
                 </aside>
             </main>
 
