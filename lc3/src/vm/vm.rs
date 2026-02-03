@@ -1,3 +1,4 @@
+use crate::io::*;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "serde")]
@@ -120,7 +121,9 @@ mod tests {
         halt
         .end"
         );
-        let mut asm = Asm::new();
+
+        let io = Lc3IO::new(Box::new(DebugIO::new()));
+        let mut asm = Asm::new(io);
 
         let binary_file = asm
             .run(file.to_string())

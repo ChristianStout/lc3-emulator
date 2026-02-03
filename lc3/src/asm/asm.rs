@@ -3,6 +3,7 @@ use super::directive::Directive;
 use super::lexer::*;
 use super::semantic::*;
 use super::token::*;
+use crate::io::*;
 use std::fs;
 use std::io::Write;
 
@@ -12,16 +13,18 @@ pub struct Asm {
     semantic_checker: SemanticChecker,
     token_index: usize,
     memory_location: usize,
+    io: Lc3IO,
 }
 
 #[allow(dead_code)]
 impl Asm {
-    pub fn new() -> Asm {
+    pub fn new(io: Lc3IO) -> Asm {
         Asm {
             lexer: Lexer::new(),
             semantic_checker: SemanticChecker::new(),
             token_index: 0,
             memory_location: 0,
+            io: io,
         }
     }
 

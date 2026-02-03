@@ -28,6 +28,9 @@ body[data-theme="light"] {
     --show-pc-loc: rgb(221, 120, 120);
     --show-pc-loc-hover: rgb(220, 138, 120);
     --bit-enabled-bg: rgb(221, 120, 120);
+    --shadow: rgb(204, 208, 218);
+    --exit-button: rgb(221, 120, 120);
+    --exit-button-hover: rgb(220, 138, 120););
 }
 
 body[data-theme="dark"] {
@@ -51,6 +54,9 @@ body[data-theme="dark"] {
     --show-pc-loc: rgb(237, 135, 150);
     --show-pc-loc-hover: rgb(238, 153, 160);
     --bit-enabled-bg: rgb(237, 135, 150);
+    --shadow: rgb(30, 32, 48);
+    --exit-button: rgb(237, 135, 150);
+    --exit-button-hover: rgb(238, 153, 160);
 }
 
 * {
@@ -60,7 +66,8 @@ body[data-theme="dark"] {
     color: var(--fg);
     transition:
         color 0.2s,
-        background-color 0.2s;
+        background-color 0.2s,
+        box-shadow 0.2s;
 }
 
 html,
@@ -431,10 +438,61 @@ body {
 }
 
 .modal {
-    display: float;
+    /*display: ;*/
     position: absolute;
     float: bottom;
-    visibility: hidden;
+    /*visibility: hidden;*/
+    z-index: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--rounded-corners);
+    /*padding: 12px;*/
+    background-color: var(--bg);
+    margin-left: 50vw;
+    margin-top: 50vh;
+    box-shadow: 5px 5px 5px var(--shadow);
+    /*overflow-y: scroll;*/
+    min-height: 30vh;
+    min-width: 300px;
+}
+
+.modal#asmErrorModal {
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+.modal#asmErrorModal > #asmModalBar {
+    border: 1px solid var(--border);
+    border-top-left-radius: var(--rounded-corners);
+    border-top-right-radius: var(--rounded-corners);
+    /*padding-left: 100px;
+    padding-right: 100px;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 2px;
+    height: fit-content;
+    background-color: var(--top-bar-bg);
+}
+
+#asmModalBar > #errorQuantity {
+    float: left;
+}
+
+#errorCloseButton {
+    margin-left: auto;
+    height: 13px;
+    width: 13px;
+    border-radius: 100%;
+    border: 1px solid var(--exit-button);
+    background-color: var(--exit-button);
+    transition: background-color 0.05s, border-color 0.05s;
+    margin-right: 3px;
+}
+
+#errorCloseButton:hover {
+    background-color: var(--exit-button-hover);
+    border-color: var(--exit-button-hover);
 }
 
 /*

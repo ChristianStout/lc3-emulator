@@ -33,7 +33,7 @@ if (editor_contents == "") {
 
                 br          begin
 
-prompt          .stringz    "\\nwill you give this repo a star? (y/n) > "
+prompt          .stringz    "will you give this repo a star? (y/n) > "
 
 begin           lea         r0, prompt
                 in
@@ -57,14 +57,14 @@ calc            ld          r1, char_y
                 lea         r0, hmm
                 puts
                 br          begin
-hmm             .stringz    "\\n?"
+hmm             .stringz    "\\n?\\n"
 
 thx_msg         .stringz    "\\nwow, tysm :) <3\\n"
 thank           lea         r0, thx_msg
                 puts
                 halt
 
-bad_msg         .stringz    "\\nhow dare you"
+bad_msg         .stringz    "\\nhow dare you\\n"
 scold           lea         r0, bad_msg
                 puts
                 br          begin

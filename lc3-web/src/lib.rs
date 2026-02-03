@@ -4,8 +4,11 @@ pub mod webvm;
 use lc3::asm::asm::Asm;
 use lc3::asm::lexer::*;
 use lc3::asm::token::*;
+use lc3::io::Lc3IO;
 use lc3::vm::vm::OPCODE_DELTA;
 use wasm_bindgen::prelude::*;
+
+use crate::webio::WebIO;
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,6 +18,7 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn assemble(file: String) -> Option<Vec<u16>> {
+    let io = Lc3IO::new(Box::new(WebIO::new()));
     let mut asm = Asm::new();
     return asm.run(file);
 }
