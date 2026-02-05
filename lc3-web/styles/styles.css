@@ -54,6 +54,7 @@ body[data-theme="dark"] {
     --show-pc-loc: rgb(237, 135, 150);
     --show-pc-loc-hover: rgb(238, 153, 160);
     --bit-enabled-bg: rgb(237, 135, 150);
+    --modal-background:
     --shadow: rgb(30, 32, 48);
     --exit-button: rgb(237, 135, 150);
     --exit-button-hover: rgb(238, 153, 160);
@@ -453,6 +454,7 @@ body {
     /*overflow-y: scroll;*/
     min-height: 30vh;
     min-width: 300px;
+    visibility: hidden;
 }
 
 .modal#asmErrorModal {
