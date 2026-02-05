@@ -480,7 +480,7 @@ mod tests {
 
     #[test]
     fn test_asm_directive_orig() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = vec![
             mk_token(TokenType::Directive(Directive::ORIG)),
@@ -492,7 +492,7 @@ mod tests {
         assert!(bin[0] == 3000);
         assert!(bin.len() == 1);
 
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = vec![
             mk_token(TokenType::Directive(Directive::ORIG)),
@@ -507,7 +507,7 @@ mod tests {
 
     #[test]
     fn test_asm_directive_fill() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Directive(Directive::FILL),
@@ -524,7 +524,7 @@ mod tests {
 
     #[test]
     fn test_asm_directive_blkw() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Directive(Directive::BLKW),
@@ -541,7 +541,7 @@ mod tests {
 
     #[test]
     fn test_asm_directive_stringz() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Directive(Directive::STRINGZ),
@@ -565,7 +565,7 @@ mod tests {
 
     #[test]
     fn test_add_immediate() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Add),
@@ -581,7 +581,7 @@ mod tests {
 
     #[test]
     fn test_add_register() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Add),
@@ -597,7 +597,7 @@ mod tests {
 
     #[test]
     fn test_and_immediate() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::And),
@@ -613,7 +613,7 @@ mod tests {
 
     #[test]
     fn test_and_register() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::And),
@@ -629,7 +629,7 @@ mod tests {
 
     #[test]
     fn test_br() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("x"),
@@ -669,7 +669,7 @@ mod tests {
 
     #[test]
     fn test_jsr() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("y"),
@@ -688,7 +688,7 @@ mod tests {
 
     #[test]
     fn test_jsrr() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Jsrr),
@@ -702,7 +702,7 @@ mod tests {
 
     #[test]
     fn test_ld() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("i"),
@@ -722,7 +722,7 @@ mod tests {
 
     #[test]
     fn test_ldi() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("i"),
@@ -742,7 +742,7 @@ mod tests {
 
     #[test]
     fn test_ldr() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Ldr),
@@ -758,7 +758,7 @@ mod tests {
 
     #[test]
     fn test_lea() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("i"),
@@ -778,7 +778,7 @@ mod tests {
 
     #[test]
     fn test_not() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Not),
@@ -793,7 +793,7 @@ mod tests {
 
     #[test]
     fn test_st() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("i"),
@@ -813,7 +813,7 @@ mod tests {
 
     #[test]
     fn test_sti() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("i"),
@@ -833,7 +833,7 @@ mod tests {
 
     #[test]
     fn test_str() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Str),
@@ -849,7 +849,7 @@ mod tests {
 
     #[test]
     fn test_trap() {
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         let stream = get_file(vec![
             TokenType::Instruction(OpcodeIns::Trap(20)), // getc
@@ -875,7 +875,7 @@ mod tests {
     #[test]
     fn test_pcoffset9() {
         // tests that the delta actually points in the correct signed direction
-        let mut asm = Asm::new();
+        let mut asm = Asm::new(Lc3IO::new(Box::new(DebugIO::new())));
 
         asm.semantic_checker.symbol_table.insert(
             String::from("x"),

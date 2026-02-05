@@ -91,12 +91,12 @@ impl AsmError {
             gen_msg += "\n\t";
 
             if from > 0 {
-                for _ in 0..(from - 1) {
+                for _ in 0..(from) {
                     gen_msg += " ";
                 }
             }
             // TODO: fix underlining being completely off.
-            for _ in 0..to {
+            for _ in from..=to {
                 gen_msg += "^";
             }
         }
