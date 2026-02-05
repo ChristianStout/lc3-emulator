@@ -44,22 +44,17 @@ impl Asm {
         if self.lexer.errors.len() > 0 {
             // let io = &Box::new(StdIO {});
             for error in self.lexer.errors.iter() {
-                println!("{}", error.generate_msg());
+                self.io.print_error(error.generate_msg());
             }
             return None;
         }
-
-        // this is for debug purposes
-        // for (i, token) in tokens.iter().enumerate() {
-        //     println!("{}\t: {:?}", i, token);
-        // }
 
         // 3. Verify that file is semantically valid
         self.semantic_checker.run(&tokens, input_file);
 
         if self.semantic_checker.errors.len() > 0 {
             for error in self.semantic_checker.errors.iter() {
-                println!("{}", error.generate_msg());
+                self.io.print_error(error.generate_msg());
             }
             return None;
         }

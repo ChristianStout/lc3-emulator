@@ -19,7 +19,7 @@ extern "C" {
 #[wasm_bindgen]
 pub fn assemble(file: String) -> Option<Vec<u16>> {
     let io = Lc3IO::new(Box::new(WebIO::new()));
-    let mut asm = Asm::new();
+    let mut asm = Asm::new(io);
     return asm.run(file);
 }
 

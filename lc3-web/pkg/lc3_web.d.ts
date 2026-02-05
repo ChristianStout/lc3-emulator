@@ -131,11 +131,11 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly assemble: (a: number, b: number) => [number, number];
     readonly get_tokens: (a: number, b: number) => any;
     readonly u16_to_ascii_rep: (a: number) => [number, number];
     readonly u16_to_instr_rep: (a: number) => [number, number];
+    readonly __wbg_webvm_free: (a: number, b: number) => void;
     readonly webvm_get_ir_value_as_hex: (a: number) => [number, number];
     readonly webvm_get_is_running: (a: number) => number;
     readonly webvm_get_n_reg_value: (a: number) => number;

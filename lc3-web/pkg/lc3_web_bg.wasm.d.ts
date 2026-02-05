@@ -1,11 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export const __wbg_webvm_free: (a: number, b: number) => void;
 export const assemble: (a: number, b: number) => [number, number];
 export const get_tokens: (a: number, b: number) => any;
 export const u16_to_ascii_rep: (a: number) => [number, number];
 export const u16_to_instr_rep: (a: number) => [number, number];
+export const __wbg_webvm_free: (a: number, b: number) => void;
 export const webvm_get_ir_value_as_hex: (a: number) => [number, number];
 export const webvm_get_is_running: (a: number) => number;
 export const webvm_get_n_reg_value: (a: number) => number;

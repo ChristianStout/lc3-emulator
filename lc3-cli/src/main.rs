@@ -25,7 +25,8 @@ fn main() {
         return;
     }
 
-    let mut asm = Asm::new();
+    let io = Lc3IO::new(Box::new(StdIOTarget {}));
+    let mut asm = Asm::new(io);
     let binary_file: Vec<u16>;
     if let Some(out) = asm.run(file) {
         binary_file = out;
